@@ -36,8 +36,14 @@ const t_tick MIN_RANDOMWALKTIME = 4000;
 #define MOB_SLAVEDISTANCE 2
 
 //Used to determine default enemy type of mobs (for use in eachinrange calls)
-#define DEFAULT_ENEMY_TYPE(md) (md->special_state.ai?BL_CHAR:BL_MOB|BL_PC|BL_HOM|BL_MER)
-
+#define DEFAULT_ENEMY_TYPE( md ) ( \
+	( md->option.ai_type == 2 || md->option.party_id || md->option.guild_id ) ? \
+	BL_CHAR : \
+	( md->option.ai_type == 3 ) ? \
+	BL_MOB : \
+	( md->special_state.ai ) ? \
+	BL_CHAR : \
+	BL_MOB|BL_PC|BL_HOM|BL_MER )
 /**
  * Mob constants
  * Added definitions for WoE:SE objects and other [L0ne_W0lf], [aleos]
@@ -53,6 +59,7 @@ enum MOBID {
 	MOBID_BLACK_MUSHROOM	= 1084,
 	MOBID_MARINE_SPHERE		= 1142,
 	MOBID_EMPERIUM			= 1288,
+	MOBID_EVENT_EMPERIUM    	= 20088,
 	MOBID_G_PARASITE		= 1555,
 	MOBID_G_FLORA			= 1575,
 	MOBID_G_HYDRA			= 1579,
@@ -220,6 +227,17 @@ struct mob_data {
 	int areanpc_id; //Required in OnTouchNPC (to avoid multiple area touchs)
 	unsigned int bg_id; // BattleGround System
 
+	struct { // Estructura mobevent
+		bool is_event, no_expdrop, no_slaves, announce_killer, announce_hprate, is_war, drop_boost;
+		unsigned hp_show : 3;
+		unsigned int max_hp; // Custom Max HP value
+		unsigned allow_warp : 2;
+		unsigned ai_type : 3;
+		int party_id, guild_id, guild_emblem_id;
+		short item_drop, item_amount, exp_boost;
+	} option;
+
+
 	t_tick next_walktime,last_thinktime,last_linktime,last_pcneartime,dmgtick;
 	short move_fail_count;
 	short lootitem_count;
@@ -242,6 +260,7 @@ struct mob_data {
 	 **/
 	int tomb_nid;
 };
+
 
 enum e_mob_skill_target {
 	MST_TARGET	=	0,
@@ -317,6 +336,11 @@ int mob_once_spawn_area(struct map_session_data* sd, int16 m,
 	int16 x0, int16 y0, int16 x1, int16 y1, const char* mobname, int mob_id, int amount, const char* event, unsigned int size, enum mob_ai ai);
 
 bool mob_ksprotected (struct block_list *src, struct block_list *target);
+
+//eAmod Mobevent
+int mob_once_spawn_especial(struct map_session_data *sd, const char *mapname, short x, short y, const char *mobname, int class_, int amount, const char *event, int hp_mod, unsigned int size,
+ 	short ai_type, bool no_slaves, short allow_warp, short hp_show, bool announce_hprate, bool announce_killer, bool no_expdrop, int TeamID, short item_drop, short item_amount, bool is_war, short exp_boost, bool drop_boost);
+
 
 int mob_spawn_guardian(const char* mapname, int16 x, int16 y, const char* mobname, int mob_id, const char* event, int guardian, bool has_index);	// Spawning Guardians [Valaris]
 int mob_spawn_bg(const char* mapname, int16 x, int16 y, const char* mobname, int mob_id, const char* event, unsigned int bg_id);

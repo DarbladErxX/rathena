@@ -1,0 +1,33 @@
+arena_4,166,92,3	script	Plagearism Master	4_M_TWMASKMAN,{
+
+	if(Class != Job_Rogue && Class != Job_Stalker ) mclose "Tu no tienes la capacidad, para aprender mis habilidades";
+
+	mes "[ ^FF0000Fu^000000 ]";
+	mes "Hola ^FFA500"+strcharinfo(0)+"^000000";
+	mes "Puedo lanzarte cualquier habilidad que me pidas, claro pagando un impuesto de ^FF0000"+F_InsertComma( .Nzeny )+"^000000 Zeny";
+	mes "Estas son las habilidades que te puedo enseñar";
+Onmenu:	
+	set .@SkillID,select( implode( .SkillName$,":" ) ) - 1;
+	next;
+
+	if (Zeny < .Nzeny ) mclose "Lo siento, pero te hace falta ^FF0000"+F_InsertComma(.Nzeny - Zeny) +"^000000 Zeny";
+
+	mes "has selecionado ^FFA500"+.Skillname$[.@SkillID]+"^000000";
+	mes "seguimos adelante o quieres volver a revisar mis habilidades";
+
+		if ( select("Sigamos : Muestrame otra vez") == 2 ) goto OnMenu;
+				
+ 		close2;
+	unitskilluseid getnpcid(0),.SkillID[.@SkillID],10,getcharid(3);
+	set zeny,zeny-.Nzeny;
+end;
+
+
+
+
+OnInit:
+set .Nzeny,30000;
+setarray .SkillID[0],15,14,19,20,90,84,534,536,537,540,379,77;
+setarray .SkillName$[0],"Frost Diver","Cold Bolt","Fire Bolt","Lightning Bolt","Earth Spike","Jupitel Thunder","Flaming Petals","Raging Fire Dragon","Lightning Spear of Ice","Wind Blade","Soul Breaker","Turn Undead";
+end;
+}

@@ -12,6 +12,8 @@
 
 #include "atcommand.hpp" // AtCommandType
 #include "pc.hpp" // e_pc_permission
+#include "battle.hpp" // battle_config
+
 
 typedef struct GroupSettings GroupSettings;
 
@@ -429,6 +431,12 @@ void do_init_pc_groups(void)
 	pc_group_db = idb_alloc(DB_OPT_RELEASE_DATA);
 	pc_groupname_db = stridb_alloc(DB_OPT_DUP_KEY, 0);
 	read_config();
+
+	if( battle_config.premium_group_id && !pc_group_exists(battle_config.premium_group_id) )
+	{
+		battle_config.premium_group_id = 0;
+		ShowWarning("conf/battle/eAmod.conf premium_group_id is enabled but group dont exist, disabling...\n");
+	}
 }
 
 /**

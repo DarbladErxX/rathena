@@ -1,0 +1,1316 @@
+	//===== eAthena Script =======================================
+//= Warper Karlita
+//===== By: ==================================================
+//= DarbladErxX (MediaFire,YuSuKe (Israel Gonzalez Urrutia)
+//===== www.facebook.com/DarbladErxX ==========================================
+//= darbladerxx@hotmail.com	
+//= leyenda_humana@hotmail.com
+//= Mediafire, YuSuKe
+//===== Descripcion: =========================================
+//= Kafra Multiusos
+//= modificacion echa para Mavis-RO
+//===== Descripcion =========================================
+//= Kafra multiusos
+//= -- Te lleva a todos los sitios especificos
+//= -- Vende, da save, etc
+//===============================================================
+arlandria,162,188,4	script	Karen::Warper	831,{
+set .curar, 1; // 1 - Curar al usar || 0 - No curar al usar
+set .ZenyD,400;
+set .ZenyF,500;
+set .nombre$, "[^0000FFKaren^000000]"; // Nombre NPC
+mes .nombre$;
+if (.curar) percentheal 100,100;
+cutin "831",2;
+mes "Hola ^5882FA"+strcharinfo(0)+"^000000.";
+menu	"^5959FF>^000000 Last Warp ^DF6F00["+.@nbmapa$+"]^000000  ^5959FF["+getmapusers(warpmap$)+"]^000000",lastwarp,"^5959FF>^000000 Ciudades",town,"^5959FF>^000000 Dungeons ^5959FF["+.ZenyD+"]z^000000",dungeon,"^5959FF>^000000 Zonas Especiales",sitiosesp,"^5959FF>^000000 Fields ^5959FF["+.ZenyF+"]z^000000",field ,"^5959FF>^000000 Castillos de Woe",woex,"^5959FF>^000000 Consumibles",items,"^5959FF>^000000 Save Point",spointx;
+
+
+spointx:
+	mes .nombre$;
+	getmapxy .@m$,.@x,.@y,0;
+       mes "Muy bien.";
+	mes "A partir de ahora este lugar quedará guardado como tu Punto de Inicio.";
+	save .@m$,.@x,.@y;
+	specialeffect2 500;
+	close2;
+	cutin "",255;
+	emotion 12;
+	end;
+
+
+lastwarp:
+	if (warpmap$ == "") {
+		mes .nombre$;
+		mes "No has visitado ningún mapa conmigo.";
+		close2;
+		cutin "",255;
+		end;
+	} // End if
+	warp ""+warpmap$+".gat",12,12;
+	end;
+
+town:
+menu 	"Prontera (Capital de Midgard)^5959FF["+getmapusers("prontera")+"]^000000",wprontera,
+	"Alberta^5959FF["+getmapusers("alberta")+"]^000000",walberta,
+	"Aldebaran^5959FF["+getmapusers("aldebaran")+"]^000000",waldebaran,
+	"Amatsu^5959FF["+getmapusers("amatsu")+"]^000000",wamatsu,
+	"Ayothaya^5959FF["+getmapusers("ayothaya")+"]^000000",wayot,
+	"Brasilis^5959FF["+getmapusers("brasilis")+"]^000000", wbrasilis,
+	"Comodo^5959FF["+getmapusers("comodo")+"]^000000",wcomodo,
+	"Dicastes^5959FF["+getmapusers("dicastes01")+"]^000000",ddicastes,
+	"Einbech (Mining Village)^5959FF["+getmapusers("einbech")+"]^000000",weinbech,
+	"Einbroch^5959FF["+getmapusers("einbroch")+"]^000000",weinbroch,
+	"Geffen^5959FF["+getmapusers("geffen")+"]^000000",wgeffen,
+	"Gonryun^5959FF["+getmapusers("gonryun")+"]^000000",wgonryun,
+	"Hugel^5959FF["+getmapusers("hugel")+"]^000000",whugel,
+	"Izlude^5959FF["+getmapusers("izlude")+"]^000000",wizlude,
+	"Jawaii^5959FF["+getmapusers("jawaii")+"]^000000",wjawaii,
+	"Lighthalzen^5959FF["+getmapusers("lighthalzen")+"]^000000",wlighthalzen,
+	"Louyang^5959FF["+getmapusers("louyang")+"]^000000",wlouyang,
+	"Lutie^5959FF["+getmapusers("xmas")+"]^000000",wxmas,	
+	"Manuk^5959FF["+getmapusers("manuk")+"]^000000",wmanuk,
+	"Midgarts Expedition Camp^5959FF["+getmapusers("mid_camp")+"]^000000",wmidcamp,
+	"Morroc^5959FF["+getmapusers("morocc")+"]^000000",wmorroc,
+	"Moscovia^5959FF["+getmapusers("moscovia")+"]^000000",wmoscovia,
+	"Nameless Island^5959FF["+getmapusers("nameless_n")+"]^000000",wnameless,
+	"Niflheim^5959FF["+getmapusers("niflheim")+"]^000000",wniflheim,
+	"Payon^5959FF["+getmapusers("payon")+"]^000000",wpayon,
+	"Rachel^5959FF["+getmapusers("rachel")+"]^000000",wafeltz,
+	"Splendide^5959FF["+getmapusers("splendide")+"]^000000",wsplendide,
+	"Thor Camp^5959FF["+getmapusers("thor_camp")+"]^000000",wthorcamp,
+	"Umbala^5959FF["+getmapusers("umbala")+"]^000000",wumbala,
+	"Veins^5959FF["+getmapusers("veins")+"]^000000",wveins,
+	"Yuno^5959FF["+getmapusers("yuno")+"]^000000",wyuno,
+	"Dewata^5959FF["+getmapusers("dewata")+"]^000000",wdewata,
+	"Malagno Island^5959FF["+getmapusers("malangdo")+"]^000000",wmalag,
+	"Bifrost^5959FF["+getmapusers("mora")+"]^000000",wbif;
+	
+field:
+menu 	"Amatsu Fields",wamafild,
+	"Ayothaya Fields",wayofild,
+	"Brasilis Fields",wbra,
+	"Comodo Fields",wcmdfild,
+	"Dewata Field",wdewfild,
+	"Einbroch Fields",weinfild,
+	"Geffen Fields",wgeffild,
+	"Gonryun Fields",wgonfild,
+	"Hugel Fields",whufild,
+	"Lighthalzen Fields",wlhzfild,
+	"Louyang Field",wloufild,
+	"Lutie Field",wxmasfild,
+	"Manuk Fields",wman,
+	"Mjolnir Fields",wmjolnir,
+	"Niflheim Fields",wniffild,
+	"Discastes Fields",wfieldisca,
+	"Payon Forests",wpayfor,
+	"Prontera Fields",wprtfild,
+	"Rachel Fields",warunfild,
+	"Sograt Deserts",wmocfild,
+	"Splendide Fields",wsplen,
+	"Umbala Fields",wumfild,
+	"Veins Fields",wveinsfild,
+	"Yuno Fields",wyunofild;
+
+dungeon:
+menu 	"Abbey, Cursed Monastery",wabbey,
+	"Abyss Lakes",wabyss,
+	"Amatsu Dungeon",ama,
+	"Anthell",ant,
+	"Ayothaya Dungeons",wayodun,
+	"Beach Dungeon",beach,
+	"Brasilis's Dungeon",wbradun,
+	"Byalan Dungeon",byalan,
+	"Clock Tower",clock,
+	"Coal Mines",coal,
+	"Culverts",culvert,
+	"Einbroch Dungeons",weindun,
+	"Gefenia",gefenia,
+	"Geffen Dungeon",geffen,
+	"Glast Heim",glast,
+	"Gonryun Dungeon",gon,
+	"Hidden Dungeon",hidden,
+	"Ice Dungeon",iced,
+	"Juperos Dungeons",wjuper,
+	"Kiel Dungeons",wkieldun,
+	"Lighthalzen",wlhzdun,
+	"Louyang Dungeons",wloudun,
+	"Magma Dungeon",magma,
+	"Moscovia Dungeon",mosk,
+	"Nydhogg's Dungeon",dnyd,
+	"Odin Temple",wodint,
+	"Orc Dungeon",orc,
+	"Payon Dungeon",payon,
+	"Pyramids",pyramids,
+	"Rachel Sanctuary",rachels,
+	"Sphinx",sphinx,
+	"Sunken Ship",sunken,
+	"Thanatos Tower",wthat,
+	"Thor Volcano",wthor,
+	"Toy Factory",toy,
+	"Turtle Dungeon",turtle,
+	"Umbala Dungeons",wumdun,
+	"Discastes Dungeons",wdis,
+	"Dimensional",wfielspec,
+	"Dewata Dungeon",wdewdun,
+	"Malangdo Dungeon",wmaldun;
+sitiosesp:
+switch(select("Merchants   ^5959FF["+getmapusers("mercado")+"]^000000:Zona Quest ^5959FF["+getmapusers("job3_rune02")+"]^000000:Mercado NPC^5959FF["+getmapusers("ayothaya")+"]^000000:Cash Room/itemmall^5959FF["+getmapusers("quiz_02")+"]^000000"))
+{
+	case 1:
+		warp "mercado",101,11; 		callfunc "LastMapSave"; end;
+		set warpmapN$,"Mercado";			     end;
+	case 2:
+		warp "job3_rune02",38,41;		callfunc "LastMapSave"; end;
+		set warpmapN$,"Zona Quest";		     end;
+	case 3:
+		warp "ayothaya",151,166;		callfunc "LastMapSave"; end;
+		set warpmapN$,"Mercado Npc";		end;
+	case 4:
+		warp "itemmall",180,56;		callfunc "LastMapSave"; end;
+		set warpmapN$,"Cash Shop";		end;
+	//case 5:
+	//	warp "quiz_00",15,116;		callfunc "LastMapSave"; end;
+	//	set warpmapN$,"Zona de Juegos";		end;
+}
+end;
+//-------------------------------
+//          Woe
+//-------------------------------
+woex:
+switch(select("Woe Jueves Prontera^5959FF["+getmapusers("prt_gld")+"]^000000:Woe Domingo 2.0 ^5959FF["+getmapusers("sch_gld")+"]^000000:Woe Sabado 2.0^5959FF["+getmapusers("sch_gld")+"]^000000"))
+{
+	if ( getcharid(2) == 0 ) {
+			mes "Usted debe tener una Guild para llegar ^FF0000A los mapas de WOE^000000.";
+			cutin "",255;
+			close;
+		}
+	case 1:
+		warp "prt_gld",141,64;		callfunc "LastMapSave"; end;
+		set warpmapN$,"Valkyrie Realm";		end;
+	case 2:
+		warp "sch_gld",294,100; /* DOMINGO HIMINN */		callfunc "LastMapSave"; end;
+		set warpmapN$,"Schwarzwald Realm";		end;
+	case 3:
+		warp "aru_gld",160,268; /*	SABADO MARDOL */	callfunc "LastMapSave"; end;
+		set warpmapN$,"Arunafelz Guild Map";		end;
+	//case 4:
+		//warp "quiz_02",234,382;		callfunc "LastMapSave"; end;
+		//end;
+}
+end;
+
+
+//-------------------------------
+//        itemshop
+//-------------------------------
+items:
+	mes "^FF0000[Kafra Battle of Midgard]^000000";
+	mes "Consumibles Universales.";
+	mes "Cierra esta ventana para accesar la tienda, Suerte!!";
+	close2;
+	callshop "consumibles_shop2",0;
+	end;
+
+//-------------------------------
+//          Fields
+//-------------------------------
+
+warunfild:
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Rachel Field 1^5959FF["+getmapusers("ra_fild01")+"]^000000",drunfild1,
+	"Rachel Field 2^5959FF["+getmapusers("ra_fild02")+"]^000000",drunfild2,
+	"Rachel Field 3^5959FF["+getmapusers("ra_fild03")+"]^000000",drunfild3,
+	"Rachel Field 4^5959FF["+getmapusers("ra_fild04")+"]^000000",drunfild4,
+	"Rachel Field 5^5959FF["+getmapusers("ra_fild05")+"]^000000",drunfild5,
+	"Rachel Field 6^5959FF["+getmapusers("ra_fild06")+"]^000000",drunfild6,
+	"Rachel Field 7^5959FF["+getmapusers("ra_fild07")+"]^000000",drunfild7,
+	"Rachel Field 8^5959FF["+getmapusers("ra_fild08")+"]^000000",drunfild8,
+	"Rachel Field 9^5959FF["+getmapusers("ra_fild09")+"]^000000",drunfild9,
+	"Rachel Field 10^5959FF["+getmapusers("ra_fild10")+"]^000000",drunfild10,
+	"Rachel Field 11^5959FF["+getmapusers("ra_fild11")+"]^000000",drunfild11,
+	"Rachel Field 12^5959FF["+getmapusers("ra_fild12")+"]^000000",drunfild12,
+	"Rachel Field 13^5959FF["+getmapusers("ra_fild13")+"]^000000",drunfild13;
+
+wgeffild:
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Geffen Field 0^5959FF["+getmapusers("gef_fild00")+"]^000000",dgeffild00,
+	"Geffen Field 1^5959FF["+getmapusers("gef_fild01")+"]^000000",dgeffild01,
+	"Geffen Field 2^5959FF["+getmapusers("gef_fild02")+"]^000000",dgeffild02,
+	"Geffen Field 3^5959FF["+getmapusers("gef_fild03")+"]^000000",dgeffild03,
+	"Geffen Field 4^5959FF["+getmapusers("gef_fild04")+"]^000000",dgeffild04,
+	"Geffen Field 5^5959FF["+getmapusers("gef_fild05")+"]^000000",dgeffild05,
+	"Geffen Field 6^5959FF["+getmapusers("gef_fild06")+"]^000000",dgeffild06,
+	"Geffen Field 7^5959FF["+getmapusers("gef_fild07")+"]^000000",dgeffild07,
+	"Geffen Field 8^5959FF["+getmapusers("gef_fild08")+"]^000000",dgeffild08,
+	"Geffen Field 9^5959FF["+getmapusers("gef_fild09")+"]^000000",dgeffild09,
+	"Geffen Field 10^5959FF["+getmapusers("gef_fild10")+"]^000000",dgeffild10,
+	"Geffen Field 11^5959FF["+getmapusers("gef_fild11")+"]^000000",dgeffild11,
+	"Geffen Field 12^5959FF["+getmapusers("gef_fild12")+"]^000000",dgeffild12,
+	"Geffen Field 13^5959FF["+getmapusers("gef_fild13")+"]^000000",dgeffild13,
+	"Geffen Field 14^5959FF["+getmapusers("gef_fild14")+"]^000000",dgeffild14;
+
+wmjolnir:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Mjolnir Field 1^5959FF["+getmapusers("mjolnir_01")+"]^000000",dmjolnir1,
+	"Mjolnir Field 2^5959FF["+getmapusers("mjolnir_02")+"]^000000",dmjolnir2,
+	"Mjolnir Field 3^5959FF["+getmapusers("mjolnir_03")+"]^000000",dmjolnir3,
+	"Mjolnir Field 4^5959FF["+getmapusers("mjolnir_04")+"]^000000",dmjolnir4,
+	"Mjolnir Field 5^5959FF["+getmapusers("mjolnir_05")+"]^000000",dmjolnir5,
+	"Mjolnir Field 6^5959FF["+getmapusers("mjolnir_06")+"]^000000",dmjolnir6,
+	"Mjolnir Field 7^5959FF["+getmapusers("mjolnir_07")+"]^000000",dmjolnir7,
+	"Mjolnir Field 8^5959FF["+getmapusers("mjolnir_08")+"]^000000",dmjolnir8,
+	"Mjolnir Field 9^5959FF["+getmapusers("mjolnir_09")+"]^000000",dmjolnir9,
+	"Mjolnir Field 10^5959FF["+getmapusers("mjolnir_10")+"]^000000",dmjolnir10,
+	"Mjolnir Field 11^5959FF["+getmapusers("mjolnir_11")+"]^000000",dmjolnir11,
+	"Mjolnir Field 12^5959FF["+getmapusers("mjolnir_12")+"]^000000",dmjolnir12;
+
+wmocfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Sograt Desert 1^5959FF["+getmapusers("moc_fild01")+"]^000000",dmocfild1,
+	"Sograt Desert 2^5959FF["+getmapusers("moc_fild02")+"]^000000",dmocfild2,
+	"Sograt Desert 3^5959FF["+getmapusers("moc_fild03")+"]^000000",dmocfild3,
+	"Sograt Desert 4^5959FF["+getmapusers("moc_fild04")+"]^000000",dmocfild4,
+	"Sograt Desert 5^5959FF["+getmapusers("moc_fild05")+"]^000000",dmocfild5,
+	"Sograt Desert 6^5959FF["+getmapusers("moc_fild06")+"]^000000",dmocfild6,
+	"Sograt Desert 7^5959FF["+getmapusers("moc_fild07")+"]^000000",dmocfild7,
+	"Sograt Desert 8^5959FF["+getmapusers("moc_fild08")+"]^000000",dmocfild8,
+	"Sograt Desert 9^5959FF["+getmapusers("moc_fild09")+"]^000000",dmocfild9,
+	"Sograt Desert 10^5959FF["+getmapusers("moc_fild10")+"]^000000",dmocfild10,
+	"Sograt Desert 11^5959FF["+getmapusers("moc_fild11")+"]^000000",dmocfild11,
+	"Sograt Desert 12^5959FF["+getmapusers("moc_fild12")+"]^000000",dmocfild12,
+	"Sograt Desert 13^5959FF["+getmapusers("moc_fild13")+"]^000000",dmocfild13,
+	"Sograt Desert 14^5959FF["+getmapusers("moc_fild14")+"]^000000",dmocfild14,
+	"Sograt Desert 15^5959FF["+getmapusers("moc_fild15")+"]^000000",dmocfild15,
+	"Sograt Desert 16^5959FF["+getmapusers("moc_fild16")+"]^000000",dmocfild16,
+	"Sograt Desert 17^5959FF["+getmapusers("moc_fild17")+"]^000000",dmocfild17,
+	"Sograt Desert 18^5959FF["+getmapusers("moc_fild18")+"]^000000",dmocfild18,
+	"Sograt Desert 19^5959FF["+getmapusers("moc_fild19")+"]^000000",dmocfild19;
+
+wpayfor:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Payon Forest 1^5959FF["+getmapusers("pay_fild01")+"]^000000",dpayfild1,
+	"Payon Forest 2^5959FF["+getmapusers("pay_fild02")+"]^000000",dpayfild2,
+	"Payon Forest 3^5959FF["+getmapusers("pay_fild03")+"]^000000",dpayfild3,
+	"Payon Forest 4^5959FF["+getmapusers("pay_fild04")+"]^000000",dpayfild4,
+	"Payon Forest 5^5959FF["+getmapusers("pay_fild05")+"]^000000",dpayfild5,
+	"Payon Forest 6^5959FF["+getmapusers("pay_fild06")+"]^000000",dpayfild6,
+	"Payon Forest 7^5959FF["+getmapusers("pay_fild07")+"]^000000",dpayfild7,
+	"Payon Forest 8^5959FF["+getmapusers("pay_fild08")+"]^000000",dpayfild8,
+	"Payon Forest 9^5959FF["+getmapusers("pay_fild09")+"]^000000",dpayfild9,
+	"Payon Forest 10^5959FF["+getmapusers("pay_fild10")+"]^000000",dpayfild10,
+	"Payon Forest 11^5959FF["+getmapusers("pay_fild11")+"]^000000",dpayfild11;
+
+wprtfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Prontera Field 1^5959FF["+getmapusers("prt_fild01")+"]^000000",dprtfild1,
+	"Prontera Field 2^5959FF["+getmapusers("prt_fild02")+"]^000000",dprtfild2,
+	"Prontera Field 3^5959FF["+getmapusers("prt_fild03")+"]^000000",dprtfild3,
+	"Prontera Field 4^5959FF["+getmapusers("prt_fild04")+"]^000000",dprtfild4,
+	"Prontera Field 5^5959FF["+getmapusers("prt_fild05")+"]^000000",dprtfild5,
+	"Prontera Field 6^5959FF["+getmapusers("prt_fild06")+"]^000000",dprtfild6,
+	"Prontera Field 7^5959FF["+getmapusers("prt_fild07")+"]^000000",dprtfild7,
+	"Prontera Field 8^5959FF["+getmapusers("prt_fild08")+"]^000000",dprtfild8,
+	"Prontera Field 9^5959FF["+getmapusers("prt_fild09")+"]^000000",dprtfild9,
+	"Prontera Field 10^5959FF["+getmapusers("prt_fild10")+"]^000000",dprtfild10,
+	"Prontera Field 11^5959FF["+getmapusers("prt_fild11")+"]^000000",dprtfild11;
+
+wxmasfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Lutie Field 1^5959FF["+getmapusers("xmas_fild01")+"]^000000",dxmasfild1;
+
+wcmdfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Comodo Field 1^5959FF["+getmapusers("cmd_fild01")+"]^000000",dcmdfild1,
+	"Comodo Field 2^5959FF["+getmapusers("cmd_fild02")+"]^000000",dcmdfild2,
+	"Comodo Field 3^5959FF["+getmapusers("cmd_fild03")+"]^000000",dcmdfild3,
+	"Comodo Field 4^5959FF["+getmapusers("cmd_fild04")+"]^000000",dcmdfild4,
+	"Comodo Field 5^5959FF["+getmapusers("cmd_fild05")+"]^000000",dcmdfild5,
+	"Comodo Field 6^5959FF["+getmapusers("cmd_fild06")+"]^000000",dcmdfild6,
+	"Comodo Field 7^5959FF["+getmapusers("cmd_fild07")+"]^000000",dcmdfild7,
+	"Comodo Field 8^5959FF["+getmapusers("cmd_fild08")+"]^000000",dcmdfild8,
+	"Comodo Field 9^5959FF["+getmapusers("cmd_fild09")+"]^000000",dcmdfild9;
+wdewfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Dewata Field 01^5959FF["+getmapusers("dew_fild01")+"]^000000",dwfild1;
+
+wyunofild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Yuno Field 1^5959FF["+getmapusers("yuno_fild01")+"]^000000",dyunofild1,
+	"Yuno Field 2^5959FF["+getmapusers("yuno_fild02")+"]^000000",dyunofild2,
+	"Yuno Field 3^5959FF["+getmapusers("yuno_fild03")+"]^000000",dyunofild3,
+	"Yuno Field 4^5959FF["+getmapusers("yuno_fild04")+"]^000000",dyunofild4,
+	"Yuno Field 5^5959FF["+getmapusers("yuno_fild05")+"]^000000",dyunofild5,
+	"Yuno Field 6^5959FF["+getmapusers("yuno_fild06")+"]^000000",dyunofild6,
+	"Yuno Field 7^5959FF["+getmapusers("yuno_fild07")+"]^000000",dyunofild7,
+	"Yuno Field 8^5959FF["+getmapusers("yuno_fild08")+"]^000000",dyunofild8,
+	"Yuno Field 9^5959FF["+getmapusers("yuno_fild09")+"]^000000",dyunofild9,
+	"Yuno Field 10^5959FF["+getmapusers("yuno_fild10")+"]^000000",dyunofild10,
+	"Yuno Field 11^5959FF["+getmapusers("yuno_fild11")+"]^000000",dyunofild11,
+	"Yuno Field 12^5959FF["+getmapusers("yuno_fild12")+"]^000000",dyunofild12;
+
+wamafild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Amatsu Field 1^5959FF["+getmapusers("ama_fild01")+"]^000000",damafild1;
+
+wgonfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Gonryun Field 1^5959FF["+getmapusers("gon_fild01")+"]^000000",dgonfild1;
+
+wumfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Umbala Field 1^5959FF["+getmapusers("um_fild01")+"]^000000",dumfild1,
+	"Umbala Field 2^5959FF["+getmapusers("um_fild02")+"]^000000",dumfild2,
+	"Umbala Field 3^5959FF["+getmapusers("um_fild03")+"]^000000",dumfild3,
+	"Umbala Field 4^5959FF["+getmapusers("um_fild04")+"]^000000",dumfild4;
+
+wniffild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Niflheim Field 1^5959FF["+getmapusers("nif_fild01")+"]^000000",dniffild1,
+	"Niflheim Field 2^5959FF["+getmapusers("nif_fild02")+"]^000000",dniffild2;
+
+wodint:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Odin Temple 1^5959FF["+getmapusers("odin_tem01")+"]^000000",wodtemp1,
+	"Odin Temple 2^5959FF["+getmapusers("odin_tem02")+"]^000000",wodtemp2,
+	"Odin Temple 3^5959FF["+getmapusers("odin_tem03")+"]^000000",wodtemp3;
+
+wloufild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Louyang Field 1^5959FF["+getmapusers("lou_fild01")+"]^000000",dloufild1;
+
+wayofild:
+
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Ayothaya Field 1^5959FF["+getmapusers("ayo_fild01")+"]^000000",dayofild1,
+	"Ayothaya Field 2^5959FF["+getmapusers("ayo_fild02")+"]^000000",dayofild2;
+
+weinfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Einbroch Field 1^5959FF["+getmapusers("ein_fild01")+"]^000000",deinfild1,
+	"Einbroch Field 2^5959FF["+getmapusers("ein_fild02")+"]^000000",deinfild2,
+	"Einbroch Field 3^5959FF["+getmapusers("ein_fild03")+"]^000000",deinfild3,
+	"Einbroch Field 4^5959FF["+getmapusers("ein_fild04")+"]^000000",deinfild4,
+	"Einbroch Field 5^5959FF["+getmapusers("ein_fild05")+"]^000000",deinfild5,
+	"Einbroch Field 6^5959FF["+getmapusers("ein_fild06")+"]^000000",deinfild6,
+	"Einbroch Field 7^5959FF["+getmapusers("ein_fild07")+"]^000000",deinfild7,
+	"Einbroch Field 8^5959FF["+getmapusers("ein_fild08")+"]^000000",deinfild8,
+	"Einbroch Field 9^5959FF["+getmapusers("ein_fild09")+"]^000000",deinfild9,
+	"Einbroch Field 10^5959FF["+getmapusers("ein_fild10")+"]^000000",deinfild10;
+
+wlhzfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Lighthalzen Field 1^5959FF["+getmapusers("lhz_fild01")+"]^000000",dlhzfild1,
+	"Lighthalzen Field 2^5959FF["+getmapusers("lhz_fild02")+"]^000000",dlhzfild2,
+	"Lighthalzen Field 3^5959FF["+getmapusers("lhz_fild03")+"]^000000",dlhzfild3;
+
+
+whufild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Hugel Field 1^5959FF["+getmapusers("hu_fild01")+"]^000000",dhufild1,
+	"Hugel Field 2^5959FF["+getmapusers("hu_fild02")+"]^000000",dhufild2,
+	"Hugel Field 3^5959FF["+getmapusers("hu_fild03")+"]^000000",dhufild3,
+	"Hugel Field 4^5959FF["+getmapusers("hu_fild04")+"]^000000",dhufild4,
+	"Hugel Field 5^5959FF["+getmapusers("hu_fild05")+"]^000000",dhufild5,
+	"Hugel Field 6^5959FF["+getmapusers("hu_fild06")+"]^000000",dhufild6,
+	"Hugel Field 7^5959FF["+getmapusers("hu_fild07")+"]^000000",dhufild7;
+
+wveinsfild:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu	"Veins Field 1^5959FF["+getmapusers("ve_fild01")+"]^000000",dvfild1,
+	"Veins Field 2^5959FF["+getmapusers("ve_fild02")+"]^000000",dvfild2,
+	"Veins Field 3^5959FF["+getmapusers("ve_fild03")+"]^000000",dvfild3,
+	"Veins Field 4^5959FF["+getmapusers("ve_fild04")+"]^000000",dvfild4,
+	"Veins Field 5^5959FF["+getmapusers("ve_fild05")+"]^000000",dvfild5,
+	"Veins Field 6^5959FF["+getmapusers("ve_fild06")+"]^000000",dvfild6,
+	"Veins Field 7^5959FF["+getmapusers("ve_fild07")+"]^000000",dvfild7;
+
+wsplen:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Splendide Field 1^5959FF["+getmapusers("spl_fild01")+"]^000000",dsplenfild1,
+	"Splendide Field 2^5959FF["+getmapusers("spl_fild02")+"]^000000",dsplenfild2,
+	"Splendide Field 3^5959FF["+getmapusers("spl_fild03")+"]^000000",dsplenfild3;
+
+wman:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Manuk Field 1^5959FF["+getmapusers("man_fild01")+"]^000000",dmanfild1,
+	"Manuk Field 2^5959FF["+getmapusers("man_fild01")+"]^000000",dmanfild2,
+	"Manuk Field 3^5959FF["+getmapusers("man_fild01")+"]^000000",dmanfild3;
+
+wbra:
+
+mes "Please select a Field. You will be warped to the center of that map.";
+next;
+menu 	"Brasilis Field 1^5959FF["+getmapusers("bra_fild01")+"]^000000",dbrafild1;
+
+//-------------------------------
+//          Dungeons
+//-------------------------------
+
+wjuper:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("juperos_01")+"]^000000",djuperos1,
+	"Level 2^5959FF["+getmapusers("juperos_02")+"]^000000",djuperos3,
+	"[ ^FF3300MVP^000000 ] Core^5959FF["+getmapusers("jupe_core")+"]^000000",djuperos2;
+
+wumdun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Carpenter's Shop in the Tree^5959FF["+getmapusers("um_dun01")+"]^000000",dumdun1,
+	"Passage to a Foreign World^5959FF["+getmapusers("um_dun02")+"]^000000",dumdun2,
+	"Hvergermil's Fountain^5959FF["+getmapusers("yggdrasil01")+"]^000000",dyggdrasil1;
+
+wloudun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"The Royal Tomb^5959FF["+getmapusers("lou_dun01")+"]^000000",dloudun1,
+	"Inside the Royal Tomb^5959FF["+getmapusers("lou_dun01")+"]^000000",dloudun2,
+	"[ ^FF3300MVP^000000 ] Suei Long Gon^5959FF["+getmapusers("lou_dun03")+"]^000000",dloudun3;
+
+wayodun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Ancient Shrine Maze^5959FF["+getmapusers("ayo_dun01")+"]^000000",dayodun1,
+	"[ ^FF3300MVP^000000 ] Inside Ancient Shrine^5959FF["+getmapusers("ayo_dun02")+"]^000000",dayodun2;
+wbradun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"At the Dusk - 01^5959FF["+getmapusers("bra_dun01")+"]^000000",dbradun1,
+	"[ ^FF3300MVP^000000 ] At the Dusk - 02^5959FF["+getmapusers("bra_dun02")+"]^000000",dbradun2;
+
+weindun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("ein_dun01")+"]^000000",deindun1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("ein_dun02")+"]^000000",deindun2;
+
+wlhzdun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("lhz_dun01")+"]^000000",dlhzdun1,
+	"Level 2^5959FF["+getmapusers("lhz_dun02")+"]^000000",dlhzdun2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("lhz_dun03")+"]^000000",dlhzdun3;
+
+
+wabyss:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("abyss_01")+"]^000000",dabyss1,
+	"Level 2^5959FF["+getmapusers("abyss_02")+"]^000000",dabyss2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("abyss_03")+"]^000000",dabyss3;
+
+wthat:
+
+mes "Selecciona un Nivel.";
+	next;
+menu 	"Level 1^5959FF["+getmapusers("tha_t01")+"]^000000",dthat1,
+	"Level 2^5959FF["+getmapusers("tha_t02")+"]^000000",dthat2,
+	"Level 3^5959FF["+getmapusers("tha_t03")+"]^000000",dthat3,
+	"Level 4^5959FF["+getmapusers("tha_t04")+"]^000000",dthat4,
+	"Level 5^5959FF["+getmapusers("tha_t05")+"]^000000",dthat5,
+	"Level 6^5959FF["+getmapusers("tha_t06")+"]^000000",dthat6,
+	"Level 7^5959FF["+getmapusers("tha_t07")+"]^000000",dthat7,
+	"Level 8^5959FF["+getmapusers("tha_t08")+"]^000000",dthat8,
+	"Level 9^5959FF["+getmapusers("tha_t09")+"]^000000",dthat9,
+	"Level 10^5959FF["+getmapusers("tha_t10")+"]^000000",dthat10,
+	"Level 11^5959FF["+getmapusers("tha_t11")+"]^000000",dthat11,
+	"Level 12^5959FF["+getmapusers("tha_t12")+"]^000000",dthat12,
+	"[ ^FF3300MVP^000000 ] Thana boss^5959FF["+getmapusers("thana_boss")+"]^000000",boss;
+
+
+wkieldun:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("kh_dun01")+"]^000000",dkieldun1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("kh_dun02")+"]^000000",dkieldun2;
+
+ant:
+	
+	mes "Selecciona un Nivel.";
+	next;
+menu 	"Level 1^5959FF["+getmapusers("anthell01")+"]^000000",danthell1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("anthell02")+"]^000000",danthell2;
+
+beach:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"[ ^FF3300MVP^000000 ] Level 1^5959FF["+getmapusers("beach_dun")+"]^000000",dbeach1,
+	"Level 2^5959FF["+getmapusers("beach_dun2")+"]^000000",dbeach2,
+	"Level 3^5959FF["+getmapusers("beach_dun3")+"]^000000",dbeach3;
+
+byalan:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("iz_dun00")+"]^000000",dbyalan1,
+	"Level 2^5959FF["+getmapusers("iz_dun01")+"]^000000",dbyalan2,
+	"Level 3^5959FF["+getmapusers("iz_dun02")+"]^000000",dbyalan3,
+	"Level 4^5959FF["+getmapusers("iz_dun03")+"]^000000",dbyalan4,
+	"Level 5^5959FF["+getmapusers("iz_dun04")+"]^000000",dbyalan5,
+	"[ ^FF3300MVP^000000 ] Level 6^5959FF["+getmapusers("iz_dun05")+"]^000000",dbyalan6;
+clock:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("c_tower1")+"]^000000",dclock1,
+	"Level 2^5959FF["+getmapusers("c_tower2")+"]^000000",dclock2,
+	"Level 3^5959FF["+getmapusers("c_tower3")+"]^000000",dclock3,
+	"Level 4^5959FF["+getmapusers("c_tower4")+"]^000000",dclock4,
+	"Basement 1^5959FF["+getmapusers("alde_dun01")+"]^000000",dalde1,
+	"Basement 2^5959FF["+getmapusers("alde_dun02")+"]^000000",dalde2,
+	"Basement 3^5959FF["+getmapusers("alde_dun03")+"]^000000",dalde3,
+	"Basement 4^5959FF["+getmapusers("alde_dun04")+"]^000000",dalde4;
+
+coal:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("mjo_dun01")+"]^000000",dcoal1,
+	"Level 2^5959FF["+getmapusers("mjo_dun02")+"]^000000",dcoal2,
+	"Level 3^5959FF["+getmapusers("mjo_dun03")+"]^000000",dcoal3;
+
+culvert:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("prt_sewb1")+"]^000000",dculvert1,
+	"Level 2^5959FF["+getmapusers("prt_sewb2")+"]^000000",dculvert2,
+	"Level 3^5959FF["+getmapusers("prt_sewb3")+"]^000000",dculvert3,
+	"[ ^FF3300MVP^000000 ] Level 4^5959FF["+getmapusers("prt_sewb4")+"]^000000",dculvert4;
+
+geffen:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("gef_dun00")+"]^000000",dgeffen1,
+	"Level 2^5959FF["+getmapusers("gef_dun01")+"]^000000",dgeffen2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("gef_dun02")+"]^000000",dgeffen3,
+	"Level 4^5959FF["+getmapusers("gef_dun03")+"]^000000",dgeffen4;
+
+glast:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Entrance^5959FF["+getmapusers("glast_01")+"]^000000",dglastent,
+	"Castle 1^5959FF["+getmapusers("gl_cas01")+"]^000000",dglastcast1,
+	"Castle 2^5959FF["+getmapusers("gl_cas02")+"]^000000",dglastcast2,
+	"Chivalry 1^5959FF["+getmapusers("gl_knt01")+"]^000000",dglastchiv1,
+	"Chivalry 2^5959FF["+getmapusers("gl_knt02")+"]^000000",dglastchiv2,
+	"Churchyard^5959FF["+getmapusers("gl_church")+"]^000000",dglastyard,
+	"Culvert 1^5959FF["+getmapusers("gl_sew01")+"]^000000",dglastcul1,
+	"Culvert 2^5959FF["+getmapusers("gl_sew02")+"]^000000",dglastcul1,
+	"Culvert 3^5959FF["+getmapusers("gl_sew03")+"]^000000",dglastcul3,
+	"Culvert 4^5959FF["+getmapusers("gl_sew04")+"]^000000",dglastcul4,
+	"[ ^FF3300MVP^000000 ] St.Abbey^5959FF["+getmapusers("gl_chyard")+"]^000000",dglastchur,
+	"Staircase Dungeon^5959FF["+getmapusers("gl_step")+"]^000000",dglaststep,
+	"Underground Cave 1^5959FF["+getmapusers("gl_dun01")+"]^000000",dglastcave1,
+	"Underground Cave 2^5959FF["+getmapusers("gl_dun02")+"]^000000",dglastcave2,
+	"Underground Prision 1^5959FF["+getmapusers("gl_prison")+"]^000000",dglastpris1,
+	"Underground prision 2^5959FF["+getmapusers("gl_prison1")+"]^000000",dglastpris2;
+
+hidden:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("prt_maze01")+"]^000000",dhidden1,
+	"Level 2^5959FF["+getmapusers("prt_maze02")+"]^000000",dhidden2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("prt_maze03")+"]^000000",dhidden3;
+
+iced:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("ice_dun01")+"]^000000",diced1,
+	"Level 2^5959FF["+getmapusers("ice_dun02")+"]^000000",diced2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("ice_dun03")+"]^000000",diced3,
+	"Level 4^5959FF["+getmapusers("ice_dun04")+"]^000000",diced4;
+
+magma:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("mag_dun01")+"]^000000",dmagma1,
+	"Level 2^5959FF["+getmapusers("mag_dun02")+"]^000000",dmagma2;
+
+orc:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("orcsdun01")+"]^000000",dorc1,
+	"Level 2^5959FF["+getmapusers("orcsdun02")+"]^000000",dorc2;
+
+payon:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("pay_dun00")+"]^000000",dpayon1,
+	"Level 2^5959FF["+getmapusers("pay_dun01")+"]^000000",dpayon2,
+	"Level 3^5959FF["+getmapusers("pay_dun02")+"]^000000",dpayon3,
+	"Level 4^5959FF["+getmapusers("pay_dun03")+"]^000000",dpayon4,
+	"[ ^FF3300MVP^000000 ] Level 5^5959FF["+getmapusers("pay_dun04")+"]^000000",dpayon5;
+
+pyramids:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("moc_pryd01")+"]^000000",dpyramids1,
+	"Level 2^5959FF["+getmapusers("moc_pryd02")+"]^000000",dpyramids2,
+	"Level 3^5959FF["+getmapusers("moc_pryd03")+"]^000000",dpyramids3,
+	"[ ^FF3300MVP^000000 ] Level 4^5959FF["+getmapusers("moc_pryd04")+"]^000000",dpyramids4,
+	"Basement 1^5959FF["+getmapusers("moc_pryd05")+"]^000000",dpyramidsb1,
+	"[ ^FF3300MVP^000000 ] Basement 2^5959FF["+getmapusers("moc_pryd06")+"]^000000",dpyramidsb2;
+
+sphinx:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("in_sphinx1")+"]^000000",dsphinx1,
+	"Level 2^5959FF["+getmapusers("in_sphinx2")+"]^000000",dsphinx2,
+	"Level 3^5959FF["+getmapusers("in_sphinx3")+"]^000000",dsphinx3,
+	"Level 4^5959FF["+getmapusers("in_sphinx4")+"]^000000",dsphinx4,
+	"[ ^FF3300MVP^000000 ] Level 5^5959FF["+getmapusers("in_sphinx5")+"]^000000",dsphinx5;
+
+sunken:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("treasure01")+"]^000000",dsunken1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("treasure02")+"]^000000",dsunken2;
+
+toy:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("xmas_dun01")+"]^000000",dtoy1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("xmas_dun02")+"]^000000",dtoy2;
+
+turtle:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Entrance^5959FF["+getmapusers("tur_dun01")+"]^000000",dturtleent,
+	"Level 1^5959FF["+getmapusers("tur_dun02")+"]^000000",dturtle1,
+	"Level 2^5959FF["+getmapusers("tur_dun03")+"]^000000",dturtle2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("tur_dun04")+"]^000000",dturtle3;
+
+ama:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("ama_dun01")+"]^000000",dama1,
+	"Level 2^5959FF["+getmapusers("ama_dun02")+"]^000000",dama2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("ama_dun03")+"]^000000",dama3;
+
+gon:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("gon_dun01")+"]^000000",dgon1,
+	"Level 2^5959FF["+getmapusers("gon_dun02")+"]^000000",dgon2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("gon_dun03")+"]^000000",dgon3;
+
+gefenia:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("gefenia01")+"]^000000",dgefenia1,
+	"Level 2^5959FF["+getmapusers("gefenia02")+"]^000000",dgefenia2,
+	"Level 3^5959FF["+getmapusers("gefenia03")+"]^000000",dgefenia3,
+	"Level 4^5959FF["+getmapusers("gefenia04")+"]^000000",dgefenia4;
+
+wthor:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("thor_v01")+"]^000000",dthor1,
+	"Level 2^5959FF["+getmapusers("thor_v02")+"]^000000",dthor2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("thor_v03")+"]^000000",dthor3;
+
+rachels:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("ra_san01")+"]^000000",drachel1,
+	"Level 2^5959FF["+getmapusers("ra_san02")+"]^000000",drachel2,
+	"Level 3^5959FF["+getmapusers("ra_san03")+"]^000000",drachel3,
+	"Level 4^5959FF["+getmapusers("ra_san04")+"]^000000",drachel4,		
+	"[ ^FF3300MVP^000000 ] Level 5^5959FF["+getmapusers("ra_san05")+"]^000000",drachel5;
+
+wabbey:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("abbey01")+"]^000000",dabbey1,
+	"Level 2^5959FF["+getmapusers("abbey02")+"]^000000",dabbey2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("abbey03")+"]^000000",dabbey3;
+
+
+dnyd:
+
+mes "Selecciona un Nivel.";
+next;
+menu 	"Nydhogg's Dungeon - nyd_dun01^5959FF["+getmapusers("nyd_dun01")+"]^000000",dnyd1,
+	"[ ^FF3300MVP^000000 ] Nydhogg's Dungeon - 2@nyd^5959FF["+getmapusers("2@nyd")+"]^000000",dnyd4;
+
+
+mosk:
+
+mes "Selecciona un Nivel.";
+next;
+menu	"Level 1^5959FF["+getmapusers("mosk_dun01")+"]^000000",mosk1,
+	"Level 2^5959FF["+getmapusers("mosk_dun02")+"]^000000",mosk2,
+	"[ ^FF3300MVP^000000 ] Level 3^5959FF["+getmapusers("mosk_dun03")+"]^000000",mosk3;
+	
+wdis:
+mes .nombre$;
+mes "Por favor selecciona el nivel de la dungeon al cual quieres viajar.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("dic_dun01")+"]^000000",ddis1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("dic_dun02")+"]^000000",ddis2;
+	
+	
+wfieldisca:
+mes .nombre$;
+mes "Por favor selecciona el nivel del field al cual quieres viajar.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("dic_fild01")+"]^000000",fdisca1,
+	"Level 2^5959FF["+getmapusers("dic_fild02")+"]^000000",fdisca2;
+	
+	
+wfielspec:
+mes .nombre$;
+mes "Por favor selecciona el nivel del field al cual quieres viajar.";
+next;
+menu 	"[ ^FF3300MVP^000000 ] Level 1^5959FF["+getmapusers("moc_fild21")+"]^000000",fspec1,
+	"[ ^FF3300MVP^000000 ] Level 2^5959FF["+getmapusers("moc_fild22")+"]^000000",fspec2;
+	
+	
+wdewdun:
+mes .nombre$;
+mes "Por favor selecciona el nivel del field al cual quieres viajar.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("dew_dun01")+"]^000000",fdew1,
+	"Level 2^5959FF["+getmapusers("dew_dun02")+"]^000000",fdew2;
+	
+wmaldun:
+mes .nombre$;
+mes "Por favor selecciona el nivel del field al cual quieres viajar.";
+next;
+menu 	"Level 1^5959FF["+getmapusers("mal_dun01")+"]^000000",fmad1;
+
+//-------------------------------
+//          Town Warps
+//-------------------------------
+
+wafeltz:	set warpmapN$,"rachel";	warp "rachel.gat",130,137;		callfunc "LastMapSave"; end;
+walberta:	set warpmapN$,"alberta";	warp "alberta.gat",28,234;		callfunc "LastMapSave"; end;
+waldebaran:	set warpmapN$,"aldebaran";	warp "aldebaran.gat",140,131;		callfunc "LastMapSave"; end;
+wamatsu:	set warpmapN$,"amatsu";	warp "amatsu.gat",198,84;		callfunc "LastMapSave"; end;
+wayot:		set warpmapN$,"ayothaya";	warp "ayothaya.gat",150,163;		callfunc "LastMapSave"; end;
+wcomodo:	set warpmapN$,"comodo";	warp "comodo.gat",209,143;		callfunc "LastMapSave"; end;
+ddicastes:	set warpmapN$,"dicastes";	warp	"dicastes01.gat",197,196;	callfunc "LastMapSave"; end;
+weinbech:	set warpmapN$,"einbech";	warp "einbech.gat",70,95;		callfunc "LastMapSave"; end;
+weinbroch:	set warpmapN$,"einbroch";	warp "einbroch.gat",64,200;		callfunc "LastMapSave"; end;
+whugel:	set warpmapN$,"hugel";		warp "hugel.gat",96,145;		callfunc "LastMapSave"; end;
+wlighthalzen:	set warpmapN$,"lighthalzen";	warp "lighthalzen.gat",158,92;		callfunc "LastMapSave"; end;
+wgonryun:	set warpmapN$,"gonryun";	warp "gonryun.gat",160,121;		callfunc "LastMapSave"; end;
+wgeffen:	set warpmapN$,"geffen";	warp "geffen.gat",119,59;		callfunc "LastMapSave"; end;
+wizlude:	set warpmapN$,"izlude";	warp "izlude.gat",128,114;		callfunc "LastMapSave"; end;
+wxmas:		set warpmapN$,"xmas";	warp "xmas.gat",147,134;		callfunc "LastMapSave"; end;
+wjawaii:	set warpmapN$,"jawaii";	warp "jawaii.gat",213,230;		callfunc "LastMapSave"; end;
+wmorroc:	set warpmapN$,"morocc";	warp "morocc.gat",156,93;		callfunc "LastMapSave"; end;
+wmoscovia:	set warpmapN$,"moscovia";		warp "moscovia.gat",225,193;		callfunc "LastMapSave"; end;
+wnameless:	set warpmapN$,"nameless";	warp	"nameless_n.gat",256,215;	callfunc "LastMapSave"; end;
+wniflheim:	set warpmapN$,"niflheim";	warp "niflheim.gat",85,154;		callfunc "LastMapSave"; end;
+wpayon:	set warpmapN$,"payon";		warp "payon.gat",152,75;		callfunc "LastMapSave"; end;
+wprontera:	set warpmapN$,"prontera"; 		warp "prontera.gat",155,183;		callfunc "LastMapSave"; end;
+wyuno:		set warpmapN$,"yuno";	warp "yuno.gat",157,51;			callfunc "LastMapSave"; end;
+wumbala:	set warpmapN$,"umbala";	warp "umbala.gat",145,155;		callfunc "LastMapSave"; end;
+wlouyang:	set warpmapN$,"louyang";	warp "louyang.gat",210,108;		callfunc "LastMapSave"; end;
+wthorcamp:	set warpmapN$,"Thor Camp";	warp "thor_camp.gat",254,90;		callfunc "LastMapSave"; end;
+wveins:	set warpmapN$,"veins";		warp "veins.gat",216,123;		callfunc "LastMapSave"; end;
+wmidcamp:	set warpmapN$,"Midgard Expedition";	warp "mid_camp.gat",219,238;	callfunc "LastMapSave"; end;
+wmanuk:	set warpmapN$,"manuk";	warp "manuk.gat",260,175;	callfunc "LastMapSave"; end;
+wsplendide:	set warpmapN$,"splendide";	warp "splendide.gat", 200,153;	callfunc "LastMapSave"; end;
+wbrasilis:	set warpmapN$,"brasilis";	warp "brasilis.gat", 196,219;	callfunc "LastMapSave"; end;
+wdiscastes:	set warpmapN$,"dicastes"; warp "dicastes01",198,189;      callfunc "LastMapSave"; end;
+wdewata:	set warpmapN$,"dewata"; warp "dewata",200,178;      callfunc "LastMapSave"; end;
+wmalag:	set warpmapN$,"malangdo"; warp "malangdo",180,129;      callfunc "LastMapSave"; end;
+wbif:		set warpmapN$,"mora";     warp "mora",108,98;      callfunc "LastMapSave"; end;
+
+//-------------------------------
+//        Dungeon Warps
+//-------------------------------
+
+
+dkieldun1: if(Zeny < .ZenyD)  mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Robot Factory LvL 1";	warp "kh_dun01.gat",28,226;	callfunc "LastMapSave"; end;
+dkieldun2: if(Zeny < .ZenyD) mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Robot Factory LvL 2";	warp "kh_dun02.gat",41,198;	callfunc "LastMapSave"; end;
+djuperos1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ruins of Juperos F1";	warp "juperos_01.gat",53,247;	callfunc "LastMapSave"; end;
+djuperos3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ruins of Juperos F2";	warp "juperos_02.gat",37,63;	callfunc "LastMapSave"; end;
+djuperos2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Center of Juperos";	warp "jupe_core.gat",150,285;	callfunc "LastMapSave"; end; end;
+dumdun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Umbala Dungeon LvL 1";	warp "um_dun02.gat",0,0;	callfunc "LastMapSave"; end;
+dumdun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Umbala Dungeon LvL 2";warp "um_dun01.gat",48,30;	callfunc "LastMapSave"; end;
+dloudun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Louyang Dungeon LvL 1";	warp "lou_dun01.gat",218,196;	callfunc "LastMapSave"; end;
+dloudun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Louyang Dungeon LvL 2";	warp "lou_dun02.gat",282,20;	callfunc "LastMapSave"; end;
+dloudun3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Louyang Dungeon LvL 3";	warp "lou_dun03.gat",165,38;	callfunc "LastMapSave"; end;
+dayodun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ayothaya Dungeon LvL 1";	warp "ayo_dun01.gat",275,19;	callfunc "LastMapSave"; end;
+dayodun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ayothaya Dungeon LvL 2";	warp "ayo_dun02.gat",24,26;	callfunc "LastMapSave"; end;
+dbradun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Brasilis Dungeon LvL 1";	warp "bra_dun01.gat",87,47;	callfunc "LastMapSave"; end;
+dbradun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Brasilis Dungeon LvL 2";	warp "bra_dun02.gat",262,262;	callfunc "LastMapSave"; end;
+deindun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Mine Dungeon LvL 1";	warp "ein_dun01.gat",22,14;	callfunc "LastMapSave"; end;
+deindun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Mine Dungeon LvL 1";	warp "ein_dun02.gat",292,290;	callfunc "LastMapSave"; end;
+dlhzdun1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Somatology Labotory F1";	warp "lhz_dun01.gat",150,288;	callfunc "LastMapSave"; end;
+dlhzdun2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Somatology Labotory F2";	warp "lhz_dun02.gat",150,18;	callfunc "LastMapSave"; end;
+dlhzdun3: if( Zeny < .ZenyD) mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Satan Pass Liberado"; set zeny,zeny -.ZenyD;	set warpmapN$,"Somatology Labotory F3";	warp "lhz_dun03.gat",140,134;	callfunc "LastMapSave"; end;
+dlhzdun4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Somatology Labotory F4";	warp "lhz_dun04.gat",140,137;	callfunc "LastMapSave"; end;
+dabyss1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abyss Lakes Cave F1";	warp "abyss_01.gat",263,273;	callfunc "LastMapSave"; end;
+dabyss2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abyss Lakes Cave F1";	warp "abyss_02.gat",275,270;	callfunc "LastMapSave"; end;
+dabyss3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abyss Lakes Cave F1";	warp "abyss_03.gat",116,27;	callfunc "LastMapSave"; end;
+dthat1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 1";	warp "tha_t01.gat",150,39;	callfunc "LastMapSave"; end;
+dthat2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 2";	warp "tha_t02.gat",150,136;	callfunc "LastMapSave"; end;
+dthat3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 3";	warp "tha_t03.gat",220,158;	callfunc "LastMapSave"; end;
+dthat4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 4";	warp "tha_t04.gat",59,143;	callfunc "LastMapSave"; end;
+dthat5: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 5";	warp "tha_t05.gat",62,11;	callfunc "LastMapSave"; end;
+dthat6: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 6";	warp "tha_t06.gat",89,221;	callfunc "LastMapSave"; end;
+dthat7: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 7";	warp "tha_t07.gat",35,166;	callfunc "LastMapSave"; end;
+dthat8: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 8";	warp "tha_t08.gat",93,148;	callfunc "LastMapSave"; end;
+dthat9: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 9";	warp "tha_t09.gat",29,107;	callfunc "LastMapSave"; end;
+dthat10: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 10";	warp "tha_t10.gat",159,138;	callfunc "LastMapSave"; end;
+dthat11: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 11";	warp "tha_t11.gat",19,20;	callfunc "LastMapSave"; end;
+dthat12: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thanatos Tower  LvL 12";	warp "tha_t12.gat",130,52;	callfunc "LastMapSave"; end;
+boss: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	 	set warpmapN$,"Thanatos Tower  Boss";	warp "thana_boss.gat",137,117;	callfunc "LastMapSave"; end;
+danthell1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Anthell F1";	warp "anthell01.gat",35,262;	callfunc "LastMapSave"; end; end;
+danthell2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Anthell F2";	warp "anthell02.gat",168,170;	callfunc "LastMapSave"; end;
+dbeach1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Beach Dungeon West";	warp "beach_dun.gat",266,67;	callfunc "LastMapSave"; end;
+dbeach2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Beach Dungeon  Nort";	warp "beach_dun2.gat",255,244;	callfunc "LastMapSave"; end;
+dbeach3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Beach Dungeon East";	warp "beach_dun3.gat",23,260;	callfunc "LastMapSave"; end;
+dbyalan1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F1";	warp "iz_dun00.gat",168,168;	callfunc "LastMapSave"; end;
+dbyalan2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F2";	warp "iz_dun01.gat",253,252;	callfunc "LastMapSave"; end;
+dbyalan3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F3";	warp "iz_dun02.gat",236,204;	callfunc "LastMapSave"; end;
+dbyalan4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F4";	warp "iz_dun03.gat",32,63;	callfunc "LastMapSave"; end;
+dbyalan5: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F5";	warp "iz_dun04.gat",26,27;	callfunc "LastMapSave"; end;
+dbyalan6: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Undersea Tunnel F6";	warp "iz_dun05.gat",141,188;	callfunc "LastMapSave"; end;
+dalde1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	 set warpmapN$,"Clock Tower B1";		warp "alde_dun01.gat",297,25;	callfunc "LastMapSave"; end;
+dalde2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower B2";		warp "alde_dun02.gat",127,169;	callfunc "LastMapSave"; end;
+dalde3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower B3";		warp "alde_dun03.gat",277,178;	callfunc "LastMapSave"; end;
+dalde4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower B4";		warp "alde_dun04.gat",268,74;	callfunc "LastMapSave"; end;
+dclock1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower F1";	warp "c_tower1.gat",199,159;	callfunc "LastMapSave"; end;
+dclock2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower F2";	warp "c_tower2.gat",148,283;	callfunc "LastMapSave"; end;
+dclock3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower F3";	warp "c_tower3.gat",65,147;	callfunc "LastMapSave"; end;
+dclock4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Clock Tower F4";	warp "c_tower4.gat",56,155;	callfunc "LastMapSave"; end;
+dcoal1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Mjonir Dead Pit F1";		warp "mjo_dun01.gat",52,17;	callfunc "LastMapSave"; end;
+dcoal2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Mjonir Dead Pit F2";		warp "mjo_dun02.gat",381,343;	callfunc "LastMapSave"; end;
+dcoal3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Mjonir Dead Pit F3";		warp "mjo_dun03.gat",302,262;	callfunc "LastMapSave"; end;
+dculvert1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Prontera Cuver F1";	warp "prt_sewb1.gat",131,247;	callfunc "LastMapSave"; end;
+dculvert2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Prontera Cuver F2";	warp "prt_sewb2.gat",19,19;	callfunc "LastMapSave"; end;
+dculvert3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Prontera Cuver F3";	warp "prt_sewb3.gat",180,169;	callfunc "LastMapSave"; end;
+dculvert4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Prontera Cuver F4";	warp "prt_sewb4.gat",100,92;	callfunc "LastMapSave"; end;
+dgeffen1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffen Dungeon F1";	warp "gef_dun00.gat",104,99;	callfunc "LastMapSave"; end;
+dgeffen2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffen Dungeon F2";	warp "gef_dun01.gat",115,236;	callfunc "LastMapSave"; end;
+dgeffen3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffen Dungeon F3";	warp "gef_dun02.gat",106,132;	callfunc "LastMapSave"; end;
+dgeffen4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffen Dungeon F4";	warp "gef_dun03.gat",203,200;	callfunc "LastMapSave"; end;
+dglastent: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim";	warp "glast_01.gat",370,304;	callfunc "LastMapSave"; end;
+dglastcast1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim F1";	warp "gl_cas01.gat",199,29;	callfunc "LastMapSave"; end;
+dglastcast2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim F2";	warp "gl_cas02.gat",104,25;	callfunc "LastMapSave"; end;
+dglastchiv1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Chivarly F1";	warp "gl_knt01.gat",150,15;	callfunc "LastMapSave"; end;
+dglastchiv2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Chivarly F2";	warp "gl_knt02.gat",157,287;	callfunc "LastMapSave"; end;
+dglastyard: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Churchyad";	warp "gl_chyard.gat",147,15;	callfunc "LastMapSave"; end;
+dglastcul1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cuver F1";	warp "gl_sew01.gat",258,255;	callfunc "LastMapSave"; end;
+dglastcul2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cuver F2";	warp "gl_sew02.gat",108,291;	callfunc "LastMapSave"; end;
+dglastcul3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cuver F3";	warp "gl_sew03.gat",171,283;	callfunc "LastMapSave"; end;
+dglastcul4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cuver F4";	warp "gl_sew04.gat",68,277;	callfunc "LastMapSave"; end;
+dglastchur: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim St.Abbey";	warp "gl_church.gat",156,7;	callfunc "LastMapSave"; end;
+dglaststep: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Staircase";	warp "gl_step.gat",12,7;	callfunc "LastMapSave"; end;
+dglastcave1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cave F1";	warp "gl_dun01.gat",133,271;	callfunc "LastMapSave"; end;
+dglastcave2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim Cave F2";	warp "gl_dun02.gat",224,274;	callfunc "LastMapSave"; end;
+dglastpris1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim UnderPrison F1";	warp "gl_prison.gat",14,70;	callfunc "LastMapSave"; end;
+dglastpris2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Glast Heim UnderPrison F2";	warp "gl_prison1.gat",150,14;	callfunc "LastMapSave"; end;
+dhidden1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Labyrinth Forest F1";	warp "prt_maze01.gat",176,7;	callfunc "LastMapSave"; end;
+dhidden2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Labyrinth Forest F2";	warp "prt_maze02.gat",93,21;	callfunc "LastMapSave"; end;
+dhidden3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Labyrinth Forest F3";	warp "prt_maze03.gat",23,8;	callfunc "LastMapSave"; end;
+diced1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ice Cave F1";		warp "ice_dun01.gat",157,14;	callfunc "LastMapSave"; end;
+diced2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ice Cave F2";		warp "ice_dun02.gat",151,155;	callfunc "LastMapSave"; end;
+diced3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ice Cave F3";		warp "ice_dun03.gat",149,22;	callfunc "LastMapSave"; end;
+diced4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Ice Cave F4";		warp "ice_dun04.gat",33,158;	callfunc "LastMapSave"; end;
+dmagma1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nog Road F1";	warp "mag_dun01.gat",126,68;	callfunc "LastMapSave"; end;
+dmagma2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nog Road F2";	warp "mag_dun02.gat",47,30;	callfunc "LastMapSave"; end;
+dorc1:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Orc Dungeon F1";		warp "orcsdun01.gat",32,170;	callfunc "LastMapSave"; end;
+dorc2:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Orc Dungeon F2";	warp "orcsdun02.gat",21,185;	callfunc "LastMapSave"; end;
+dpayon1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Payon Cave F1";	warp "pay_dun00.gat",21,183;	callfunc "LastMapSave"; end;
+dpayon2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Payon Cave F2";	warp "pay_dun01.gat",19,33;	callfunc "LastMapSave"; end;
+dpayon3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Payon Cave F3";	warp "pay_dun02.gat",19,63;	callfunc "LastMapSave"; end;
+dpayon4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Payon Cave F4";	warp "pay_dun03.gat",155,159;	callfunc "LastMapSave"; end;
+dpayon5: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Payon Cave F5";	warp "pay_dun04.gat",201,204;	callfunc "LastMapSave"; end;
+dpyramids1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F1";	warp "moc_pryd01.gat",192,9;	callfunc "LastMapSave"; end;
+dpyramids2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F2";	warp "moc_pryd02.gat",10,192;	callfunc "LastMapSave"; end;
+dpyramids3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F3";	warp "moc_pryd03.gat",100,92;	callfunc "LastMapSave"; end;
+dpyramids4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F4";	warp "moc_pryd04.gat",181,11;	callfunc "LastMapSave"; end;
+dpyramidsb1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F5";	warp "moc_pryd05.gat",94,96;	callfunc "LastMapSave"; end;
+dpyramidsb2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Inside Pyramid F6";	warp "moc_pryd06.gat",192,8;	callfunc "LastMapSave"; end;
+dsphinx1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sphinx F1";	warp "in_sphinx1.gat",288,9;	callfunc "LastMapSave"; end;
+dsphinx2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sphinx F2";	warp "in_sphinx2.gat",149,81;	callfunc "LastMapSave"; end;
+dsphinx3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sphinx F3";	warp "in_sphinx3.gat",210,54;	callfunc "LastMapSave"; end;
+dsphinx4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sphinx F4";	warp "in_sphinx4.gat",10,222;	callfunc "LastMapSave"; end;
+dsphinx5: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sphinx F5";	warp "in_sphinx5.gat",100,99;	callfunc "LastMapSave"; end;
+dsunken1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sunken Ship F1";	warp "treasure01.gat",69,24;	callfunc "LastMapSave"; end;
+dsunken2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sunken Ship F2";	warp "treasure02.gat",102,27;	callfunc "LastMapSave"; end;
+dtoy1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Toy Factory F1";		warp "xmas_dun01.gat",205,15;	callfunc "LastMapSave"; end;
+dtoy2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD; 	set warpmapN$,"Toy Factory F2";	warp "xmas_dun02.gat",129,133;	callfunc "LastMapSave"; end;
+dturtleent: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Turtle Island";	warp "tur_dun01.gat",154,49;	callfunc "LastMapSave"; end;
+dturtle1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Turtle Island Dungeon";	warp "tur_dun02.gat",148,261;	callfunc "LastMapSave"; end;
+dturtle2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Turtle Village";	warp "tur_dun03.gat",132,189;	callfunc "LastMapSave"; end;
+dturtle3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Turtle Palace";	warp "tur_dun04.gat",100,192;	callfunc "LastMapSave"; end;
+dama1:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Tatami Maze";		warp "ama_dun01.gat",228,11;	callfunc "LastMapSave"; end;
+dama2:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Underground Forest";		warp "ama_dun02.gat",34,41;	callfunc "LastMapSave"; end;
+dama3:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Amatsu Underground Shrine";		warp "ama_dun03.gat",119,14;	callfunc "LastMapSave"; end;
+dgon1:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Gonryun Dungeon F1";		warp "gon_dun01.gat",153,53;	callfunc "LastMapSave"; end;
+dgon2:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Gonryun Dungeon F2";		warp "gon_dun02.gat",28,113;	callfunc "LastMapSave"; end;
+dgon3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Gonryun Dungeon F3";	warp "gon_dun03.gat",68,16;	callfunc "LastMapSave"; end;
+dgefenia1: if (Zeny < .ZenyD) mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffenia";	warp "gefenia01.gat",40,103;	callfunc "LastMapSave"; end;
+dgefenia2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffenia";	warp "gefenia02.gat",203,34;	callfunc "LastMapSave"; end;
+dgefenia3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffenia";	warp "gefenia03.gat",266,168;	callfunc "LastMapSave"; end;
+dgefenia4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Geffenia";	warp "gefenia04.gat",130,272;	callfunc "LastMapSave"; end;
+dthor1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thor Volcano F1";	warp "thor_v01.gat",21,228;	callfunc "LastMapSave"; end;
+dthor2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thor Volcano F2";	warp "thor_v02.gat",75,205;	callfunc "LastMapSave"; end;
+dthor3: if(Zeny < .ZenyD )mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Thor Pass Liberado"; set zeny,zeny -.ZenyD;	set warpmapN$,"Thor Volcano F3";	warp "thor_v03.gat",34,272;	callfunc "LastMapSave"; end;
+drachel1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sacred Precint F1";	warp "ra_san01.gat",140,11;	callfunc "LastMapSave"; end;
+drachel2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sacred Precint F2";	warp "ra_san02.gat",32,21;	callfunc "LastMapSave"; end;
+drachel3:if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sacred Precint F3";	warp "ra_san03.gat",10,149;	callfunc "LastMapSave"; end;
+drachel4: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sacred Precint F4";	warp "ra_san04.gat",204,218;	callfunc "LastMapSave"; end;
+drachel5: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Sacred Precint F5";	warp "ra_san05.gat",150,9;	callfunc "LastMapSave"; end;
+dabbey1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abbey Dungeon F1";	warp "abbey01.gat",51,14;	callfunc "LastMapSave"; end;
+dabbey2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abbey Dungeon F2";	warp "abbey02.gat",150,11;	callfunc "LastMapSave"; end;
+dabbey3: if(Zeny < .ZenyD )mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Abbey Pass Liberado"; set zeny,zeny -.ZenyD;	set warpmapN$,"Abbey Dungeon F3";	warp "abbey03.gat",120,10;	callfunc "LastMapSave"; end;
+dnyd1:	if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nydhogg Dungeon";	warp "nyd_dun01",61,239;	callfunc "LastMapSave"; end;
+dnyd2:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nydhogg Dungeon";	warp "nyd_dun02",60,271;	callfunc "LastMapSave"; end;
+dnyd3:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nydhogg Next";	warp "1@nyd",32,45;	callfunc "LastMapSave"; end;
+dnyd4:	 if(Zeny < .ZenyD )mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Nyd Pass Liberado"; set zeny,zeny -.ZenyD;	set warpmapN$,"Nydhogg Next";	warp "2@nyd",199,10;	callfunc "LastMapSave"; end;
+mosk1:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Lest Forest";	warp "mosk_dun01",210,43;	callfunc "LastMapSave"; end;
+mosk2:	 if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Temmy Forest";	warp "mosk_dun02",164,31;	callfunc "LastMapSave"; end;
+mosk3: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Dremuci Forest";	warp "mosk_dun03",31,135;	callfunc "LastMapSave"; end;
+ddis1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Passage Kamidal Tunnel";	    warp "dic_dun01",33,212;	callfunc "LastMapSave"; end;
+ddis2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	set warpmapN$,"Next Scaraba Hole";    warp "dic_dun02",102,142;	callfunc "LastMapSave"; end;
+fdew1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Island of Krakatoa";	    warp "dew_dun01",176,86;	callfunc "LastMapSave"; end;
+fdew2: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;	 	set warpmapN$,"Tina Grace Cave";   warp "dew_dun02",298,29;	callfunc "LastMapSave"; end;
+fmad1: if(Zeny < .ZenyD)mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny"; set zeny,zeny -.ZenyD;		set warpmapN$,"Lagoon in the Start";    warp "mal_dun01",33,230;	callfunc "LastMapSave"; end;
+fspec1: if(Zeny < .ZenyD  )mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Satan Pass Liberado"; set zeny,zeny -.ZenyD;		set warpmapN$,"Dimensional George";    warp "moc_fild21",30,195;	callfunc "LastMapSave"; end;
+fspec2: if(Zeny < .ZenyD  )mclose "Lo siento, para entrar a este Dungeon necesitas ^DF6F00"+ .ZenyD +"^000000 de zeny y el Satan Pass Liberado"; set zeny,zeny -.ZenyD;		set warpmapN$,"Dimensional George";    warp "moc_fild22",36,196;	callfunc "LastMapSave"; end;
+
+
+//-------------------------------
+//         Field Warps
+//-------------------------------
+
+drunfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 1";	warp "ra_fild01.gat",192,162;	callfunc "LastMapSave"; end;
+drunfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 2";	warp "ra_fild02.gat",235,166;	callfunc "LastMapSave"; end;
+drunfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 3";	warp "ra_fild03.gat",202,206;	callfunc "LastMapSave"; end;
+drunfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 4";	warp "ra_fild04.gat",202,208;	callfunc "LastMapSave"; end;
+drunfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 5";	warp "ra_fild05.gat",225,202;	callfunc "LastMapSave"; end;
+drunfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 6";	warp "ra_fild06.gat",202,214;	callfunc "LastMapSave"; end;
+drunfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 7";	warp "ra_fild07.gat",263,196;	callfunc "LastMapSave"; end;
+drunfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 8";	warp "ra_fild08.gat",217,201;	callfunc "LastMapSave"; end;
+drunfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 9";	warp "ra_fild09.gat",87,121;	callfunc "LastMapSave"; end;
+drunfild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 10";	warp "ra_fild10.gat",277,181;	callfunc "LastMapSave"; end;
+drunfild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 11";	warp "ra_fild11.gat",221,185;	callfunc "LastMapSave"; end;
+drunfild12: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 12";	warp "ra_fild12.gat",175,200;	callfunc "LastMapSave"; end;
+drunfild13: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Rachel Field 13";	warp "ra_fild13.gat",174,197;	callfunc "LastMapSave"; end;
+dgeffild00: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 1";	warp "gef_fild00.gat",46,199;	callfunc "LastMapSave"; end;
+dgeffild01: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 2";	warp "gef_fild01.gat",213,204;	callfunc "LastMapSave"; end;
+dgeffild02: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 3";	warp "gef_fild02.gat",195,212;	callfunc "LastMapSave"; end;
+dgeffild03: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 4";	warp "gef_fild03.gat",257,192;	callfunc "LastMapSave"; end;
+dgeffild04: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 5";	warp "gef_fild04.gat",188,171;	callfunc "LastMapSave"; end;
+dgeffild05: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 6";	warp "gef_fild05.gat",166,263;	callfunc "LastMapSave"; end;
+dgeffild06: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 7";	warp "gef_fild06.gat",248,158;	callfunc "LastMapSave"; end;
+dgeffild07: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 8";	warp "gef_fild07.gat",195,191;	callfunc "LastMapSave"; end;
+dgeffild08: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 9";	warp "gef_fild08.gat",186,183;	callfunc "LastMapSave"; end;
+dgeffild09: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 10";	warp "gef_fild09.gat",221,117;	callfunc "LastMapSave"; end;
+dgeffild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 11";	warp "gef_fild10.gat",178,218;	callfunc "LastMapSave"; end;
+dgeffild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 12";	warp "gef_fild11.gat",136,328;	callfunc "LastMapSave"; end;
+dgeffild12: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 13";	warp "gef_fild12.gat",240,181;	callfunc "LastMapSave"; end;
+dgeffild13: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 14";	warp "gef_fild13.gat",235,235;	callfunc "LastMapSave"; end;
+dgeffild14: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Geffen Field 15";	warp "gef_fild14.gat",211,185;	callfunc "LastMapSave"; end;
+dmjolnir1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$," Mjolnir Field 1";	warp "mjolnir_01.gat",204,120;	callfunc "LastMapSave"; end;
+dmjolnir2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 2";	warp "mjolnir_02.gat",175,193;	callfunc "LastMapSave"; end;
+dmjolnir3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 3";	warp "mjolnir_03.gat",208,213;	callfunc "LastMapSave"; end;
+dmjolnir4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 4";	warp "mjolnir_04.gat",179,180;	callfunc "LastMapSave"; end;
+dmjolnir5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 5";	warp "mjolnir_05.gat",181,240;	callfunc "LastMapSave"; end;
+dmjolnir6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 6";	warp "mjolnir_06.gat",195,270;	callfunc "LastMapSave"; end;
+dmjolnir7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 7";	warp "mjolnir_07.gat",235,202;	callfunc "LastMapSave"; end;
+dmjolnir8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 8";	warp "mjolnir_08.gat",188,215;	callfunc "LastMapSave"; end;
+dmjolnir9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 9";	warp "mjolnir_09.gat",205,144;	callfunc "LastMapSave"; end;
+dmjolnir10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 10";	warp "mjolnir_10.gat",245,223;	callfunc "LastMapSave"; end;
+dmjolnir11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 11";	warp "mjolnir_11.gat",180,206;	callfunc "LastMapSave"; end;
+dmjolnir12: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Mjolnir Field 12";	warp "mjolnir_12.gat",196,208;	callfunc "LastMapSave"; end;
+dmocfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 1";	warp "moc_fild01.gat",219,205;	callfunc "LastMapSave"; end;
+dmocfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 2";	warp "moc_fild02.gat",177,206;	callfunc "LastMapSave"; end;
+dmocfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 3";	warp "moc_fild03.gat",194,182;	callfunc "LastMapSave"; end;
+dmocfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 4";	warp "moc_fild04.gat",184,217;	callfunc "LastMapSave"; end;
+dmocfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 5";	warp "moc_fild05.gat",203,213;	callfunc "LastMapSave"; end;
+dmocfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 6";	warp "moc_fild06.gat",213,208;	callfunc "LastMapSave"; end;
+dmocfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 7";	warp "moc_fild07.gat",224,170;	callfunc "LastMapSave"; end;
+dmocfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 8";	warp "moc_fild08.gat",229,177;	callfunc "LastMapSave"; end;
+dmocfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 9";	warp "moc_fild09.gat",195,198;	callfunc "LastMapSave"; end;
+dmocfild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 10";	warp "moc_fild10.gat",209,168;	callfunc "LastMapSave"; end;
+dmocfild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 11";	warp "moc_fild11.gat",198,216;	callfunc "LastMapSave"; end;
+dmocfild12: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 12";	warp "moc_fild12.gat",156,187;	callfunc "LastMapSave"; end;
+dmocfild13: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 13";	warp "moc_fild13.gat",185,263;	callfunc "LastMapSave"; end;
+dmocfild14: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 14";	warp "moc_fild14.gat",209,219;	callfunc "LastMapSave"; end;
+dmocfild15: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 15";	warp "moc_fild15.gat",223,188;	callfunc "LastMapSave"; end;
+dmocfild16: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 16";	warp "moc_fild16.gat",206,228;	callfunc "LastMapSave"; end;
+dmocfild17: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 17";	warp "moc_fild17.gat",208,238;	callfunc "LastMapSave"; end;
+dmocfild18: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 18";	warp "moc_fild18.gat",209,223;	callfunc "LastMapSave"; end;
+dmocfild19: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Morocc Field 19";	warp "moc_fild19.gat",85,97;	callfunc "LastMapSave"; end;
+dpayfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 1";	warp "pay_fild01.gat",158,206;	callfunc "LastMapSave"; end;
+dpayfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 2";	warp "pay_fild02.gat",151,219;	callfunc "LastMapSave"; end;
+dpayfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 3";	warp "pay_fild03.gat",205,148;	callfunc "LastMapSave"; end;
+dpayfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 4";	warp "pay_fild04.gat",186,247;	callfunc "LastMapSave"; end;
+dpayfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 5";	warp "pay_fild05.gat",134,204;	callfunc "LastMapSave"; end;
+dpayfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 6";	warp "pay_fild06.gat",193,235;	callfunc "LastMapSave"; end;
+dpayfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 7";	warp "pay_fild07.gat",200,177;	callfunc "LastMapSave"; end;
+dpayfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 8";	warp "pay_fild08.gat",137,189;	callfunc "LastMapSave"; end;
+dpayfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 9";	warp "pay_fild09.gat",201,224;	callfunc "LastMapSave"; end;
+dpayfild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 10";	warp "pay_fild10.gat",160,205;	callfunc "LastMapSave"; end;
+dpayfild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Payon Field 11";	warp "pay_fild11.gat",194,150;	callfunc "LastMapSave"; end;
+dprtfild0: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 1";	warp "prt_fild00.gat",184,235;	callfunc "LastMapSave"; end;
+dprtfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 2";	warp "prt_fild01.gat",190,206;	callfunc "LastMapSave"; end;
+dprtfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 3";	warp "prt_fild02.gat",240,206;	callfunc "LastMapSave"; end;
+dprtfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 4";	warp "prt_fild03.gat",190,143;	callfunc "LastMapSave"; end;
+dprtfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 5";	warp "prt_fild04.gat",307,252;	callfunc "LastMapSave"; end;
+dprtfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 6";	warp "prt_fild05.gat",239,213;	callfunc "LastMapSave"; end;
+dprtfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 7";	warp "prt_fild06.gat",185,188;	callfunc "LastMapSave"; end;
+dprtfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 8";	warp "prt_fild07.gat",193,194;	callfunc "LastMapSave"; end;
+dprtfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 9";	warp "prt_fild08.gat",187,218;	callfunc "LastMapSave"; end;
+dprtfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 10";	warp "prt_fild09.gat",210,183;	callfunc "LastMapSave"; end;
+dprtfild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 11";	warp "prt_fild10.gat",195,149;	callfunc "LastMapSave"; end;
+dprtfild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Prontera Field 12";	warp "prt_fild11.gat",198,164;	callfunc "LastMapSave"; end;
+dxmasfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Lutie Field 1";	warp "xmas_fild01.gat",115,145;	callfunc "LastMapSave"; end;
+dcmdfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 1";	warp "cmd_fild01.gat",180,178;	callfunc "LastMapSave"; end;
+dcmdfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 2";	warp "cmd_fild02.gat",231,160;	callfunc "LastMapSave"; end;
+dcmdfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 3";	warp "cmd_fild03.gat",191,172;	callfunc "LastMapSave"; end;
+dcmdfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 4";	warp "cmd_fild04.gat",228,194;	callfunc "LastMapSave"; end;
+dcmdfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 5";	warp "cmd_fild05.gat",224,203;	callfunc "LastMapSave"; end;
+dcmdfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 6";	warp "cmd_fild06.gat",190,223;	callfunc "LastMapSave"; end;
+dcmdfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 7";	warp "cmd_fild07.gat",234,177;	callfunc "LastMapSave"; end;
+dcmdfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 8";	warp "cmd_fild08.gat",194,175;	callfunc "LastMapSave"; end;
+dcmdfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Comodo Field 9";	warp "cmd_fild09.gat",172,172;	callfunc "LastMapSave"; end;
+dwfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Dewata Field 1";	warp "dew_fild01.gat",230,197;	callfunc "LastMapSave"; end;
+dyunofild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 1";	warp "yuno_fild01.gat",189,224;	callfunc "LastMapSave"; end;
+dyunofild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 2";	warp "yuno_fild02.gat",192,207;	callfunc "LastMapSave"; end;
+dyunofild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 3";	warp "yuno_fild03.gat",221,157;	callfunc "LastMapSave"; end;
+dyunofild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 4";	warp "yuno_fild04.gat",226,199;	callfunc "LastMapSave"; end;
+dyunofild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 5";	warp "yuno_fild05.gat",223,177;	callfunc "LastMapSave"; end;
+dyunofild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 6";	warp "yuno_fild06.gat",187,232;	callfunc "LastMapSave"; end;
+dyunofild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 7";	warp "yuno_fild07.gat",231,174;	callfunc "LastMapSave"; end;
+dyunofild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 8";	warp "yuno_fild08.gat",196,203;	callfunc "LastMapSave"; end;
+dyunofild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 9";	warp "yuno_fild09.gat",183,214;	callfunc "LastMapSave"; end;
+dyunofild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 10";	warp "yuno_fild10.gat",200,124;	callfunc "LastMapSave"; end;
+dyunofild11: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 11";	warp "yuno_fild11.gat",195,226;	callfunc "LastMapSave"; end;
+dyunofild12: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yuno Field 12";	warp "yuno_fild12.gat",210,304;	callfunc "LastMapSave"; end;
+damafild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Amatsu Field 1";	warp "ama_fild01.gat",190,197;	callfunc "LastMapSave"; end;
+dgonfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Gonryun Field 1";	warp "gon_fild01.gat",220,227;	callfunc "LastMapSave"; end;
+dumfild1:  if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Umbala Field 1";	warp "um_fild01.gat",217,206;	callfunc "LastMapSave"; end;
+dumfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Umbala Field 2";	warp "um_fild02.gat",223,221;	callfunc "LastMapSave"; end;
+dumfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Umbala Field 3";	warp "um_fild03.gat",237,215;	callfunc "LastMapSave"; end;
+dumfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Umbala Field 4";	warp "um_fild04.gat",202,197;	callfunc "LastMapSave"; end;
+dniffild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Niflheim Field 1";	warp "nif_fild01.gat",215,229;	callfunc "LastMapSave"; end;
+dniffild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Niflheim Field 2";	warp "nif_fild02.gat",167,234;	callfunc "LastMapSave"; end;
+dyggdrasil1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Yggdrasil";	warp "yggdrasil01.gat",204,78;	callfunc "LastMapSave"; end;
+dloufild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Louyang Field";	warp "lou_fild01.gat",229,187;	callfunc "LastMapSave"; end;
+dayofild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Ayothaya Field 1";	warp "ayo_fild01.gat",173,134;	callfunc "LastMapSave"; end;
+dayofild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Ayothaya Field 2";	warp "ayo_fild02.gat",212,150;	callfunc "LastMapSave"; end;
+deinfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 1";	warp "ein_fild01.gat",142,225;	callfunc "LastMapSave"; end;
+deinfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 2";	warp "ein_fild02.gat",182,141;	callfunc "LastMapSave"; end;
+deinfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 3";	warp "ein_fild03.gat",187,228;	callfunc "LastMapSave"; end;
+deinfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 4";	warp "ein_fild04.gat",185,173;	callfunc "LastMapSave"; end;
+deinfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 5";	warp "ein_fild05.gat",216,173;	callfunc "LastMapSave"; end;
+deinfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 6";	warp "ein_fild06.gat",195,148;	callfunc "LastMapSave"; end;
+deinfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 7";	warp "ein_fild07.gat",272,220;	callfunc "LastMapSave"; end;
+deinfild8: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 8";	warp "ein_fild08.gat",173,214;	callfunc "LastMapSave"; end;
+deinfild9: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 9";	warp "ein_fild09.gat",207,174;	callfunc "LastMapSave"; end;
+deinfild10: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Einbroch Field 10";	warp "ein_fild10.gat",196,200;	callfunc "LastMapSave"; end;
+dlhzfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Ligthalzen Field 1";	warp "lhz_fild01.gat",240,179;	callfunc "LastMapSave"; end;
+dlhzfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Ligthalzen Field 2";	warp "lhz_fild02.gat",185,235;	callfunc "LastMapSave"; end;
+dlhzfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Ligthalzen Field 3";	warp "lhz_fild03.gat",240,226;	callfunc "LastMapSave"; end;
+dhufild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 1";	warp "hu_fild01.gat",268,101;	callfunc "LastMapSave"; end;
+dhufild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 2";	warp "hu_fild02.gat",222,193;	callfunc "LastMapSave"; end;
+dhufild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 3";	warp "hu_fild03.gat",232,185;	callfunc "LastMapSave"; end;
+dhufild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 4";	warp "hu_fild04.gat",252,189;	callfunc "LastMapSave"; end;
+dhufild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 5";	warp "hu_fild05.gat",196,106;	callfunc "LastMapSave"; end;
+dhufild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 6";	warp "hu_fild06.gat",216,220;	callfunc "LastMapSave"; end;
+dhufild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Hugel Field 7";	warp "hu_fild07.gat",227,197;	callfunc "LastMapSave"; end;
+wodtemp1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Odin Field 1";	warp "odin_tem01.gat",298,167;	callfunc "LastMapSave"; end;
+wodtemp2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Odin Field 2";	warp "odin_tem02.gat",224,149;	callfunc "LastMapSave"; end;
+wodtemp3: if(Zeny < .ZenyF   ) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny y haber liberado la zona"; set zeny,zeny -.ZenyF;	set warpmapN$,"Odin Field 3";	warp "odin_tem03.gat",266,280;	callfunc "LastMapSave"; end;
+dvfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 1";	warp "ve_fild01",186,175;	callfunc "LastMapSave"; end;
+dvfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 2";	warp "ve_fild02",196,370;	callfunc "LastMapSave"; end;
+dvfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 3";	warp "ve_fild03",222,45;	callfunc "LastMapSave"; end;
+dvfild4: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 4";	warp "ve_fild04",51,250;	callfunc "LastMapSave"; end;
+dvfild5: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 5";	warp "ve_fild05",202,324;	callfunc "LastMapSave"; end;
+dvfild6: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 6";	warp "ve_fild06",150,223;	callfunc "LastMapSave"; end;
+dvfild7: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Veins Field 7";	warp "ve_fild07",149,307;	callfunc "LastMapSave"; end;
+dsplenfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Splendide Field 1";	warp "spl_fild01",289,32;	callfunc "LastMapSave"; end;
+dsplenfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Splendide Field 2";	warp "spl_fild02",12,241;	callfunc "LastMapSave"; end;
+dsplenfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Splendide Field 3";	warp "spl_fild03",306,375;	callfunc "LastMapSave"; end;
+dmanfild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Manuk Field 1";	warp "man_fild01",35,236;	callfunc "LastMapSave"; end;
+dmanfild2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Manuk Field 2";	warp "man_fild02",35,262;	callfunc "LastMapSave"; end;
+dmanfild3: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Manuk Field 3";	warp "man_fild03",84,365;	callfunc "LastMapSave"; end;
+fdisca1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Dicastes Fild 1";	warp "dic_fild01",150,278;	callfunc "LastMapSave"; end;
+fdisca2: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Dicastes field 2";	warp "dic_fild02",71,369;	callfunc "LastMapSave"; end ;
+dbrafild1: if(Zeny < .ZenyF) mclose "Lo siento, para entrar a este Fild necesitas ^DF6F00.ZenyF^000000 de zeny"; set zeny,zeny -.ZenyF;	set warpmapN$,"Brasilis Field 1";	warp "bra_fild01",74,32;	callfunc "LastMapSave"; end;
+
+}
+
+
+//-------------------------------
+//         consumbiles shop
+//-------------------------------
+
+-	shop	consumibles_shop2	-1,1065:-1,611:-1,501:-1,502:-1,503:-1,504:-1,505:5000,506:-1,645:-1,14510:-1,14511:-1,601:-1,602:-1,610:-1,717:-1,716:-1,715:-1,533:-1,522:-1,1752:-1,1751:-1
+
+
+
+function	script	LastMapSave	{
+getmapxy(warpmap$,warpmapx,warpmapy,0,strcharinfo(0));
+	return;
+} // End function
+
+//========================================
+// --------- Duplicastes Warper ---------
+//========================================
+
+morocc.gat,161,144,4	duplicate(Warper)	Warper#1-1	831
+geffen.gat,124,67,3	duplicate(Warper)	Warper#1-2	831
+payon.gat,182,110,3	duplicate(Warper)	Warper#1-3	831
+alberta.gat,182,143,3	duplicate(Warper)	Warper#1-4	831
+izlude.gat,131,154,3	duplicate(Warper)	Warper#1-5	831
+aldebaran.gat,135,123,3	duplicate(Warper)	Warper#1-6	831
+xmas.gat,151,135,3	duplicate(Warper)	Warper#1-7	831
+comodo.gat,212,187,3	duplicate(Warper)	Warper#1-8	831
+yuno.gat,143,189,4	duplicate(Warper)	Warper#1-9	831
+amatsu.gat,225,234,4	duplicate(Warper)	Warper#1-10	831
+gonryun.gat,162,122,3	duplicate(Warper)	Warper#1-11	831
+umbala.gat,141,165,5	duplicate(Warper)	Warper#1-12	831
+louyang.gat,216,109,4	duplicate(Warper)	Warper#1-13	831
+new_1-1.gat,51,114,5	duplicate(Warper)	Warper#1-14	831
+ayothaya.gat,213,193,3	duplicate(Warper)	Warper#1-15	831
+einbroch.gat,69,202,3	duplicate(Warper)	Warper#1-16	831
+lighthalzen.gat,153,97,5	duplicate(Warper)	Warper#11-17	831
+hugel.gat,102,149,3	duplicate(Warper)	Warper#1-18	831
+rachel.gat,130,119,3	duplicate(Warper)	Warper#1-19	831
+veins.gat,220,132,3	duplicate(Warper)	Warper#1-20	831
+moscovia.gat,225,197,3	duplicate(Warper)	Warper#1-21	831
+manuk.gat,282,236,5	duplicate(Warper)	Warper#1-22	831
+splendide.gat,205,153,3	duplicate(Warper)	Warper#1-23	831
+brasilis.gat,197,221,3	duplicate(Warper)	Warper#1-24	831
+mid_camp.gat,222,239,3	duplicate(Warper)	Warper#1-25	831
+dicastes01.gat,195,197,5	duplicate(Warper)	Warper#1-26	831
+dewata.gat,201,183,3	duplicate(Warper)	Warper#1-27	831
+moc_fild04.gat,207,331,4	duplicate(Warper)	Warper#1-28	831
+izlu2dun.gat,104,82,4	duplicate(Warper)	Warper#1-29	831
+mjolnir_02.gat,85,363,4	duplicate(Warper)	Warper#1-30	831
+prt_fild05.gat,273,215,4	duplicate(Warper)	Warper#1-31	831
+glast_01.gat,370,308,4	duplicate(Warper)	Warper#1-32	831
+yuno_fild03.gat,37,135,4	duplicate(Warper)	Warper#1-33	831
+gef_fild10.gat,71,339,4	duplicate(Warper)	Warper#1-34	831
+pay_arche.gat,39,135,4	duplicate(Warper)	Warper#1-35	831
+moc_ruins.gat,64,166,4	duplicate(Warper)	Warper#1-36	831
+moc_fild19.gat,106,97,4	duplicate(Warper)	Warper#1-37	831
+alb2trea.gat,73,101,4	duplicate(Warper)	Warper#1-38	831
+tur_dun01.gat,148,239,4	duplicate(Warper)	Warper#1-39	831
+quiz_02,226,383,6	duplicate(Warper)	Warper#1-40	831
+itemmall,187,85,4	duplicate(Warper)	Warper#1-41	831
+ayothaya.gat,154,120,3	duplicate(Warper)	Warper#1-42	831
+ayothaya.gat,142,171,3	duplicate(Warper)	Warper#1-43	831
+einbech.gat,135,248,3	duplicate(Warper)	Warper#1-44	831
+morocc.gat,162,96,3	duplicate(Warper)	Warper#1-45	831
+jawaii.gat,223,232,3	duplicate(Warper)	Warper#1-46	831
+
+
+//========================================================
+// --------- Duplicastes Guild Rooms----------
+//========================================================
+gr_1,47,62,6	duplicate(Warper)	Warp NPC#43-1	831
+gr_2,47,62,6	duplicate(Warper)	Warp NPC#44-1	831
+gr_3,47,62,6	duplicate(Warper)	Warp NPC#45-1	831
+gr_4,47,62,6	duplicate(Warper)	Warp NPC#46-1	831
+gr_5,47,62,6	duplicate(Warper)	Warp NPC#47-1	831
+gr_6,47,62,6	duplicate(Warper)	Warp NPC#48-1	831
+gr_7,47,62,6	duplicate(Warper)	Warp NPC#49-1	831
+gr_8,47,62,6	duplicate(Warper)	Warp NPC#50-1	831
+gr_9,47,62,6	duplicate(Warper)	Warp NPC#51-1	831
+gr_10,47,62,6	duplicate(Warper)	Warp NPC#52-1	831
+gr_11,47,62,6	duplicate(Warper)	Warp NPC#53-1	831
+gr_12,47,62,6	duplicate(Warper)	Warp NPC#54-1	831
+gr_13,47,62,6	duplicate(Warper)	Warp NPC#55-1	831
+gr_14,47,62,6	duplicate(Warper)	Warp NPC#56-1	831
+gr_15,47,62,6	duplicate(Warper)	Warp NPC#57-1	831
+gr_16,47,62,6	duplicate(Warper)	Warp NPC#59-1	831
+gr_17,47,62,6	duplicate(Warper)	Warp NPC#60-1	831
+gr_18,47,62,6	duplicate(Warper)	Warp NPC#61-1	831
+gr_19,47,62,6	duplicate(Warper)	Warp NPC#62-1	831
+gr_20,47,62,6	duplicate(Warper)	Warp NPC#63-1	831
+gr_21,47,62,6	duplicate(Warper)	Warp NPC#64-1	831
+gr_22,47,62,6	duplicate(Warper)	Warp NPC#65-1	831
+gr_23,47,62,6	duplicate(Warper)	Warp NPC#66-1	831
+gr_24,47,62,6	duplicate(Warper)	Warp NPC#67-1	831
+gr_25,47,62,6	duplicate(Warper)	Warp NPC#68-1	831
+gr_26,47,62,6	duplicate(Warper)	Warp NPC#69-1	831
+gr_27,47,62,6	duplicate(Warper)	Warp NPC#70-1	831
+gr_28,47,62,6	duplicate(Warper)	Warp NPC#71-1	831
+gr_29,47,62,6	duplicate(Warper)	Warp NPC#72-1	831
+gr_30,47,62,6	duplicate(Warper)	Warp NPC#73-1	831

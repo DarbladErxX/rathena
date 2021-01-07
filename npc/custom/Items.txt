@@ -1,0 +1,105 @@
+prontera,147,175,3	shop	Usables	506,1065:-1,611:-1,501:-1,502:-1,503:-1,504:-1,505:5000,506:-1,645:-1,14510:-1,14511:-1,601:-1,602:-1,610:-1,717:-1,716:-1,715:-1,533:-1,522:-1,1752:-1,1751:-1,531:-1,532:-1,534:-1,533:-1,620:-1
+//NPC Clones//
+alberta,177,143,4	duplicate(Usables)	Usables#us02	506
+aldebaran,135,112,4	duplicate(Usables)	Usables#us03	506
+amatsu,196,79,1	duplicate(Usables)	Usables#us04	506
+ayothaya,220,229,6	duplicate(Usables)	Usables#us05	506
+comodo,217,185,4	duplicate(Usables)	Usables#us06	506
+einbroch,69,204,4	duplicate(Usables)	Usables#us07	506
+einbroch,243,183,2	duplicate(Usables)	Usables#us08	506
+einbech,142,246,4	duplicate(Usables)	Usables#us09	506
+geffen,110,63,4	duplicate(Usables)	Usables#us10	506
+gonryun,152,115,4	duplicate(Usables)	Usables#us11	506
+izlude,128,154,4	duplicate(Usables)	Usables#us12	506
+hugel,89,145,5	duplicate(Usables)	Usables#us13	506
+lighthalzen,153,85,6	duplicate(Usables)	Usables#us14	506
+louyang,224,109,4	duplicate(Usables)	Usables#us15	506
+morocc,164,144,4	duplicate(Usables)	Usables#us16	506
+payon,179,110,4	duplicate(Usables)	Usables#us18	506
+umbala,151,162,4	duplicate(Usables)	Usables#us19	506
+xmas,154,139,4	duplicate(Usables)	Usables#us20	506
+yuno,153,186,4	duplicate(Usables)	Usables#us21	506
+brasilis,192,220,4	duplicate(Usables)	Usables#us22	506
+dicastes01,201,192,4	duplicate(Usables)	Usables#us23	506
+jawaii,182,170,4	duplicate(Usables)	Usables#us24	506
+rachel,124,118,4	duplicate(Usables)	Usables#us25	506
+moscovia,232,195,6	duplicate(Usables)	Usables#us26	506
+manuk,286,243,6	duplicate(Usables)	Usables#us27	506
+splendide,193,147,6	duplicate(Usables)	Usables#us28	506
+veins,211,125,4	duplicate(Usables)	Usables#us29	506
+mid_camp,215,242,4	duplicate(Usables)	Usables#us30	506
+morocc,165,96,4	duplicate(Usables)	Usables#us31	506
+dewata,204,183,4	duplicate(Usables)	Usables#us32	506
+yuno,216,234,4	duplicate(Usables)	Usables#us33	506
+ayothaya,154,117,4	duplicate(Usables)	Usables#us34	506
+jawaii,216,236,4	duplicate(Usables)	Usables#us35	506
+louyang,209,108,4	duplicate(Usables)	Usables#us37	506
+arlandria,184,185,4	duplicate(Usables)	Usables#us95	91
+
+
+//========================================================
+// --------- Duplicastes Usables Villlas Prontera---------
+//========================================================
+
+rentb1,23,28,4	duplicate(Usables)	Usables#us38	506
+rentb2,23,28,4	duplicate(Usables)	Usables#us39	506
+rentb3,23,28,4	duplicate(Usables)	Usables#us40	506
+rentb4,23,28,4	duplicate(Usables)	Usables#us41	506
+rentb5,23,28,4	duplicate(Usables)	Usables#us42	506
+rentb6,23,28,4	duplicate(Usables)	Usables#us43	506
+rentb7,23,28,4	duplicate(Usables)	Usables#us44	506
+rentb8,23,28,4	duplicate(Usables)	Usables#us45	506
+rentb9,23,28,4	duplicate(Usables)	Usables#us46	506
+rentb10,23,28,4	duplicate(Usables)	Usables#us47	506
+rentb11,23,28,4	duplicate(Usables)	Usables#us48	506
+rentb12,23,28,4	duplicate(Usables)	Usables#us49	506
+rentb13,23,28,4	duplicate(Usables)	Usables#us50	506
+rentb14,23,28,4	duplicate(Usables)	Usables#us51	506
+rentb15,23,28,4	duplicate(Usables)	Usables#us52	506
+rentb16,23,28,4	duplicate(Usables)	Usables#us53	506
+rentb17,23,28,4	duplicate(Usables)	Usables#us54	506
+rentb18,23,28,4	duplicate(Usables)	Usables#us55	506
+rentb19,23,28,4	duplicate(Usables)	Usables#us56	506
+rentb20,23,28,4	duplicate(Usables)	Usables#us57	506
+rentb21,23,28,4	duplicate(Usables)	Usables#us58	506
+rentb22,23,28,4	duplicate(Usables)	Usables#us59	506
+rentb23,23,28,4	duplicate(Usables)	Usables#us60	506
+rentb24,23,28,4	duplicate(Usables)	Usables#us61	506
+rentb25,23,28,4	duplicate(Usables)	Usables#us62	506
+rentb26,23,28,4	duplicate(Usables)	Usables#us63	506
+rentb27,23,28,4	duplicate(Usables)	Usables#us64	506
+
+//========================================================
+// --------- Duplicastes Guild Base----------
+//========================================================
+
+gr_1,50,59,4	duplicate(Usables)	Usables#us65	506
+gr_2,50,59,4	duplicate(Usables)	Usables#us66	506
+gr_3,50,59,4	duplicate(Usables)	Usables#us67	506
+gr_4,50,59,4	duplicate(Usables)	Usables#us68	506
+gr_5,50,59,4	duplicate(Usables)	Usables#us69	506
+gr_6,50,59,4	duplicate(Usables)	Usables#us70	506
+gr_7,50,59,4	duplicate(Usables)	Usables#us71	506
+gr_8,50,59,4	duplicate(Usables)	Usables#us72	506
+gr_9,50,59,4	duplicate(Usables)	Usables#us73	506
+gr_10,50,59,4	duplicate(Usables)	Usables#us74	506
+gr_11,50,59,4	duplicate(Usables)	Usables#us75	506
+gr_12,50,59,4	duplicate(Usables)	Usables#us76	506
+gr_13,50,59,4	duplicate(Usables)	Usables#us77	506
+gr_14,50,59,4	duplicate(Usables)	Usables#us78	506
+gr_15,50,59,4	duplicate(Usables)	Usables#us79	506
+gr_16,50,59,4	duplicate(Usables)	Usables#us80	506
+gr_17,50,59,4	duplicate(Usables)	Usables#us81	506
+gr_18,50,59,4	duplicate(Usables)	Usables#us82	506
+gr_19,50,59,4	duplicate(Usables)	Usables#us83	506
+gr_20,50,59,4	duplicate(Usables)	Usables#us84	506
+gr_21,50,59,4	duplicate(Usables)	Usables#us85	506
+gr_22,50,59,4	duplicate(Usables)	Usables#us86	506
+gr_23,50,59,4	duplicate(Usables)	Usables#us87	506
+gr_24,50,59,4	duplicate(Usables)	Usables#us88	506
+gr_25,50,59,4	duplicate(Usables)	Usables#us89	506
+gr_26,50,59,4	duplicate(Usables)	Usables#us90	506
+gr_27,50,59,4	duplicate(Usables)	Usables#us91	506
+gr_28,50,59,4	duplicate(Usables)	Usables#us92	506
+gr_29,50,59,4	duplicate(Usables)	Usables#us93	506
+gr_30,50,59,4	duplicate(Usables)	Usables#us94	506

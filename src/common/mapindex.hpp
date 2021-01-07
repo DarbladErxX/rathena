@@ -9,6 +9,7 @@
 #define MAX_MAPINDEX 2000
 
 //Some definitions for the mayor city maps.
+#define MAP_ARLANDRIA "arlandria"
 #define MAP_PRONTERA "prontera"
 #define MAP_GEFFEN "geffen"
 #define MAP_MORROC "morocc"
@@ -51,6 +52,8 @@
 #define MAP_ECLAGE "eclage"
 #define MAP_ECLAGE_IN "ecl_in01"
 #define MAP_LASAGNA "lasagna"
+#define MAP_MERCADOZENY "mercado"
+#define MAP_MERCADONPC "ayothaya"
 
 const char* mapindex_getmapname(const char* string, char* output);
 const char* mapindex_getmapname_ext(const char* string, char* output);

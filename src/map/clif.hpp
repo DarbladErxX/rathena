@@ -42,6 +42,7 @@ struct mail_message;
 struct achievement;
 struct guild_log_entry;
 enum e_guild_storage_log : uint16;
+enum e_bg_queue_apply_ack : uint16;
 
 enum e_PacketDBVersion { // packet DB
 	MIN_PACKET_DB  = 0x064,
@@ -219,6 +220,7 @@ enum send_target : uint8_t {
 	BG_SAMEMAP_WOS,
 	BG_AREA,
 	BG_AREA_WOS,
+	BG_LISTEN,
 
 	CLAN,				// Clan System
 };
@@ -823,6 +825,15 @@ void clif_bg_updatescore(int16 m);
 void clif_bg_updatescore_single(struct map_session_data *sd);
 void clif_sendbgemblem_area(struct map_session_data *sd);
 void clif_sendbgemblem_single(int fd, struct map_session_data *sd);
+// BG eAmod [Easycore]
+void clif_bg_belonginfo (struct map_session_data *sd);
+int clif_visual_guild_id (struct block_list *bl);
+int clif_visual_emblem_id (struct block_list *bl);
+void clif_bg_emblem (struct map_session_data *sd, struct guild *g);
+void clif_bg_memberlist (struct map_session_data *sd);
+void clif_bg_leave_single (struct map_session_data *sd, const char *name, const char *mes);
+void clif_bg_expulsion_single (struct map_session_data *sd, const char *name, const char *mes);
+void clif_bg_updatescore_team (struct battleground_data *bg);
 
 // Instancing
 void clif_instance_create(unsigned short instance_id, int num);
@@ -1047,6 +1058,7 @@ void clif_spiritcharm(struct map_session_data *sd);
 
 void clif_snap( struct block_list *bl, short x, short y );
 void clif_monster_hp_bar( struct mob_data* md, int fd );
+void clif_monster_hp_bar_area(struct mob_data* md);
 
 // Clan System
 void clif_clan_basicinfo( struct map_session_data *sd );
@@ -1095,7 +1107,7 @@ void clif_broadcast_obtain_special_item(const char *char_name, unsigned short na
 
 void clif_dressing_room(struct map_session_data *sd, int flag);
 void clif_navigateTo(struct map_session_data *sd, const char* mapname, uint16 x, uint16 y, uint8 flag, bool hideWindow, uint16 mob_id );
-void clif_SelectCart(struct map_session_data *sd);
+void clif_SelectCart(struct map_session_data *sd, uint16 skill_id);
 
 /// Achievement System
 void clif_achievement_list_all(struct map_session_data *sd);
@@ -1128,5 +1140,17 @@ void clif_equipswitch_reply( struct map_session_data* sd, bool failed );
 
 /// Pet evolution
 void clif_pet_evolution_result( struct map_session_data* sd, e_pet_evolution_result result );
+
+/// Extended Vending [Lilith]
+int clif_vend(struct map_session_data *sd, int skill_lv);
+
+void clif_rank_info(struct map_session_data *sd, int points, int total, int flag);
+
+void clif_parse_bg_queue_apply_request(int fd, struct map_session_data *sd);// Battleground Queue
+void clif_bg_queue_apply_result(e_bg_queue_apply_ack result, const char *name, struct map_session_data *sd);
+void clif_bg_queue_apply_notify(const char *name, struct map_session_data *sd);
+void clif_bg_queue_entry_init(struct map_session_data *sd);
+void clif_bg_queue_lobby_notify(const char *name, struct map_session_data *sd);
+void clig_bg_queue_ack_lobby(bool result, const char *name, const char *lobbyname, struct map_session_data *sd);
 
 #endif /* CLIF_HPP */

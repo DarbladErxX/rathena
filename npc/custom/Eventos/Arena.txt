@@ -1,0 +1,498 @@
+//= ==== eAthena Script ============================================= = \\
+//= Evento Arena Nivel 1                                                //
+//= ==== By: ======================================================== = \\
+//= DarbladErxX // (darbladerxx@hotmail.com // facebook/DarbladErX      //
+//= Copyright © 2013 DarbladErxX - Todos los derechos reservados.       //
+//= ==== Current Version: =========================================== = \\
+//= Version: 3.0                                                        //
+//= ==== Compatible With: =========================================== = \\
+//= eAthena SVN	SQL y TXT // Ahora es compatible con rathena	        //
+//= ==== Description: =============================================== = //
+//= Arena Fase 1, con niveles de por medio.		                //
+//= Usa un sistema de premiado a todo el mapa. [Getitem Map [Xantara]]  //
+//= parche Elemental añadido en update del 2017.                       //
+//= La arena ya no solo es de ciertos mobs, ahora es por elemento.     //
+// = Ultima actualización 05/11/2020                                   //
+//= ================================================================== //
+-	script	ArenaOFF	-1,{
+
+OnWhisperGlobal:
+	if( getgmlevel() > 89 && getmapusers("ordeal_1-1") == 0 ) 
+	{
+		Announce "Se cerraron las puertas de la Arena",8,0xFF0000;
+		enablenpc "Healer ARENA";
+		enablenpc "Usables ARENA";
+		set $status,1;
+		killmonsterall "ordeal_1-1";
+		end;
+	}
+end;
+
+OnInit:
+OnTimer30000:
+	if( getmapusers("ordeal_1-1") == 0 &&  $status == 2 ) 
+	{
+		Announce "Se cerraron las puertas de la Arena",8,0xFF0000;
+		enablenpc "Healer ARENA";
+		enablenpc "Usables ARENA";
+		set $status,1;
+		killmonsterall "ordeal_1-1";
+		end;
+	}
+
+	 mapannounce "ordeal_1-1",  "["+ getmapusers("ordeal_1-1") +"] jugadores aun resisten en la Arena",8,0x00FF00;
+ 	mapannounce "force_1-2",  "["+ getmapusers("force_1-2") +"] jugadores aun resisten en la Arena",8,0x00FF00;
+ 	mapannounce "force_4-1",  "["+ getmapusers("force_4-1") +"] jugadores aun resisten en la Arena",8,0x00FF00;
+	initnpctimer;
+	end;
+}
+
+
+
+-	script	ArenaON	-1,{
+
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto OnArenaON;
+	}
+end;
+
+
+
+OnClock0055:
+OnClock0355:
+OnClock0755:
+OnClock1155:
+OnClock1605:
+OnClock1955:
+	Announce "¡La Arena abrirá sus puertas en 15 minutos!",8,0x00FF00;
+end;
+
+OnClock0105:
+OnClock0405:
+OnClock0805:
+OnClock1205:
+OnClock1615:
+OnClock2005:
+	Announce "¡La Arena abrirá sus puertas en 5 minutos!",8,0x00FF00;
+end;
+
+OnClock0109:
+OnClock0409:
+OnClock0809:
+OnClock1209:
+OnClock1619:
+OnClock2009:
+	Announce "¡La Arena abrirá sus puertas en 1 minuto!",8,0x00FF00;
+end;
+
+
+OnClock0110:
+OnClock0410:
+OnClock0810:
+OnClock1210:
+OnClock1620:
+OnClock2010:
+OnArenaON:
+	Announce "¡La Arena abrio sus puertas! Estaran abiertas durante 3 minutos",8,0x00FF00;
+       disablenpc "fase1";
+       disablenpc "fase2";
+	enablenpc "Healer ARENA";
+	enablenpc "Usables ARENA";
+       setwall "ordeal_1-1",266,161,30,4,0,"WallInicio";
+       initnpctimer;
+       set $inf,1;
+       set $status,0;
+       killmonsterall "ordeal_1-1";
+       end;
+
+OnTimer600:
+	Announce "Mavis Arena empezara en 2 minutos",8,0x00FF00;
+       end;
+
+OnTimer1020:
+	Announce "Mavis Arena empezara en 1 minutos",8,0x00FF00;
+        end;
+OnTimer1800:
+ 	Announce "¡Mavis Arena a empezado!",8,0x00FF00;
+ sleep2 4000;
+ 	mapannounce "ordeal_1-1","Mavis Arena : Su misiones es derrotar a todos los mob en la arena, y recuperar el Corazón de Ymir.",8,0x09E8E8;
+ sleep2 5000;
+	 mapannounce "ordeal_1-1","Mavis Arena : Buena suerte.",8,0x09E8E8;
+ sleep2 4000;
+ 	mapannounce "ordeal_1-1","Ahhh se me olvidaba, no olviden desequipar la evil druid",8,0x09E8E8;
+ sleep2 4000;
+ 	mapannounce "ordeal_1-1","Mavis Arena : La Arena empezara en...",8,0x09E8E8;
+ sleep2 4000;
+ 	mapannounce "ordeal_1-1","Mavis Arena : 3.",8,0x09E8E8;
+ sleep2 1000;
+	mapannounce "ordeal_1-1","Mavis Arena : 2.",8,0x09E8E8;
+ sleep2 1000;
+	 mapannounce "ordeal_1-1","Mavis Arena : 1.",8,0x09E8E8;
+ sleep2 1000;
+ 	mapannounce "ordeal_1-1","Mavis Arena : ¡COMIEZEN!.",8,0xFF0000;
+ 	disablenpc "Usables ARENA";
+ 	disablenpc "Healer ARENA";
+ 	delwall "WallInicio";
+ 	set $inf,0;
+ 	set $mob,75;
+ 	set $status, 2;
+	set $ElementR, rand(1,4);
+	if ($ElementR == 1){ //FIRE
+	setarray .@RandMobArena[0],1379,1382,1673,1385,1384,1495,2154,1835,1309;
+	setarray .@RandMobCount[0],11,10,10,10,9,13,16,8,11;
+	}else if ($ElementR == 2){ //EARTH
+	setarray .@RandMobArena[0],1986,1380,1316,1405,1410,1672,1194,1306,1713;
+	setarray .@RandMobCount[0],11,10,10,10,9,13,16,8,11;
+	}else if ($ElementR == 3){ //AQUA
+	setarray .@RandMobArena[0],1968,1406,1671,2020,2021,1778,1775,1681,1777;
+	setarray .@RandMobCount[0],11,10,10,10,9,13,16,8,11,16,6,11;
+	}else{ //NEUTRAL
+	setarray .@RandMobArena[0],1028,1189,1165,1016,1149,1164;
+	setarray .@RandMobCount[0],10,10,10,9,13,13;
+		}
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) {
+	areamonster "ordeal_1-1",211,148,261,148,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaON::Ondevildead";
+	  }
+	callfunc("ArenaMvpSummon","ordeal_1-1",211,148,1,"ArenaON::Ondevildead");
+	callfunc("ArenaMvpSummon","ordeal_1-1",261,148,1,"ArenaON::Ondevildead");
+ 	mobevent "ordeal_1-1",211,148,"[MO] ATROCE",1785,0,1,0,1,1500000,0,0,0,0,0,0,0,0,"ArenaON::Ondevildead";
+	// mobevent <map>		  ,<x>,<y>,         <fakename>,<mobid>,<size>,<amount>,<teamid>,<showhp>,<increasehp>,<allied>,<noslaves>,<noexpnodrop>,<poringcoins>,<event>
+ 	end;
+
+ 
+Ondevildead:
+ if ($status == 1) end;
+ 	set $mob,$mob-1;
+	set .@num,0;
+	switch ( $mob ) 
+	{
+	case 50:
+ 		 mapannounce "ordeal_1-1","Mavis Arena : 50 monstruos para destruir la muralla",8,0x09E8E8;
+	break;
+
+ 	case 25:
+ 		mapannounce "ordeal_1-1","Mavis Arena : 25 monstruos para destruir la muralla",8,0x09E8E8;
+		set .@num,1;
+	break;
+	
+ 	case 15:
+		 mapannounce "ordeal_1-1","Mavis Arena : 15 monstruos para destruir la muralla",8,0x09E8E8;
+	       if ($ElementR == 1){ //FIRE
+		setarray .@RandMobArena[0],1383,1072,1318,1366,1387,1381;
+	}else if ($ElementR == 2){ //EARTH
+		setarray .@RandMobArena[0],1194,1672,1993,1998,2019,2024;
+	}else if ($ElementR == 3){ // AQUA
+		setarray .@RandMobArena[0],1206,1676,2020,2016,2021,1883;
+	}else{ // NEUTRAL
+		setarray .@RandMobArena[0],1253,1193,1213,1257,1191,1192;
+		}
+		setarray .@RandMobCount[0],18,16,16,14,16,9;
+ 		for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) {
+		areamonster "ordeal_1-1",211,151,261,151,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaON::Ondevildead";
+		}
+	break;
+
+	case 0:
+ 		set $wal1,4;
+ 		mapannounce "ordeal_1-1","Mavis Arena : ¡Destruyan las Murallas!",8,0x09E8E8;
+		monster "ordeal_1-1",201,151,"[MO] Wall#1",1906,1,"ArenaON::Onwalldead1";
+ 		monster "ordeal_1-1",199,151,"[MO] Wall#2",1906,1,"ArenaON::Onwalldead1";
+ 		monster "ordeal_1-1",201,148,"[MO] Wall#3",1906,1,"ArenaON::Onwalldead1";
+ 		monster "ordeal_1-1",199,148,"[MO] Wall#4",1906,1,"ArenaON::Onwalldead1";
+	break;
+   }
+	if (.@num == 1)
+		mapannounce "ordeal_1-1","Arena : " + $mob + " monstruos para destruir la muralla",8,0x09E8E8;
+end;
+
+ 
+
+Onwalldead1:
+	if ($status == 1) 
+		end;
+
+	set $wal1,$wal1 - 1;
+	
+	if( $wal1 == 0 ) 
+	{
+   	enablenpc "fase1";
+  	 mapannounce "ordeal_1-1","Mavis Arena : Se ha abierto el warp a la siguiente sala",8,0x09E8E8;
+sleep2 3000;
+   	mapannounce "ordeal_1-1","Guardian: [Ifrit] Vamos guerreros de la arena, continúen avanzando!!!",8,0xFF0000;
+sleep2 2000;
+   	atcommand "@raisemap";
+sleep2 3000;
+  	 mapannounce "ordeal_1-1","Mavis Arena : En esta fase tienen la tarea de derrotar al guardian y avanzar hasta la ultima sala de la Arena",8,0x09E8E8;
+
+ 	set $boss1,1;
+	if ($ElementR == 1){ //FIRE
+		setarray .@RandMobArena[0],1283,1640,1310,1366,1379,1837,2068,1115;
+		setarray .@RandMobCount[0],3,1,4,10,13,8,1,1;
+	}else if ($ElementR == 2){ //EARTH
+		setarray .@RandMobArena[0],1681,1087,1312,2017,1672,1216,1713,1678,1289,1993;
+		setarray .@RandMobCount[0],2,1,1,5,15,21,11,16,2,4;
+	}else if ($ElementR == 3){ //AQUA
+		setarray .@RandMobArena[0],1681,1252,1778,1777,1518,1671,1968,1642;
+		setarray .@RandMobCount[0],2,1,15,10,1,10,14,1;
+	}else{ //NEUTRAL
+		setarray .@RandMobArena[0],1206,1643,1208,1109,1131,1150,1302;
+		setarray .@RandMobCount[0],15,1,11,13,14,2,2;
+	}
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) {
+		areamonster "ordeal_1-1",43,152,84,152,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaON::OnAttach";
+	}
+ 		areamonster "ordeal_1-1",43,152,84,152,.@MVPName$,.@MVPSelect,2,"ArenaON::OnAttach";
+ 		areamonster "ordeal_1-1",43,152,84,152,.@MVPName$,.@MVPSelect[.@i + 1],1,"ArenaON::OnAttach";
+		mobevent "ordeal_1-1",40,144,"[MO] PORING LIDER",3601,0,1,0,1,254000,0,0,0,0,0,0,0,0,"ArenaON::Onbossdead1";
+		callfunc("ArenaMvpSummon","ordeal_1-1",43,147,1,"ArenaON::OnAttach");
+		callfunc("ArenaMvpSummon","ordeal_1-1",84,147,1,"ArenaON::OnAttach");
+
+   }
+end;	
+///////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////// TERMINO PRIMERA SALA //////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+ 
+Onbossdead1:
+ if ($status == 1) end;
+ 	set $boss1,$boss1-1;
+ if($boss1 == 0)
+	 mapannounce "ordeal_1-1","Mavis Arena : El guardian a muerto, destruyan la muralla para abrir paso a la ultima etapa de la Arena",8,0x09E8E8;
+sleep2 3000;
+  	 mapannounce "ordeal_1-1","Guardian: [Ifrit] Vamos guerreros de la arena, alzaos y luchad por la Victoria!!!",8,0xFF0000;
+sleep2 2000;
+	atcommand "@raisemap";
+sleep2 3000;
+
+	if ($ElementR == 1){ //FIRE
+		setarray .@RandMobArena[0],1383,1072,1318,1366,1387,1381;
+	}else if ($ElementR == 2){ //EARTH
+		setarray .@RandMobArena[0],1194,1672,1993,1998,2019,2024;
+	}else if ($ElementR == 3){ //AQUA
+		setarray .@RandMobArena[0],1206,1676,2020,2016,2021,1883;
+	}else{ //NEUTRAL
+		setarray .@RandMobArena[0],1253,1193,1213,1257,1191,1192;
+	}
+		setarray .@RandMobCount[0],5,7,7,6,7,6;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) {
+		areamonster "ordeal_1-1",37,161,44,139,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaON::OnAttach";
+	}
+
+ 	set $wall2,4;
+ 	monster "ordeal_1-1",22,153,"[MO] Wall#5",1906,1,"ArenaON::Onwalldead2";
+ 	monster "ordeal_1-1",30,153,"[MO] Wall#6",1906,1,"ArenaON::Onwalldead2";
+ 	monster "ordeal_1-1",22,146,"[MO] Wall#7",1906,1,"ArenaON::Onwalldead2";
+ 	monster "ordeal_1-1",30,146,"[MO] Wall#8",1906,1,"ArenaON::Onwalldead2";
+ end;
+ 
+Onwalldead2:
+	if ($status == 1) 
+		end;
+
+	set $wall2,$wall2 - 1;
+	if($wall2 == 0) 
+	{
+
+	enablenpc "fase2";
+	mapannounce "ordeal_1-1","Mavis Arena : Ha aparecido el warp al fin de la Arena",8,0x09E8E8;
+sleep2 3000;
+  	 mapannounce "ordeal_1-1","Guardiana: [Alysa] Guerreros esta es la ultima fase, alzaos caidos que os espera una ultima batalla!!!",8,0xFF0000;
+sleep2 2000;
+	atcommand "@raisemap";
+	set $crystal,1;
+	if ($ElementR == 1){ //FIRE
+		setarray .@RandMobArena[0],1831,1833,1640,1387,1673;
+		setarray .@RandMobCount[0],5,5,1,10,10;	
+		set $Element,32;
+	}else if ($ElementR == 2){ //EARTH
+		setarray .@RandMobArena[0],1672,2018,1678,1147,1933,2017,1190;
+		setarray .@RandMobCount[0],10,10,12,2,3,5,1;
+		set $Element,44;
+	}else if ($ElementR == 3){ //AQUA
+		setarray .@RandMobArena[0],1778,1777,1252,2016,1264,1642;
+		setarray .@RandMobCount[0],16,10,2,6,16,1;
+		set $Element,52;
+	}else{ //NEUTRAL
+		setarray .@RandMobArena[0],1286,1285,1830,1638,1644,1643;
+		setarray .@RandMobCount[0],9,9,4,6,2,1;
+		set $Element,32;
+	}
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) {
+		areamonster "ordeal_1-1",155,144,155,154,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaON::OnElemental";
+	}
+
+ end;
+ 
+OnElemental:
+set $Element,$Element - 1;
+switch ( $Element )
+	{
+		case 0:
+			sleep2 3000;
+			mapannounce "ordeal_1-1","Arena : La Princesa Elemental ha caido, es nuestra oportunidad Alzaos Guerrero!!!",8,0xFF0000;
+			atcommand "@raisemap";
+			mobevent "ordeal_1-1",150,149,"Ymir Heart",1915,0,1,0,1,1000,0,1,0,0,0,0,0,0,"ArenaON::Oncristaldead";
+
+		break;
+
+		case 1:
+			atcommand "@raisemap";
+			mapannounce "ordeal_1-1","Guardiana: [Alysa] La Princesa Elemental ha aparecido, a las armas mis valientes!!!",8,0xFF0000;
+			mobevent "ordeal_1-1",150,148,"Princesa Elemental",1645,0,1,0,1,450000,0,0,0,0,0,0,0,0,"ArenaON::OnElemental";
+			areamonster "ordeal_1-1",155,144,155,154,"Element",1788,3,"ArenaON::OnAttach";
+			areamonster "ordeal_1-1",155,144,155,154,"Element",1834,3,"ArenaON::OnAttach";
+			areamonster "ordeal_1-1",155,144,155,154,"Element",2016,3,"ArenaON::OnAttach";
+			areamonster "ordeal_1-1",155,144,155,154,"Element",1933,3,"ArenaON::OnAttach";
+		break;
+
+		case 2:
+		case 5:
+		case 10:
+		case 15:
+		case 20:
+		case 25:
+			areamonster "ordeal_1-1",43,152,84,152,.@MVPName$,.@MVPSelect,1,"ArenaON::OnAttach";
+	break;
+		case 29:
+ 			mobevent "ordeal_1-1",150,148,"[MO] BYORGUE Mavis",1839,0,2,0,1,40000,0,0,0,0,0,0,0,0,"ArenaON::OnAttach";
+	break;
+		case 30:
+		case 42:
+		case 50:
+	break;
+     }
+end;
+
+OnAttach: // para evitar no event [DarbladErxX]
+	end;
+
+
+Oncristaldead:
+ if ($status == 1) end;
+  	Announce "Mavis Arena : Felicidades a los sobrevivientes a la Arena",8,0xFF0000;
+ sleep2 3500;
+  	Announce "Mavis Arena : Han recuperado el corazón de Ymir ahora continuemos mas adelante",8,0xFF0000;
+callfunc("ArenaRewards","ordeal_1-1");
+ sleep2 3500;
+	donpcevent "ArenaNivelF1::OnArenaStart";
+	donpcevent "ArenaNivelF2::OnArenaStart";
+	donpcevent "ArenaNivelF3::OnArenaStart";
+ 	initnpctimer "ArenaP";
+	set $ArenaV2,0;
+	set $status,1;
+	mapwarp "ordeal_1-1","force_1-2",99,26; 
+	end;
+	}
+}
+
+// -- Mapflags
+ordeal_1-1	mapflag	nowarp
+ordeal_1-1	mapflag	nowarpto
+ordeal_1-1	mapflag	noteleport
+ordeal_1-1	mapflag	nosave	SavePoint
+ordeal_1-1	mapflag	nomemo
+ordeal_1-1	mapflag	nobranch
+ordeal_1-1	mapflag	nopenalty
+ordeal_1-1	mapflag	noloot
+ordeal_1-1	mapflag	restricted	5
+ordeal_1-1	mapflag	monster_noteleport
+// -- End of Mapflags
+
+
+arlandria,140,170,5	script	Mavis Arena Guard::MA	404,{
+	title("Mavis Arena Guard");
+	mes "Bienvenido a la puerta de entrada a la ^FF0000 Arena^000000.";
+	mes "¿Quieres probar tu valentia?, ¿Poner a prueba tu resistencia y habilidad?. Si te atrevez acepta el desafio?.";
+	next;
+	switch( select("[ > ] Entrar :[ > ] Información:[ > ] Cancelar") ) {
+		case 3: close2; break;
+		case 1:
+			     title("Mavis Arena Guard");
+			if ( $status == 1 )
+				mclose "Las puertas de la arena están cerradas.";
+
+			if ( $status == 2 )
+				mclose "La arena está en progreso.";
+
+			if( Baselevel < 70 ) 
+				mclose "Nivel minimo de base 70.";
+
+			if ( getmapusers("ordeal_1-1") >= 100 ) 
+				mclose "Ya hay muchos usuarios en la sala.";
+
+
+			mapannounce "ordeal_1-1","[ "+strcharinfo(0)+" ] A entrado a la Arena",8,0x00FF00;
+       			percentheal 100,100;
+			warp "ordeal_1-1",274,150;
+      		break;
+
+		case 2:
+			 title("Mavis Arena Guard");
+			mes "La Arena tiene 3 niveles, en el que encontraras enemigos.";
+			mes "Cada nivel tiene monstruos mas fuertes.";
+			mes "Si superan los 3 niveles y derrotan al Boss, seran recompensados.";
+			next;
+       			title("Mavis Arena Guard");
+     			mes "Mavis Arena permanece cerrado";
+       			mes "Se volvera abrir otra vez a las:";
+			mes "^0000FF[        01:00AM        ]^000000";
+			mes "^0000FF[        04:00AM        ]^000000";
+			mes "^0000FF[        08:00AM        ]^000000";
+			mes "^0000FF[        12:00PM        ]^000000";
+			mes "^0000FF[        16:10PM        ]^000000";
+			mes "^0000FF[        20:00PM        ]^000000";
+			close2;
+		break;
+	}
+	end;
+
+OnWhisperGlobal:
+	if ( getgmlevel() <= 60 ) end;
+ 		if (@whispervar0$ != "activar") end;
+	OnInit:
+	do {
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500; 
+		delwaitingroom;
+		waitingroom "Mavis Arena[" +getmapusers("ordeal_1-1") +"]",0;
+		sleep 2500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500;
+		delwaitingroom;
+		waitingroom "!Arena V2¡[" +getmapusers("force_1-2") +"]",0;
+		sleep 2500; // Evites super infinity loop
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500;
+		delwaitingroom;
+		waitingroom "!ArenaV3¡[" +getmapusers("force_4-1") +"]",0;
+		sleep 2500;
+	} while(1); // End Loop
+
+// End Script
+}
+
+ordeal_1-1,277,154,5	script	Healer ARENA	480,7,7,{
+	sc_start 32,  240000, 10;  // Increase Agi
+	sc_start 30, 240000, 10; // Blessing
+	percentheal 100,100;
+	skilleffect 29,0; // Increase Agi
+	skilleffect 34,0; // Blessing
+	specialeffect2 312;
+}
+
+ordeal_1-1,271,161,5	shop	Usables ARENA	506,610:-1,11501:1500,11502:1500
+
+ordeal_1-1,199,150,0	warp	fase1	1,1,ordeal_1-1,95,150
+ordeal_1-1,25,149,0	warp	fase2	1,1,ordeal_1-1,172,150
+ordeal_1-1,176,150,0	warp	fase31	1,1,ordeal_1-1,29,150
+ordeal_1-1,100,150,0	warp	fase21	1,1,ordeal_1-1,204,150
+//+++++++++++++++++DUPLICATE INFO++++++++++++++++++++++++++++++++++++++++
+force_1-2,92,33,4	duplicate(Usables ARENA)	Usables ARENA#2	506,{
+force_1-2,107,33,4	duplicate(Healer ARENA)	Healer ARENA#3	480,7,7,{

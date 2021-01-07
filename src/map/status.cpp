@@ -93,12 +93,7 @@ static signed short status_calc_def2(struct block_list *,struct status_change *,
 static defType status_calc_mdef(struct block_list *bl, struct status_change *sc, int);
 static signed short status_calc_mdef2(struct block_list *,struct status_change *,int);
 static unsigned short status_calc_speed(struct block_list *,struct status_change *,int);
-static short status_calc_aspd_rate(struct block_list *,struct status_change *,int);
 static unsigned short status_calc_dmotion(struct block_list *bl, struct status_change *sc, int dmotion);
-#ifdef RENEWAL_ASPD
-static short status_calc_aspd(struct block_list *bl, struct status_change *sc, bool fixed);
-#endif
-static short status_calc_fix_aspd(struct block_list *bl, struct status_change *sc, int);
 static unsigned int status_calc_maxhp(struct block_list *bl, uint64 maxhp);
 static unsigned int status_calc_maxsp(struct block_list *bl, uint64 maxsp);
 static unsigned char status_calc_element(struct block_list *bl, struct status_change *sc, int element);
@@ -1176,6 +1171,9 @@ void initChangeTables(void)
 	StatusIconChangeTable[SC_LHZ_DUN_N4] = EFST_LHZ_DUN_N4;
 
 	StatusIconChangeTable[SC_ANCILLA] = EFST_ANCILLA;
+	
+	// Battleground Queue
+	StatusIconChangeTable[SC_ENTRY_QUEUE_APPLY_DELAY] = EFST_ENTRY_QUEUE_APPLY_DELAY;
 
 	/* Other SC which are not necessarily associated to skills */
 	StatusChangeFlagTable[SC_ASPDPOTION0] |= SCB_ASPD;
@@ -1330,6 +1328,9 @@ void initChangeTables(void)
 	StatusChangeFlagTable[SC_GLASTHEIM_STATE] |= SCB_STR|SCB_AGI|SCB_VIT|SCB_DEX|SCB_INT|SCB_LUK;
 	StatusChangeFlagTable[SC_GLASTHEIM_ITEMDEF] |= SCB_DEF|SCB_MDEF;
 	StatusChangeFlagTable[SC_GLASTHEIM_HPSP] |= SCB_MAXHP|SCB_MAXSP;
+
+	// Battleground Queue
+	StatusChangeFlagTable[SC_ENTRY_QUEUE_APPLY_DELAY] |= SCB_NONE;
 
 	// Summoner
 	StatusChangeFlagTable[SC_DORAM_WALKSPEED] |= SCB_SPEED;
@@ -1773,6 +1774,9 @@ int status_damage(struct block_list *src,struct block_list *target,int64 dhp, in
 		case BL_MER: mercenary_heal((TBL_MER*)target,hp,sp); break;
 		case BL_ELEM: elemental_heal((TBL_ELEM*)target,hp,sp); break;
 	}
+
+	// Extended Features BG [Easycore]
+	pc_record_damage(src,target,hp);
 
 	if( src && target->type == BL_PC && ((TBL_PC*)target)->disguise ) { // Stop walking when attacked in disguise to prevent walk-delay bug
 		unit_stop_walking( target, 1 );
@@ -2771,7 +2775,7 @@ int status_calc_mob_(struct mob_data* md, enum e_status_calc_opt opt)
 	if (battle_config.mobs_level_up && md->level > md->db->lv)
 		flag|=1;
 
-	if (md->special_state.size)
+	if (md->special_state.size && !md->option.max_hp)
 		flag|=2;
 
 	if (md->guardian_data && md->guardian_data->guardup_lv)
@@ -2787,6 +2791,9 @@ int status_calc_mob_(struct mob_data* md, enum e_status_calc_opt opt)
 
 	if (md->master_id && battle_config.slaves_inherit_mode)
 		flag |= 32;
+
+	if (md->option.max_hp)
+		flag |= 64;
 
 	if (!flag) { // No special status required.
 		if (md->base_status) {
@@ -2818,6 +2825,9 @@ int status_calc_mob_(struct mob_data* md, enum e_status_calc_opt opt)
 
 	if (flag&32)
 		status_calc_slave_mode(md, map_id2md(md->master_id));
+
+	if (flag&64)
+		status->max_hp = status->hp = md->option.max_hp;
 
 	if (flag&1) { // Increase from mobs leveling up [Valaris]
 		int diff = md->level - md->db->lv;
@@ -3365,7 +3375,7 @@ bool status_calc_weight(struct map_session_data *sd, enum e_status_calc_weight_o
  */
 bool status_calc_cart_weight(struct map_session_data *sd, enum e_status_calc_weight_opt flag)
 {
-	int b_cart_weight_max, i;
+	int b_cart_weight_max, b_cart_num_max, i;
 
 	nullpo_retr(false, sd);
 
@@ -3373,7 +3383,9 @@ bool status_calc_cart_weight(struct map_session_data *sd, enum e_status_calc_wei
 		return false;
 
 	b_cart_weight_max = sd->cart_weight_max; // Store cart max weight for later comparison
-	sd->cart_weight_max = battle_config.max_cart_weight; // Recalculate max weight
+	sd->cart_weight_max = map_cart_max_weight(sd); // Recalculate max weight
+	b_cart_num_max = sd->cart_num_max;
+	sd->cart_num_max = map_cart_max_items(sd);
 
 	if (flag&CALCWT_ITEM) {
 		sd->cart_weight = 0; // Reset current cart weight
@@ -3392,7 +3404,7 @@ bool status_calc_cart_weight(struct map_session_data *sd, enum e_status_calc_wei
 		sd->cart_weight_max += (pc_checkskill(sd, GN_REMODELING_CART) * 5000);
 
 	// Update the client if the new weight calculations don't match
-	if (b_cart_weight_max != sd->cart_weight_max)
+	if (b_cart_weight_max != sd->cart_weight_max || b_cart_num_max != sd->cart_num_max)
 		clif_updatestatus(sd, SP_CARTINFO);
 
 	return true;
@@ -3501,6 +3513,9 @@ int status_calc_pc_sub(struct map_session_data* sd, enum e_status_calc_opt opt)
 	if (pc_isvip(sd)) // Magic Stone requirement avoidance for VIP.
 		sd->special_state.no_gemstone = battle_config.vip_gemstone;
 
+	if (pc_isPremium(sd) ) // Requerimientos de stones para cuentas premium
+		sd->special_state.no_gemstone = battle_config.premium_gemstone;
+
 	if (!sd->state.permanent_speed) {
 		memset(&base_status->max_hp, 0, sizeof(struct status_data)-(sizeof(base_status->hp)+sizeof(base_status->sp)));
 		base_status->speed = DEFAULT_WALK_SPEED;
@@ -3596,6 +3611,9 @@ int status_calc_pc_sub(struct map_session_data* sd, enum e_status_calc_opt opt)
 			continue;
 		if (!sd->inventory_data[index])
 			continue;
+
+		if( battle_config.costume_reserved_char_id && sd->inventory.u.items_inventory[index].card[0] == CARD0_CREATE && MakeDWord(sd->inventory.u.items_inventory[index].card[2],sd->inventory.u.items_inventory[index].card[3]) == battle_config.costume_reserved_char_id )
+			continue; // Lets Ignore CostumeIT items
 
 		base_status->def += sd->inventory_data[index]->def;
 
@@ -6956,7 +6974,7 @@ static unsigned short status_calc_speed(struct block_list *bl, struct status_cha
  *               False - percentage value
  * @return modified aspd
  */
-static short status_calc_aspd(struct block_list *bl, struct status_change *sc, bool fixed)
+short status_calc_aspd(struct block_list *bl, struct status_change *sc, bool fixed)
 {
 	int bonus = 0;
 
@@ -7081,7 +7099,7 @@ static short status_calc_aspd(struct block_list *bl, struct status_change *sc, b
  * @param aspd: Object's current ASPD
  * @return modified aspd
  */
-static short status_calc_fix_aspd(struct block_list *bl, struct status_change *sc, int aspd)
+short status_calc_fix_aspd(struct block_list *bl, struct status_change *sc, int aspd)
 {
 	if (!sc || !sc->count)
 		return cap_value(aspd, 0, 2000);
@@ -7109,7 +7127,7 @@ static short status_calc_fix_aspd(struct block_list *bl, struct status_change *s
  * @param aspd_rate: Object's current ASPD
  * @return modified aspd_rate
  */
-static short status_calc_aspd_rate(struct block_list *bl, struct status_change *sc, int aspd_rate)
+short status_calc_aspd_rate(struct block_list *bl, struct status_change *sc, int aspd_rate)
 {
 	int i;
 
@@ -7445,7 +7463,7 @@ void status_calc_slave_mode(struct mob_data *md, struct mob_data *mmd)
 				sc_start4(NULL, &md->bl, SC_MODECHANGE, 100, 1, 0, 0, MD_AGGRESSIVE, 0);
 			break;
 		case 4: // Overwrite with slave mode
-			sc_start4(NULL, &md->bl, SC_MODECHANGE, 100, 1, MD_CANMOVE|MD_NORANDOM_WALK|MD_CANATTACK, 0, 0, 0);
+			sc_start4(NULL, &md->bl, SC_MODECHANGE, 100, 1, MD_CANMOVE|MD_NORANDOM_WALK|MD_CANATTACK|MD_CANATTACKMOB, 0, 0, 0);
 			break;
 		default: //Copy master
 			if (status_has_mode(&mmd->status,MD_AGGRESSIVE))
@@ -7623,6 +7641,8 @@ int status_get_party_id(struct block_list *bl)
 			break;
 		case BL_MOB: {
 				struct mob_data *md=(TBL_MOB*)bl;
+				if( md->option.is_event && map_getmapflag(bl->m, MF_PVP) && md->option.party_id )
+					return md->option.party_id;
 				if( md->master_id > 0 ) {
 					struct map_session_data *msd;
 					if (md->special_state.ai && (msd = map_id2sd(md->master_id)) != NULL)
@@ -7670,10 +7690,16 @@ int status_get_guild_id(struct block_list *bl)
 			{
 				struct map_session_data *msd;
 				struct mob_data *md = (struct mob_data *)bl;
+				if (md->option.is_war && md->option.guild_id)
+					return md->option.guild_emblem_id;
 				if (md->guardian_data)	// Guardian's guild [Skotlex]
 					return md->guardian_data->guild_id;
 				if (md->special_state.ai && (msd = map_id2sd(md->master_id)) != NULL)
 					return msd->status.guild_id; // Alchemist's mobs [Skotlex]
+				if (md->option.is_event && map_getmapflag(bl->m, MF_GVG))
+					return md->option.guild_id;
+				if (md->option.is_war && !map_flag_vs(bl->m))
+					return md->option.guild_id;
 			}
 			break;
 		case BL_HOM:
@@ -9498,6 +9524,7 @@ int status_change_start(struct block_list* src, struct block_list* bl,enum sc_ty
 			case SC_LHZ_DUN_N2:
 			case SC_LHZ_DUN_N3:
 			case SC_LHZ_DUN_N4:
+			case SC_ENTRY_QUEUE_APPLY_DELAY:
 				break;
 			case SC_GOSPEL:
 				 // Must not override a casting gospel char.

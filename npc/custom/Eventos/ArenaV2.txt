@@ -1,0 +1,655 @@
+//= ==== eAthena Script ============================================= = \\
+//= Evento Arena Nivel 2                                                //
+//= ==== By: ======================================================== = \\
+//= DarbladErxX // (darbladerxx@hotmail.com // facebook/DarbladErX      //
+//= Copyright © 2013 DarbladErxX - Todos los derechos reservados.       //
+//= ==== Current Version: =========================================== = \\
+//= Version: 3.0                                                        //
+//= ==== Compatible With: =========================================== = \\
+//= eAthena SVN	SQL y TXT // Ahora es compatible con rathena	        //
+//= ==== Description: =============================================== = //
+//= Arena Fase 2 Modo Laberinto				                //
+// = Ultima actualización 17/11/2020                                    //
+//= ================================================================== //
+
+-	script	ArenaP	-1,{
+	end;
+	
+OnTimer2000:
+	mapannounce "force_1-2","[Guardiana Alysa]: Andrea, apoya a los guerreros, algo me molesta mucho de este lugar...!",8,0xFF0000;
+	end;
+
+OnTimer3000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Saludos guerreros, esta es la fase 2 de la arena!",bc_all;
+	end;
+	
+OnTimer5000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Los guardianes me encargaron ami, de guiarlos y explicarles un poco...",bc_all;
+	end;
+	
+OnTimer7000:
+	mapannounce "force_1-2","[Guardiana Andrea]: No hay un orden para entrar, son 3 habitaciones, 3 direcciones. Pero recuerden, una vez adentro no podran salir hasta matar todo.",bc_all;
+	end;
+
+OnTimer9000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Solo tenemos 15 minutos para completar toda la arena, yo estare avisando el tiempo que aun nos queda! ",bc_all;
+	end;
+
+OnTimer11000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Sin mas que decir, suerte a todos y mucho cuidado!",bc_all;
+	end;
+	
+OnTimer60000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante: 14 minutos ",bc_all;
+	end;
+
+OnTimer120000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante: 13 minutos ",bc_all;
+	end;
+
+OnTimer180000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 12 minutos ",bc_all;
+	end;
+	
+OnTimer240000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 11 minutos ",bc_all;
+	end;
+
+OnTimer300000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 10 minutos ",bc_all;
+	end;
+
+OnTimer360000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 9 minutos ",bc_all;
+	end;
+
+OnTimer420000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 8 minutos ",bc_all;
+	end;
+
+OnTimer480000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 7 minutos ",bc_all;
+	end;
+
+OnTimer540000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 6 minutos ",bc_all;
+	end;
+
+OnTimer600000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 5 minutos",bc_all;
+	end;
+
+OnTimer660000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 4 minutos",bc_all;
+	end;
+
+
+OnTimer720000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 3 minutos",bc_all;
+	end;
+
+
+OnTimer780000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 2 minutos",bc_all;
+	end;
+
+
+OnTimer840000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Tiempo restante : 1 minutos",bc_all;
+	end;
+
+
+OnTimer900000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Se acabo el tiempo, tratare de retrasar un minuto más rapido...!",bc_all;
+	end;
+
+	
+OnTimer960000:
+	mapannounce "force_1-2","[Guardiana Andrea]: Se acabo el tiempo, lo siento mucho!",bc_all;
+ 	sleep2 3500;
+	stopnpctimer;
+	stopnpctimer "ArenaP";
+	set $ArenaV2,1;
+	set $@ArenaP,0;
+       disablenpc "arenap4";
+       disablenpc "arenap5";
+       disablenpc "arenap6";
+       disablenpc "arenap7";
+       disablenpc "arenap8";
+       disablenpc "arenap9";
+       disablenpc "arenap10";
+       disablenpc "arenap11";
+       disablenpc "arenap12";
+       disablenpc "arenap13";
+       disablenpc "arenap14";
+       disablenpc "arenap15";
+       disablenpc "arenap16";
+       disablenpc "arenap17";
+       disablenpc "arenap18";
+	disablenpc "TrampaArena";
+	disablenpc "TrampaArena2";
+	disablenpc "TrampaArena3";
+	disablenpc "TrampaArena4";
+	disablenpc "Time Holder";
+	killmonsterall "force_1-2";
+	mapwarp "force_1-2","prontera",138,164;
+	end;
+
+
+OnWhisperGlobal:
+	if ( getgmlevel() <= 60 ) end;
+ 		if (@whispervar0$ != "activar") end;
+OnInit:
+	set $ArenaV2,1;
+	set $@ArenaP,0;
+       disablenpc "arenap4";
+       disablenpc "arenap5";
+       disablenpc "arenap6";
+       disablenpc "arenap7";
+       disablenpc "arenap8";
+       disablenpc "arenap9";
+       disablenpc "arenap10";
+       disablenpc "arenap11";
+       disablenpc "arenap12";
+       disablenpc "arenap13";
+       disablenpc "arenap14";
+       disablenpc "arenap15";
+       disablenpc "arenap16";
+       disablenpc "arenap17";
+       disablenpc "arenap18";
+	disablenpc "TrampaArena";
+	disablenpc "TrampaArena2";
+	disablenpc "TrampaArena3";
+	disablenpc "TrampaArena4";
+	disablenpc "Time Holder";
+	end;
+
+}
+
+
+-	script	Arena2ON	-1,{
+
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto OnArenaON;
+	}
+end;
+
+OnArenaON:
+	donpcevent "ArenaNivelF1::OnArenaStart";
+	donpcevent "ArenaNivelF2::OnArenaStart";
+	donpcevent "ArenaNivelF3::OnArenaStart";
+ 	initnpctimer "ArenaP";
+	set $ArenaV2,0;
+	set $@ArenaP,0;
+	end;
+}
+
+
+-	script	Arena2OFF	-1,{
+
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto OnArenaOFF;
+	}
+end;
+
+OnArenaOFF:
+	stopnpctimer;
+	stopnpctimer "ArenaP";
+	set $ArenaV2,1;
+	set $@ArenaP,0;
+       disablenpc "arenap4";
+       disablenpc "arenap5";
+       disablenpc "arenap6";
+       disablenpc "arenap7";
+       disablenpc "arenap8";
+       disablenpc "arenap9";
+       disablenpc "arenap10";
+       disablenpc "arenap11";
+       disablenpc "arenap12";
+       disablenpc "arenap13";
+       disablenpc "arenap14";
+       disablenpc "arenap15";
+       disablenpc "arenap16";
+       disablenpc "arenap17";
+       disablenpc "arenap18";
+	disablenpc "TrampaArena";
+	disablenpc "TrampaArena2";
+	disablenpc "TrampaArena3";
+	disablenpc "TrampaArena4";
+	killmonsterall "force_1-2";
+	end;
+}
+
+
+-	script	ArenaNivelF1	-1,{
+OnArenaStart:
+	setarray .@RandMobArena[0],1580,1260,1198,2023,1219,1302;
+	setarray .@RandMobCount[0],10,8,4,7,4,4;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) 
+	areamonster "force_1-2",26,14,23,34,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaNivelF1::OnMobDeath";
+	callfunc("ArenaMvpSummon","force_1-2",15,31,1,"ArenaNivelF1::OnMobDeath");
+	callfunc("ArenaMvpSummon","force_1-2",29,25,1,"ArenaNivelF1::OnMobDeath");
+	set $zona1,39;
+end;
+
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona1,$zona1 -1;
+
+	if($zona1 < 1)
+	{
+		enablenpc "arenap4";
+		set $@ArenaP, $@ArenaP + 1;
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 1[izquierda] despejada ",bc_all;
+	}
+
+	if($@ArenaP == 3){
+		enablenpc "arenap7";
+		enablenpc "arenap8";
+	donpcevent "ArenaNivelF4::OnArenaStart";
+	donpcevent "ArenaNivelF5::OnArenaStart";
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 3[Norte] Se han abierto nuevos caminos ",bc_all;
+	atcommand "@raisemap";
+		end;
+		}
+}
+-	script	ArenaNivelF2	-1,{
+OnArenaStart:
+	setarray .@RandMobArena[0],1163,1477,1453,2015,1283,1204;
+	setarray .@RandMobCount[0],10,10,8,10,4,6;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) 
+	areamonster "force_1-2",179,36,180,17,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaNivelF2::OnMobDeath";
+	callfunc("ArenaMvpSummon","force_1-2",167,37,1,"ArenaNivelF2::OnMobDeath");
+	callfunc("ArenaMvpSummon","force_1-2",179,15,1,"ArenaNivelF2::OnMobDeath");
+	set $zona2,50;
+end;
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona2,$zona2 -1;
+	if($zona2 < 1)
+	{
+		enablenpc "arenap5";
+		set $@ArenaP, $@ArenaP + 1;
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 2[derecha] despejada ",bc_all;
+
+	}
+	if($@ArenaP == 3){
+		enablenpc "arenap7";
+		enablenpc "arenap8";
+	donpcevent "ArenaNivelF4::OnArenaStart";
+	donpcevent "ArenaNivelF5::OnArenaStart";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 3[Norte] Se han abierto nuevos caminos ",bc_all;
+		end;
+		}
+}
+
+
+
+-	script	ArenaNivelF3	-1,{
+OnArenaStart:
+	setarray .@RandMobArena[0],1433,1490,1450,1379,1268,1286;
+	setarray .@RandMobCount[0],11,10,8,10,3,3;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) 
+	areamonster "force_1-2",90,81,110,80,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaNivelF3::OnMobDeath";
+	callfunc("ArenaMvpSummon","force_1-2",100,89,1,"ArenaNivelF3::OnMobDeath");
+	callfunc("ArenaMvpSummon","force_1-2",101,70,1,"ArenaNivelF3::OnMobDeath");
+	set $zona3,47;
+end;
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona3,$zona3 -1;
+	if($zona3 < 1)
+	{
+		enablenpc "arenap6";
+		set $@ArenaP, $@ArenaP + 1;
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 3[Norte] despejada ",bc_all;
+
+	}
+	if($@ArenaP == 3){
+		enablenpc "arenap7";
+		enablenpc "arenap8";
+	donpcevent "ArenaNivelF4::OnArenaStart";
+	donpcevent "ArenaNivelF5::OnArenaStart";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 3[Norte] Se han abierto nuevos caminos ",bc_all;
+		end;
+		}
+}
+
+-	script	ArenaNivelF4	-1,{
+OnArenaStart:
+	setarray .@RandMobArena[0],1203,1292,1370,1371,1268,1286;
+	setarray .@RandMobCount[0],4,8,8,20,5,10;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) 
+	areamonster "force_1-2",25,68,22,85,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaNivelF4::OnMobDeath";
+	callfunc("ArenaMvpSummon","force_1-2",27,83,1,"ArenaNivelF4::OnMobDeath");
+	callfunc("ArenaMvpSummon","force_1-2",31,68,1,"ArenaNivelF4::OnMobDeath");
+	set $zona4,55;
+	end;
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona4,$zona4 -1;
+	if($zona4 < 1)
+	{
+	enablenpc "arenap9";
+	set $@ArenaP, $@ArenaP + 1;
+	mapannounce "force_1-2","[Guardiana Andrea]: Lado izquierdo despejado ",bc_all;
+
+	}
+	if($@ArenaP == 5){
+	enablenpc "arenap12";
+	donpcevent "ArenaNivelF6::OnArenaStart";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Se han abierto nuevos caminos",bc_all;
+		end;
+		}
+}
+
+
+-	script	ArenaNivelF5	-1,{
+OnArenaStart:
+	setarray .@RandMobArena[0],1566,1478,1441,1364,1219,1302;
+	setarray .@RandMobCount[0],10,10,8,10,3,3;
+ 	for (set .@m,0; .@m < getarraysize(.@RandMobArena); set .@m, .@m + 1) 
+	areamonster "force_1-2",174,78,169,72,getmonsterinfo(.@RandMobArena[.@m],0),.@RandMobArena[.@m],.@RandMobCount[.@m],"ArenaNivelF5::OnMobDeath";
+	callfunc("ArenaMvpSummon","force_1-2",185,71,1,"ArenaNivelF5::OnMobDeath");
+	callfunc("ArenaMvpSummon","force_1-2",165,87,1,"ArenaNivelF5::OnMobDeath");
+	set $zona5,46;
+end;
+
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona5,$zona5 -1;
+	if($zona5 < 1)
+	{
+	set $@ArenaP, $@ArenaP + 1;
+	enablenpc "arenap10";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona derecha despejada, Sigan avanzando ",bc_all;
+	}
+
+	if($@ArenaP == 5){
+	enablenpc "arenap12";
+	donpcevent "ArenaNivelF6::OnArenaStart";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Zona 3[Norte] Se han abierto nuevos caminos ",bc_all;
+		end;
+		}
+}
+
+-	script	ArenaNivelF6	-1,{
+OnArenaStart:
+	callfunc("ArenaMvpSummon","force_1-2",25,128,1,"ArenaNivelF6::OnMobDeath");
+	monster "force_1-2",16,140,"Wicked Nymph",1564,10,"ArenaNivelF6::OnMobDeath";
+	areamonster "force_1-2",12,140,37,141,"Cloud Hermit",1531,15,"ArenaNivelF6::OnMobDeath"; 
+	areamonster "force_1-2",12,119,37,118,"Shinobi",1560,30,"ArenaNivelF6::OnMobDeath"; 
+	areamonster "force_1-2",13,126,37,127,"Tengu",1563,15,"ArenaNivelF6::OnMobDeath"; 
+	set $zona6,71;
+	end;
+
+OnMobDeath:
+ if ($ArenaV2 == 1) end;
+	set $zona6,$zona6 -1;
+	if($zona6 < 1)
+	{
+	enablenpc "arenap11";
+	enablenpc "arenap13";
+	enablenpc "TrampaArena2";	
+	mapannounce "force_1-2","[Guardiana Andrea]: Sigan avanzando el tiempo se esta acabando. Portal de lado izquierdo se ha abierto ",bc_all;
+	goto OnArenaStart2;
+	}
+end;
+
+OnArenaStart2:
+	callfunc("ArenaMvpSummon","force_1-2",172,154,1,"ArenaNivelF6::OnMobDeath2");
+	monster "force_1-2",184,151,"Poring Leader",3601,1,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",174,145,"Ghostring",1576,2,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",162,152,"Chimera",1456,5,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",174,145,"Bygorgue",1839,5,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",174,145,"Hydrolancer",1720,5,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",173,120,"Bomb Poring",1904,5,"ArenaNivelF6::OnMobDeath2";
+	monster "force_1-2",170,171,"Valkyrie",1765,5,"ArenaNivelF6::OnMobDeath2";
+	areamonster "force_1-2",163,124,164,181,"Skeggiold",1755,10,"ArenaNivelF6::OnMobDeath2"; 
+	areamonster "force_1-2",180,184,181,125,"Khalitzburg",1438,35,"ArenaNivelF6::OnMobDeath2";
+	set $zona7,74;
+	end;
+
+OnMobDeath2:
+ if ($ArenaV2 == 1) end;
+	set $zona7,$zona7 -1;
+	if($zona7 < 1)
+	{
+	enablenpc "arenap14";
+	enablenpc "arenap15";
+	atcommand "@raisemap";	
+	mapannounce "force_1-2","[Guardiana Andrea]: Se ha abierto un portal de lado derecho, tengan cuidado con las trampas!!! ",bc_all;
+	goto OnArenaStart3;
+	}
+end;
+
+OnArenaStart3:
+	callfunc("ArenaMvpSummon","force_1-2",104,134,1,"ArenaNivelF6::OnMobDeath3");
+	monster "force_1-2",98,122,"Executioner",1487,8,"ArenaNivelF6::OnMobDeath3";
+	monster "force_1-2",108,140,"Chimera",1456,5,"ArenaNivelF6::OnMobDeath3";
+	areamonster "force_1-2",102,127,104,140,"Greatest General",1541,15,"ArenaNivelF6::OnMobDeath3"; 
+	areamonster "force_1-2",113,140,112,134,"Greatest General",1541,15,"ArenaNivelF6::OnMobDeath3";
+	areamonster "force_1-2",87,126,96,126,"Greatest General",1541,15,"ArenaNivelF6::OnMobDeath3";  
+	areamonster "force_1-2",102,127,112,128,"Khalitzburg",1438,20,"ArenaNivelF6::OnMobDeath3"; 
+	set $zona8,79;
+	end;
+	
+
+OnMobDeath3:
+ if ($ArenaV2 == 1) end;
+	set $zona8,$zona8 -1;
+	if($zona8 < 1)
+	{
+	enablenpc "arenap16";
+	enablenpc "arenap17";
+	enablenpc "TrampaArena3";
+	enablenpc "TrampaArena4";
+	mapannounce "force_1-2","[Guardiana Andrea]: Solo faltan dos lugares más, adelante ",bc_all;
+	sleep2 3500;
+	mapannounce "force_1-2","[Time Holder] Tic Tac... Tic Tac... Tic Tac...",8,0x0000FF;
+	sleep2 3500;
+	mapannounce "force_1-2","[Guardiana Andrea]:Que fue eso... se escuchaba como las manecillas de un relog y se escucho en todo el lugar",bc_all;
+	goto OnArenaStart4;
+	}
+end;
+
+OnArenaStart4:
+	setarray .@RandMobArena[0],1213,1473,1273,1023,1686,1087,1190;
+	setarray .@RandMobCount[0],15,15,15,15,5,2,3;
+ 	for (set .@i,0; .@i < getarraysize(.@RandMobArena); set .@i, .@i + 1)
+	areamonster "force_1-2",58,177,133,177,getmonsterinfo(.@RandMobArena[.@i],0),.@RandMobArena[.@i],.@RandMobCount[.@i],"ArenaNivelF6::OnMobDeath4";
+	set $zona9,70;
+	end;
+
+
+OnMobDeath4:
+ if ($ArenaV2 == 1) end;
+	set $zona9,$zona9 -1;
+	if($zona9 < 1)
+	{
+	enablenpc "arenap18";
+	atcommand "@raisemap";
+	mapannounce "force_1-2","[Guardiana Andrea]: Estamos en la etapa final, el portal se ha aparecido de lado derecho",bc_all;
+	goto OnArenaStart5;
+	}
+end;
+
+OnArenaStart5:
+	callfunc("ArenaMvpSummon","force_1-2",14,185,1,"ArenaNivelF6::OnMobDeath5");
+	callfunc("ArenaMvpSummon","force_1-2",14,172,1,"ArenaNivelF6::OnMobDeath5");
+	monster "force_1-2",16,179,"Samurai Spector",1542,2,"ArenaNivelF6::OnMobDeath5";
+	areamonster "force_1-2",28,188,28,170,"Shinobi",1560,30,"ArenaNivelF6::OnMobDeath5";
+	areamonster "force_1-2",18,188,18,170,"Gazeti",3655,40,"ArenaNivelF6::OnMobDeath5"; 
+	set $zona10,74;
+	end;
+
+
+OnMobDeath5:
+ if ($ArenaV2 == 1) end;
+	set $zona10,$zona10 -1;
+	if($zona10 < 1)
+	{
+   mapannounce "force_1-2","[Guardiana Alysa]: No podemos pasar esta pared, que pasaaaa...!!!",8,0xFF0000;
+	sleep2 3500;
+   mapannounce "force_1-2","[Guardiana Andrea]: Alysa! No! No! Nooooooo...",8,0xFF0000;
+   callfunc("ArenaRewards","force_2-1");
+	enablenpc "Time Holder";
+   	atcommand "@raisemap";
+	donpcevent "Arena2OFF::OnArenaOFF";
+ 	sleep2 3500;
+	mapwarp "force_1-2","force_1-2",25,178;
+ 	initnpctimer "Time Holder";
+	end;
+	}
+end;
+}
+
+force_1-2,19,178,4	script	Time Holder	3074,{
+			end;
+OnTimer3000:
+	npctalk "Creen Poder entrar a mi dominio"; end;
+OnTimer6000:
+	npctalk "Adelanteee, apartir de ahora, nadie podra ayudarlos"; end;
+OnTimer9000:
+	npctalk "Ni aquellos que osan llamarse GUARDIANES"; end;
+OnTimer12000:
+	npctalk "Hahahahahahahahahahah"; end;
+OnTimer15000:
+	mapannounce "force_1-2","[Time Holder] Hahahahahahahahahahahahahahahaha!!!",8,0x0000FF;
+	stopnpctimer;
+	stopnpctimer "Time Holder";
+	disablenpc "Time Holder";
+      	setwall "force_4-1",106,18,14,2,0,"Arena3Inicio";
+	setnpcdisplay "ArenaV3","Karlita";
+	sleep2 3500;
+	mapwarp "force_1-2","force_4-1",99,12;
+	sleep2 3500;
+ 	$ArenaV3 = 0;
+	enablenpc "ArenaV3";
+ 	initnpctimer "ArenaV3";
+end;
+}
+
+
+
+force_1-2,99,92,5	script	TrampaArena	45,2,2,{
+switch( rand(6) ) {
+
+case 0:	warp "force_1-2",174,79;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena::OnMobDeath";  end;
+case 1:	warp "force_1-2",99,26;     monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena::OnMobDeath"; end;
+case 2:	warp "force_1-2",172,26;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena::OnMobDeath"; end;
+case 3:	warp "force_1-2",27,27;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena::OnMobDeath"; end;
+case 4:	warp "force_1-2",100,79;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena::OnMobDeath"; end;
+case 5:	warp "force_1-2",26,78;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena::OnMobDeath";     end;
+	}
+				dispbottom "Has caido en una trampa!!!"; 
+
+OnMobDeath:
+	end;
+}
+
+force_1-2,26,114,5	script	TrampaArena2	45,2,2,{
+switch( rand(6) ) {
+
+case 0:	warp "force_1-2",174,79;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena2::OnMobDeath";  end;
+case 1:	warp "force_1-2",99,26; 	monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena2::OnMobDeath"; end;
+case 2:	warp "force_1-2",172,26;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena2::OnMobDeath"; end;
+case 3:	warp "force_1-2",27,27;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena2::OnMobDeath"; end;
+case 4:	warp "force_1-2",100,79;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena2::OnMobDeath"; end;
+case 5:	warp "force_1-2",26,78;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena2::OnMobDeath";     end;
+case 6:	warp "force_1-2",26,130;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena2::OnMobDeath"; end;
+case 7:	warp "force_1-2",173,118;   monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena2::OnMobDeath"; end;
+	}
+				dispbottom "Has caido en una trampa!!!"; 
+
+OnMobDeath:
+	end;
+}
+
+
+force_1-2,137,177,5	script	TrampaArena3	45,2,2,{
+switch( rand(6) ) {
+
+case 0:	warp "force_1-2",174,79;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena3::OnMobDeath";  end;
+case 1:	warp "force_1-2",99,26; 	monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena3::OnMobDeath"; end;
+case 2:	warp "force_1-2",172,26;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena3::OnMobDeath"; end;
+case 3:	warp "force_1-2",27,27;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena3::OnMobDeath"; end;
+case 4:	warp "force_1-2",100,79;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena3::OnMobDeath"; end;
+case 5:	warp "force_1-2",26,78;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena3::OnMobDeath";     end;
+case 6:	warp "force_1-2",26,130;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena3::OnMobDeath"; end;
+case 7:	warp "force_1-2",173,118;   monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena3::OnMobDeath"; end;
+	}
+			dispbottom "Has caido en una trampa!!!"; 
+	
+	
+OnMobDeath:
+	end;
+}
+
+force_1-2,96,187,5	script	TrampaArena4	45,2,2,{
+switch( rand(6) ) {
+
+case 0:	warp "force_1-2",174,79;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena4::OnMobDeath";  end;
+case 1:	warp "force_1-2",99,26; 	monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena4::OnMobDeath"; end;
+case 2:	warp "force_1-2",172,26;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena4::OnMobDeath"; end;
+case 3:	warp "force_1-2",27,27;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena4::OnMobDeath"; end;
+case 4:	warp "force_1-2",100,79;    monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena4::OnMobDeath"; end;
+case 5:	warp "force_1-2",26,78;     monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena4::OnMobDeath";     end;
+case 6:	warp "force_1-2",26,130;    monster "force_1-2",0,0,"Mimic",1191,25,"TrampaArena4::OnMobDeath"; end;
+case 7:	warp "force_1-2",173,118;   monster "force_1-2",0,0,"Arclouse",1477,25,"TrampaArena4::OnMobDeath"; end;
+	}
+				dispbottom "Has caido en una trampa!!!"; 
+
+OnMobDeath:
+	end;
+}
+
+
+force_1-2,85,26,0	warp	arenap1	1,1,force_1-2,37,26
+force_1-2,114,26,0	warp	arenap2	1,1,force_1-2,162,26
+force_1-2,99,40,0	warp	arenap3	1,1,force_1-2,99,66
+force_1-2,41,26,0	warp	arenap4	1,1,force_1-2,89,26
+force_1-2,158,26,0	warp	arenap5	1,1,force_1-2,110,26
+force_1-2,99,63,1	warp	arenap6	1,1,force_1-2,99,36
+force_1-2,84,78,1	warp	arenap7	1,1,force_1-2,37,78
+force_1-2,115,77,1	warp	arenap8	1,1,force_1-2,162,77
+force_1-2,40,77,1	warp	arenap9	1,1,force_1-2,87,77
+force_1-2,158,77,1	warp	arenap10	1,1,force_1-2,112,77
+force_1-2,49,130,1	warp	arenap11	1,1,force_1-2,99,79
+force_1-2,26,93,1	warp	arenap12	1,1,force_1-2,25,117
+force_1-2,174,93,1	warp	arenap13	1,1,force_1-2,173,118
+force_1-2,173,114,1	warp	arenap14	1,1,force_1-2,174,90
+force_1-2,158,177,1	warp	arenap15	1,1,force_1-2,107,141
+force_1-2,108,145,1	warp	arenap16	1,1,force_1-2,134,177
+force_1-2,91,129,1	warp	arenap17	1,1,force_1-2,161,177
+force_1-2,55,177,1	warp	arenap18	1,1,force_1-2,33,177
+
+
+// -- Mapflags
+force_1-2	mapflag	nowarp
+force_1-2	mapflag	nowarpto
+force_1-2	mapflag	noteleport
+force_1-2	mapflag	nosave	SavePoint
+force_1-2	mapflag	nomemo
+force_1-2	mapflag	nobranch
+force_1-2	mapflag	nopenalty
+force_1-2	mapflag	noloot
+force_1-2	mapflag	restricted	5
+force_1-2	mapflag	monster_noteleport
+// -- End of Mapflags

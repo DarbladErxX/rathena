@@ -1,0 +1,304 @@
+-	script	Enchanter	-1,{
+
+	set .@name$, "[^0000FFEncantadora^000000]";
+	mes .@name$;
+	mes "^009933 Armaduras: ^FF0000400,000 z^000000 .";
+	mes "^FF0000[2]^000000 Emblem of the Sun God";
+	mes "probabilidad que se rompa ^DD3434[ 10% ]^000000";
+	mes "^009933 Hats: ^FF0000400,000 z^000000 .";
+	mes "^FF0000[4]^000000 Emblem of the Sun God";
+	mes "100 Valor,Bravery,Battle Badge.";
+	mes "probabilidad que se rompa ^DD3434[ 0% ]^000000";
+	mes "^009933Shield/Weapon/Garment/Shoes:^000000";
+	mes "^FF0000[6]^000000 Emblem of the Sun God";
+	mes "100 Valor,Bravery,Battle Badge.";
+	mes "^FF0000400,000 z^000000";
+	mes "probabilidad que se rompa ^DD3434[ 10% ]^000000";
+
+set .@menu$,"";
+for( set .@i,2; .@i <= 9; set .@i,.@i+1 ){
+	if (.@i != 4 && .@i !=5 ){
+	set .@menu$, .@menu$ + ( getequipisequiped(.@i) ? "^4879E1"+getequipname(.@i)+"^000000 [^FF0000"+((getequipcardid(.@i,3) != 0 && getequipcardid(.@i,3) >= 4700 && getequipcardid(.@i,3) <= 5000) ? getitemname(getequipcardid(.@i,3)) : "NULL" )+"^000000]" : "^DD3434[ NULL ]^000000");
+	set .@menu$, .@menu$ + ":";
+	}	
+}
+	switch ( select(.@menu$) ) {
+
+		case 8://ESCUDO
+			next;
+			mes .@name$;
+			mes " ";
+
+			if( !getequipisequiped(3) )
+				mclose "No traes ningun Escudo...";
+
+			if( countitem(7828) < 100 || countitem(7829) < 100 || countitem(7773) < 100 || countitem(7086) < 6 || Zeny < 400000 ) 
+				mclose "Me gustaría seguir adelante, pero te faltan algunas cosas...";	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 20% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			close2;
+				delitem 7828,100;
+				delitem 7829,100;
+				delitem 7773,100;
+				delitem 7086,6;
+				set Zeny, Zeny - 400000;
+				set .@Rate,rand(210);
+			if (.@Rate >= 0 && .@Rate < 40) { // Break 20
+			mes "[Encantadora]";
+			delitem getequipid(3),1;
+			mclose "Ha fallado el intento. Lo siento...";
+		     } else if ((.@Rate > 40) && (.@Rate <= 50)) //
+				set .@Enchant, 4979;
+			else if ((.@Rate > 50) && (.@Rate <= 60)) //
+				set .@Enchant, 4980;
+			else if ((.@Rate > 60) && (.@Rate <= 70)) //
+				set .@Enchant, 4981;
+			else if ((.@Rate > 70) && (.@Rate <= 80)) //
+				set .@Enchant, 4982;
+			else if ((.@Rate > 85) && (.@Rate <= 100)) //
+				set .@Enchant, 4983;
+			else if ((.@Rate > 110) && (.@Rate <= 120)) //
+				set .@Enchant, 4984;
+			else if ((.@Rate > 120) && (.@Rate <= 130)) //
+				set .@Enchant, 4985;
+			else if ((.@Rate > 130) && (.@Rate <= 140)) //
+				set .@Enchant, 4986;
+			else if ((.@Rate > 140) && (.@Rate <= 150)) //
+				set .@Enchant, 4987;
+			else if ((.@Rate > 150) && (.@Rate <= 160)) //
+				set .@Enchant, 4988;
+			else if ((.@Rate > 160) && (.@Rate <= 170)) //
+				set .@Enchant, 4989;
+			else if ((.@Rate > 170) && (.@Rate <= 180)) //
+				set .@Enchant, 4990;
+			else if ((.@Rate > 180) && (.@Rate <= 190)) //
+				set .@Enchant, 4991;
+			else if ((.@Rate > 190) && (.@Rate <= 200)) //
+				set .@Enchant, 4992;
+			else  // 
+				set .@Enchant, 4993;
+				successenchant(getequipid(2),.@Enchant,2);
+			break;
+
+
+		case 9://ARMA
+			next;
+			mes .@name$;
+			mes " ";
+
+			if( !getequipisequiped(4) )
+				mclose "No traes ninguna Arma...";
+
+			if( countitem(7828) < 100 || countitem(7829) < 100 || countitem(7773) < 100 || countitem(7086) < 6 || Zeny < 400000 ) 
+				mclose "Me gustaría seguir adelante, pero te faltan algunas cosas...";	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 20% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			close2;
+				delitem 7828,100;
+				delitem 7829,100;
+				delitem 7773,100;
+				delitem 7086,6;
+				set Zeny, Zeny - 400000;
+				set .@Rate,rand(210);
+			if (.@Rate >= 0 && .@Rate < 40) { // Break 20 %
+			mes "[Encantadora]";
+			delitem getequipid(4),1;
+			mclose "Ha fallado el intento. Lo siento...";
+		     } else if ((.@Rate > 40) && (.@Rate <= 50)) //
+				set .@Enchant, 4964;
+			else if ((.@Rate > 50) && (.@Rate <= 60)) //
+				set .@Enchant, 4965;
+			else if ((.@Rate > 60) && (.@Rate <= 70)) //
+				set .@Enchant, 4966;
+			else if ((.@Rate > 70) && (.@Rate <= 80)) //
+				set .@Enchant, 4967;
+			else if ((.@Rate > 85) && (.@Rate <= 100)) //
+				set .@Enchant, 4968;
+			else if ((.@Rate > 110) && (.@Rate <= 120)) //
+				set .@Enchant, 4969;
+			else if ((.@Rate > 120) && (.@Rate <= 130)) //
+				set .@Enchant, 4970;
+			else if ((.@Rate > 130) && (.@Rate <= 140)) //
+				set .@Enchant, 4971;
+			else if ((.@Rate > 140) && (.@Rate <= 150)) //
+				set .@Enchant, 4972;
+			else if ((.@Rate > 150) && (.@Rate <= 160)) //
+				set .@Enchant, 4973;
+			else if ((.@Rate > 160) && (.@Rate <= 170)) //
+				set .@Enchant, 4974;
+			else if ((.@Rate > 170) && (.@Rate <= 180)) //
+				set .@Enchant, 4975;
+			else if ((.@Rate > 180) && (.@Rate <= 190)) //
+				set .@Enchant, 4976;
+			else if ((.@Rate > 190) && (.@Rate <= 200)) //
+				set .@Enchant, 4977;
+			else
+				set .@Enchant, 4978;
+				successenchant(getequipid(3),.@Enchant,3);
+			break;
+
+
+		case 3: //Garment
+			next;
+			mes .@name$;
+			mes " ";
+
+			if( !getequipisequiped(5) )
+				mclose "No traes ningun Garment...";
+
+			if( countitem(7828) < 100 || countitem(7829) < 100 || countitem(7773) < 100 || countitem(7086) < 6 || Zeny < 400000 ) 
+				mclose "Me gustaría seguir adelante, pero te faltan algunas cosas...";	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 20% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			close2;
+				delitem 7828,100;
+				delitem 7829,100;
+				delitem 7773,100;
+				delitem 7086,6;
+				set Zeny, Zeny - 400000;
+				set .@Rate,rand(110);
+			if (.@Rate >= 0 && .@Rate < 35) { // Break 10
+			mes "[Encantadora]";
+			delitem getequipid(5),1;
+			mclose "Ha fallado el intento. Lo siento...";
+		     } else if ((.@Rate > 40) && (.@Rate <= 50)) //
+				set .@Enchant, 4994;
+			else if ((.@Rate > 50) && (.@Rate <= 60)) //
+				set .@Enchant, 4995;
+			else if ((.@Rate > 60) && (.@Rate <= 70)) //
+				set .@Enchant, 4996;
+			else if ((.@Rate > 70) && (.@Rate <= 80)) //
+				set .@Enchant, 4997;
+			else if ((.@Rate > 85) && (.@Rate <= 100)) //
+				set .@Enchant, 4998;
+			else  // 
+				set .@Enchant, 4999;
+				successenchant(getequipid(4),.@Enchant,4);
+			break;
+
+		case 2: //Shoes
+			next;
+			mes .@name$;
+			mes " ";
+
+			if( !getequipisequiped(6) )
+				mclose "No traes ningunas Shoes...";
+
+			if( countitem(7828) < 100 || countitem(7829) < 100 || countitem(7773) < 100 || countitem(7086) < 6 || Zeny < 400000 ) 
+				mclose "Me gustaría seguir adelante, pero te faltan algunas cosas...";	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 20% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			close2;
+				delitem 7828,100;
+				delitem 7829,100;
+				delitem 7773,100;
+				delitem 7086,6;
+				set Zeny, Zeny - 400000;
+			set .@Rate,rand(110);
+			if (.@Rate >= 0 && .@Rate < 35) { // Break 10
+			mes "[Encantadora]";
+			delitem getequipid(6),1;
+			mclose "Ha fallado el intento. Lo siento...";
+		     } else if ((.@Rate > 40) && (.@Rate <= 50)) //
+				set .@Enchant, 4994;
+			else if ((.@Rate > 50) && (.@Rate <= 60)) //
+				set .@Enchant, 4995;
+			else if ((.@Rate > 60) && (.@Rate <= 70)) //
+				set .@Enchant, 4996;
+			else if ((.@Rate > 70) && (.@Rate <= 80)) //
+				set .@Enchant, 4997;
+			else if ((.@Rate > 85) && (.@Rate <= 100)) //
+				set .@Enchant, 4998;
+			else  // 
+				set .@Enchant, 4999;
+				successenchant(getequipid(5),.@Enchant,5);
+			break;
+
+
+		case 6: //hat
+			next;
+			mes .@name$;
+			mes " ";
+
+			if( !getequipisequiped(0) )
+				mclose "No traes ningun Hat...";
+
+			if( countitem(7828) < 100 || countitem(7829) < 100 || countitem(7773) < 100 || countitem(7086) < 4 || Zeny < 400000 ) 
+				mclose "Me gustaría seguir adelante, pero te faltan algunas cosas...";	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 0% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			close2;
+				delitem 7828,100;
+				delitem 7829,100;
+				delitem 7773,100;
+				delitem 7086,4;
+				set Zeny, Zeny - 400000;
+				set .@Enchant, 4700 + (rand(6) * 10);
+				successenchant(getequipid(0),.@Enchant,0);
+			break;	
+
+		case 7://armaduras
+			deletearray .@ArmorT[0],127;		
+			setarray .@ArmorT[0],2307,2309,2314,2316,2321,2325,2327,2322,2328,2330,2332,2334,2335,2341,2344,2346,2348,2350,2337,2386,2394,2395,2396,2311,2318,2319,2320,2308,2310,2315,2317,2324,2326,2331,2333,2336,30093,30092,2342,2345,2347,2349,2351,2364,2365,2391,2374,2375,2376,2377,2378,2379,2380,2381,2382,2387,2388,2389,2390;
+			next;
+			mes .@name$;
+			mes " ";
+
+			for( set .@i, 0; .@i < getarraysize(.@ArmorT); set .@i,.@i + 1 ) {
+				if( .@ArmorT[.@i] == getequipid(2) )
+					break;
+			}	
+	
+
+			mes "Seguro de que quieres seguir?";
+			mes "probabilidad que se rompa ^DD3434[ 10% ]^000000";
+			if ( select("^009933 > ^000000 Vamos Enchantar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			set Zeny, Zeny - 400000;
+			delitem 7086,2;
+			set .@Rate,rand(110);
+			if (.@Rate >= 0 && .@Rate < 25) { // Break 10%
+			mes "[Encantadora]";
+			delitem getequipid(2),1;
+			mclose "Ha fallado el intento. Lo siento...";
+		     } else if ((.@Rate > 30) && (.@Rate <= 40)) // status +1
+				set .@Enchant, 4700 + (rand(6) * 10);
+			else if ((.@Rate > 40) && (.@Rate <= 50)) // status +2
+				set .@Enchant, 4701 + (rand(6) * 10);
+			else if ((.@Rate > 50) && (.@Rate <= 60)) // str
+				set .@Enchant, 4702;
+			else if ((.@Rate > 60) && (.@Rate <= 70)) // int
+				set .@Enchant, 4712;
+			else if ((.@Rate > 70) && (.@Rate <= 85)) // dex
+				set .@Enchant, 4722;
+			else if ((.@Rate > 85) && (.@Rate <= 90)) // agi
+				set .@Enchant, 4732;
+			else if ((.@Rate > 90) && (.@Rate <= 100)) // vit
+				set .@Enchant, 4742;
+			else  // luk
+				set .@Enchant, 4752;
+			close2;
+				successenchant(getequipid(1),.@Enchant,1);
+			break;
+	}
+	end;
+}
+
+//DUPLICATE ENCHANTER
+itemmall,191,63,4	duplicate(Enchanter)	Enchanter#1	747,{
+arena_4,152,94,8	duplicate(Enchanter)	Enchanter#2	84,{

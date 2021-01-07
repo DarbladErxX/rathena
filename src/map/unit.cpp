@@ -1202,10 +1202,10 @@ int unit_warp(struct block_list *bl,short m,short x,short y,clr_type type)
 
 	switch (bl->type) {
 		case BL_MOB:
-			if (map_getmapflag(bl->m, MF_MONSTER_NOTELEPORT) && ((TBL_MOB*)bl)->master_id == 0)
+			if (map_getmapflag(bl->m, MF_MONSTER_NOTELEPORT) && ((TBL_MOB*)bl)->master_id == 0 && !map_getmapflag(bl->m, MF_BATTLEGROUND))
 				return 1;
 
-			if (m != bl->m && map_getmapflag(m, MF_NOBRANCH) && battle_config.mob_warp&4 && !(((TBL_MOB *)bl)->master_id))
+			if (m != bl->m && map_getmapflag(m, MF_NOBRANCH) && battle_config.mob_warp&4 && !(((TBL_MOB *)bl)->master_id) || ((TBL_MOB*)bl)->option.allow_warp)
 				return 1;
 			break;
 		case BL_PC:
@@ -1847,7 +1847,7 @@ int unit_skilluse_id2(struct block_list *src, int target_id, uint16 skill_id, ui
 #ifndef RENEWAL_CAST
 	casttime = skill_castfix_sc(src, casttime, skill_get_castnodex(skill_id));
 #else
-	casttime = skill_vfcastfix(src, casttime, skill_id, skill_lv);
+	casttime = (int)skill_vfcastfix(src, casttime, skill_id, skill_lv);
 #endif
 
 	if(!ud->state.running) // Need TK_RUN or WUGDASH handler to be done before that, see bugreport:6026
@@ -2061,7 +2061,7 @@ int unit_skilluse_pos2( struct block_list *src, short skill_x, short skill_y, ui
 #ifndef RENEWAL_CAST
 	casttime = skill_castfix_sc(src, casttime, skill_get_castnodex(skill_id));
 #else
-	casttime = skill_vfcastfix(src, casttime, skill_id, skill_lv );
+	casttime = (int)skill_vfcastfix(src, casttime, skill_id, skill_lv );
 #endif
 
 	ud->state.skillcastcancel = castcancel&&casttime>0?1:0;
@@ -3234,6 +3234,7 @@ int unit_free(struct block_list *bl, clr_type clrtype)
 			pc_inventory_rental_clear(sd);
 			pc_delspiritball(sd, sd->spiritball, 1);
 			pc_delspiritcharm(sd, sd->spiritcharm, sd->spiritcharm_type);
+			if (sd->qd) bg_queue_leaveall(sd);
 
 			if( sd->st && sd->st->state != RUN ) {// free attached scripts that are waiting
 				script_free_state(sd->st);

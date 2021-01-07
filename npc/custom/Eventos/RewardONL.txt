@@ -1,0 +1,169 @@
+-	script	premioauto	-1,{
+	end;
+	
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) {
+		if (@whispervar0$ == "activar") goto L_Premio;
+	}
+	end;
+
+OnClock0559:
+OnClock1759:
+	set .@controlr,0; //Reseteo del control de repetición un minuto antes de las 6am y 6pm.
+	end;
+
+OnClock0600:
+OnClock0700:
+OnClock0800:
+OnClock0900:
+OnClock1000:
+OnClock1100:
+OnClock1200:
+OnClock1300:
+OnClock1400:
+OnClock1500:
+OnClock1600:
+OnClock1700:
+	goto L_control;		
+	end;
+
+OnClock1800:
+OnClock1900:
+OnClock2000:
+OnClock2100:
+OnClock2200:
+OnClock2300:
+OnClock0000:
+OnClock0100:
+OnClock0200:
+OnClock0300:
+OnClock0400:
+OnClock0500:
+	goto L_control;	
+	end;
+	
+L_control:
+	if (agitcheck()) end;
+	set .@countPremio,rand(1,6);
+	if(.@controlr == 0 && .@countPremio == 4) goto L_Premio;
+	end;
+	
+L_Premio:
+announce "[Daily Reward]: estamos apunto de escoger a un ganador, recuerda que: doble login, auto trade y chatting no aplican para el sorteo.",bc_all;
+	sleep2 6000;
+announce "[Daily Reward]: Suerte a todos y sigan disfrutando de Mavis-RO",bc_all;
+	sleep2 15000;
+	query_sql "select ACCID, `char`.`name` FROM (select MIN(`char`.`account_id`) as ACCID, `login`.`last_mac` as MACADD, count(`login`.`last_mac`) as CMACADD from `login` INNER JOIN `char` ON `char`.`account_id` = `login`.`account_id` WHERE `login`.`account_id` NOT IN (0,1) AND `login`.`last_mac` NOT IN ('')  AND `char`.`online` = 1 GROUP BY `login`.`last_mac`) AS USUARIOS INNER JOIN `char` ON `char`.`account_id` = USUARIOS.ACCID WHERE `char`.`online` = 1",.@PremioR,.@PremioN$;
+	set .@randreward, rand(0,getarraysize(.@PremioR)-1);
+	set .@randarray, rand(0,1);
+	for (set .@i, 0; .@i < getarraysize(.@PremioR); set .@i, .@i + 1) {
+		if (.@i == .@randreward) {
+			attachrid(.@PremioR[.@i]);
+			if(checkvending() < 1 && checkchatting() < 1) {
+				set .@valP,(.@randarray == 0 ? rand(0,getarraysize(.PremioP)-1) : rand(0,getarraysize(.Premio)-1));
+				if (.@randarray == 0)
+					getitem .PremioP[.@valP],.PremioC[.@valP];					
+				else					
+					getitem .Premio[.@valP],1;
+				announce "[Daily Reward]: " + (Sex?"El ganador":"La ganadora") + " es "+.@PremioN$[.@i]+" ha ganado " + ( .@randarray == 0 ? .PremioC[.@valP] +"  "+ getitemname(.PremioP[.@valP]): getitemname(.Premio[.@valP] )) + " - Muchas felicidades",bc_all;
+				set .@controlr,1;
+			}			
+			detachrid; 
+		}		
+	}
+	end;
+	
+OnInit:
+	set .@countPremio,0; //Variable para los rand en las horas.
+	set .@controlr,0; //Variable para evitar repetición de evento en cada hora.
+	setarray .PremioP[0],7539;
+	setarray .PremioC[0],50;
+	setarray .Premio[0],21239,21240,21241,21242,21243,21244,21245,21250,21251,21255,21260,21265,21266,21267,21269,21271,21272,21273,21274,21275,21291,21278,21285,21289,2129,21296,21298,21302,21303,21308,21309,21310,21311,21312,21172,21173,21175,5453,5452,5506,5407,5406,5474,5258,5086,5137,5766,5389,5153,5449,5490,5512,5513,5490,5449,5132,5074,5513,5546,5545,2261,5505,5264,5531,5147,5076,5344,5338,5480,5183,5401,5191,5102,5776,5236,5233,5065,5052,5241,5506,5406,5800,5429,5398,5827,5016;
+	end;
+}
+
+// Variable .Premio
+// ID,   NAME
+// 21239 Atroce_Hat
+// 21240 Dragon_Hat
+// 21241 Puppet_Loli_Ruri
+// 21242 Puppet_de_Fada
+// 21243 Puppet_Sandra
+// 21244 Puppet_Valkyria
+// 21245 Puppet_Hunny
+// 21250 Boss_Cat_Hat
+// 21251 Bradium_Dragon
+// 21255 Baphomet_Horns
+// 21260 Green_Dragon_Hat
+// 21265 Drooping_Maya
+// 21266 Drooping_Mina
+// 21267 Drooping_Zealotus
+// 21269 Randgris_Hat
+// 21271 Gloom_Doll
+// 21272 Hanging_Dolls
+// 21273 Leopard_hat
+// 21274 Mascara_de_Vendetta
+// 21275 Mascara_de_Panico
+// 21291 Critura_Hat
+// 21278 Phreeoni_Hat
+// 21285 White_Snake
+// 21289 Celestial_Dark_Frame
+// 21294 Drooping_Aliot
+// 21296 RWC2010_Indonesia
+// 21298 Pumpkin_Hat
+// 21302 Monkey Hat
+// 21303 Prayer Cherry Blossom
+// 21308 Gorilla Model Hat
+// 21309 Advanced Jao King Hat
+// 21310 Lion Model Hat
+// 21311 Bridal Ribbon
+// 21312 Stardust Hairband
+// 21172 Frog_Umbrella
+// 21173 Lady_Tanee_Hat 
+// 21175 Aquaring_Hat
+// 5453  RWC 2008 Dragon Helm Copper [1] 
+// 5452  RWC 2008 Dragon Helm Silver [1]
+// 5506 4Leaf Clover In Mouth [0]
+// 5407 Academy Completion Hat [0] 
+// 5406 Academy Freshman Hat [0]
+// 5474 AFK Hat [0] 
+// 5258 Afro Wig [1]
+// 5086 Alarm Mask [0]
+// 5137 Alice Doll [1]  
+// 5766 Amistr Cap [1]
+// 5389 Angel Spirit [0]
+// 5153 Angeling Hairpin [0]
+// 5074 Angel Wing Ears [0]
+// 5132 Angeling Hat [0]
+// 5449 Angry Solo Hat [1]
+// 5490 Anubis Helm [0]
+// 5513 Aquarius Crown [0]
+// 5512 Aquarius Diadem [0] 
+// 5546 Aries Crown [1]
+// 5545 Aries Diadem [1] 
+// 2261 Army Cap [0]
+// 5505 Asara Fairy Hat [0] 
+// 5264 Australian Flag Hat [0]
+// 5531 Baby Dragon Hat [1]
+// 5147 Baseball Cap [0]
+// 5076 Beanie [0]
+// 5344 Bennit Doll Hat [1]
+// 5338 BF Recruiter Hat [0]
+// 5480 Bijofnil Wings [0]
+// 5183 Bird Nest Hat [0]
+// 5401 Black Frame Glasses [0]
+// 5191 Black Ribbon [1] 
+// 5102 Blank Eyes [0] 
+// 5776 Blazing Sun [0] 
+// 5236 Blue Beanie [0] 
+// 5233 Blue Drooping Cat [0]
+// 5065 Blue Fish [0] 
+// 5052 Blue Hairband [0] 
+// 5241 Blue Mage Hat [0]
+// 5506 Blue Night Cap [0]
+// 5404 Blue Ribbon [1]
+// 5800 Blush of Groom [0]
+// 5429 Hobgoblin's Hat [1]
+// 5398 Bone Head [1]
+// 5827 Book File Hat [0] 
+// 5016 Boy's Cap [0] 

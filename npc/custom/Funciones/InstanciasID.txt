@@ -1,0 +1,14 @@
+//Aglao - Función para realizar validaciones SQL sobre registros de personajes en instancias
+function	script	valsqlfunc	{
+query_sql("SELECT `last_ip`, `last_unique_id` FROM `login` WHERE `account_id` = "+getarg(1), .@ipuser$, .@geparduser$);
+query_sql("SELECT COUNT(*) FROM `quest` INNER JOIN `char` ON `char`.`char_id` = `quest`.`char_id` INNER JOIN `login` ON `login`.`account_id` = `char`.`account_id` WHERE `quest`.`quest_id` IN ("+getarg(2)+") AND `char`.`char_id` != "+getarg(0)+" AND (`login`.`account_id` = "+getarg(1)+" OR `login`.`last_ip` = '"+.@ipuser$+"' OR `login`.`last_unique_id` = '"+.@geparduser$+"')", .@cantus);
+	return (.@cantus[0]);
+}
+
+//Función para capturar el tiempo de cada instancia
+function	script	ExpireF	{
+	set .@Time, 1 * 7 * 24 * 60 * 60; // Tiempo en segundos = 1 semana, 7 dias, 60 minutos, 60 segundos
+ 	if(getarg(0) <= gettimetick(2))
+	set getarg(0), gettimetick(2) + .@Time;
+	return;
+}

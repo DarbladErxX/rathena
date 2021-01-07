@@ -1,0 +1,489 @@
+//Sistema Configurado por MediaFire
+-	script	rankmvpsystem	-1,{ //By: Aglao
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto rewardmvp;
+	}
+end;
+
+OnClock0600: //6 de la mañana.
+	if(gettime(4)==1) { //Si es Lunes.
+		goto rewardmvp;
+	}
+	end;
+
+rewardmvp:
+		query_sql("SELECT `char`.`char_id` as IDJugador, `char`.`name` as Jugador, `char_reg_num`.`value` as Puntos FROM `char` INNER JOIN `char_reg_num` ON `char_reg_num`.`char_id` = `char`.`char_id` WHERE `char_reg_num`.`key` = 'MVPKILLRANK' ORDER BY `char_reg_num`.`value` DESC LIMIT 3",.@idplayermvp,.@playermvp$,.@puntos);
+
+		.@sender$ = "Mavis-RO";
+		.@title$ = "Ranking MVP Rewards";
+		.@zeny = 0;
+
+		//Solo se pueden enviar 5 items maximos por Mail
+		setarray .@mailitem[0],50008,0,0,0,0; // Premios para el prmier lugar
+		setarray .@mailamount[0],1,0,0,0,0; // Cantidad maxima de items 5
+
+		setarray .@mailitem2[0],50009,0,0,0,0; // Segundo para el prmier lugar
+		setarray .@mailamount2[0],1,0,0,0,0; // Cantidad maxima de items 5
+
+		setarray .@mailitem3[0],50010,0,0,0,0; // Tercero para el prmier lugar
+		setarray .@mailamount3[0],1,0,0,0,0; // Cantidad maxima de items 5
+
+		if(getarraysize(.@idplayermvp) > 0) {
+			announce "-- Ranking MVP Semanal --",bc_all;
+			for (set .@i,0; .@i < getarraysize(.@idplayermvp); set .@i,.@i+1) {
+				if(.@i == 0) {	
+					announce "Primer Lugar: Jugador [ "+.@playermvp$[.@i]+" ]",bc_all;
+					.@body$ = "Hola " + .@playermvp$[.@i] + ", Aquí tienes tu premio por ocupar el primer lugar del ranking MVP semanal, felicidades. ^^";
+					atcommand "@itemdestroy 50008";
+					mail .@idplayermvp[.@i],.@sender$,.@title$,.@body$,.@zeny,.@mailitem,.@mailamount;
+				}
+				if(.@i == 1) {	
+					announce "Segundo Lugar: Jugador [ "+.@playermvp$[.@i]+" ]",bc_all;
+					.@body$ = "Hola " + .@playermvp$[.@i] + ", Aquí tienes tu premio por ocupar el segundo lugar del ranking MVP semanal, felicidades. ^^";
+					atcommand "@itemdestroy 50009"; 
+					mail .@idplayermvp[.@i],.@sender$,.@title$,.@body$,.@zeny,.@mailitem2,.@mailamount2;
+				}
+				if(.@i == 2) {	
+					announce "Tercer Lugar: Jugador [ "+.@playermvp$[.@i]+" ]",bc_all;
+					.@body$ = "Hola " + .@playermvp$[.@i] + ", Aquí tienes tu premio por ocupar el tercer lugar del ranking MVP semanal, felicidades. ^^";
+					atcommand "@itemdestroy 50010";
+					mail .@idplayermvp[.@i],.@sender$,.@title$,.@body$,.@zeny,.@mailitem3,.@mailamount3;
+				}
+			}
+			announce "-- Felicidades a los ganadores de los primeros lugares del Ranking MVP Semanal --",bc_all;
+			query_sql("DELETE FROM `char_reg_num` WHERE `key` = 'MVPKILLRANK'");
+			addrid(0);
+			MVPKILLRANK = 0;
+			set $mvprankpos1$,"";
+			set $mvprankpos2$,"";
+			set $mvprankpos3$,"";
+			detachrid;
+		}
+	end;
+}
+
+-	script	mob_reward	-1,{
+
+OnPCLoadMapEvent:
+	setarray .mapsreward$[0],
+		"moc_pryd06",
+		"ra_fild02",
+		"ra_fild03",
+		"ra_fild04",
+		"ve_fild01",
+		"ve_fild02",
+		"lou_dun03",
+		"prt_maze03",
+		"bra_dun02",
+		"gl_chyard",
+		"abyss_03",
+		"gef_dun02",
+		"gld_dun02",
+		"gef_dun01",
+		"treasure02",
+		"gld_dun01",
+		"pay_fild11",
+		"gon_dun03",
+		"abbey02",
+		"xmas_fild01",
+		"ra_san05",
+		"dic_dun02",
+		"prt_sewb4",
+		"mosk_dun03",
+		"ama_dun03",
+		"kh_dun02",
+		"xmas_dun02",
+		"ayo_dun02",
+		"niflheim",
+		"anthell02",
+		"mjolnir_04",
+		"pay_dun04",
+		"moc_prydn2",
+		"2@orcs",
+		"gef_fild02",
+		"gef_fild14",
+		"gef_fild10",
+		"moc_pryd04",
+		"in_sphinx5",
+		"moc_fild17",
+		"ein_dun02",
+		"beach_dun",
+		"tur_dun04",
+		"jupe_core",
+		"lhz_dun02",
+		"mag_dun02",
+		"lhz_dun03",
+		"thor_v03",
+		"iz_dun05",
+		"ice_dun03",
+		"2@nyd",
+		"thana_boss",
+		"odin_tem03",
+		"moc_fild22",
+		"ice_dun02",
+		"pay_fild04",
+		"mosk_dun03",
+		"dew_dun01",
+		"spl_fild03",
+		"yuno_fild03",
+		"abbey03",
+ 	// Configuración Mapas Mini boss
+		"xmas_dun01",
+		"yuno_fild05",
+		"gl_cas02",
+		"moc_fild18",
+		"prt_fild02",
+		"anthell01",
+		"hu_fild05",
+		"cmd_fild03",
+		"ama_dun02",
+		"ama_fild01",
+		"moc_fild03",
+		"prt_maze01";
+
+		
+	getmapxy(.@map$,.@x,.@y,0);
+	set InMap, 0;
+	for ( set .@i, 0; .@i < getarraysize(.mapsreward$); set .@i, .@i + 1)
+	{
+		if ( .@map$ == .mapsreward$[.@i] )
+		{
+			set InMap, 1;
+			dispbottom "Has entrado a una zona de reconocimiento por matar MvP's y Mini Boss";
+			if( isPremium() == 1 )
+			sc_start SC_BOSSMAPINFO,600000,0;
+		}
+	}
+end;
+
+OnWhisperGlobal:
+	if ( getgmlevel() < 90 ) end; 
+OnInit:
+	//Configuración MvP's
+	setarray $MVPReward[0],
+		1511,//	Amon Ra
+		1647,// Assassin Cross Eremes
+		1785,//	Atroce
+		1630,//	Bacsojin
+		1039,//	Baphomet
+		1874,//	Beelzebub
+		1272,//	Dark Lord
+		1719,//	Datale
+		1046,//	Doppelgangger
+		1389,//	Dracula
+		1112,//	Drake
+		1115,//	Eddga
+		1418,//	Evil Snake Lord
+		1871,//	Fallen Bishop
+		1252,//	Garm
+		1768,//	Gloom Under Night
+		1086,//	Golden Thief Bug
+		1885,//	Gopinich
+		1649,// High Priest Magaleta
+		1651,// High Wizard Katrinn
+		1832,//	Ifrit
+		1492,//	Incantation Samurai
+		1734,//	Kiel D-01
+		1251,//	Knight of Windstorm
+		1779,//	Ktullanux
+		1688,//	Lady Tanee
+		1646,// Lord Knight Seyren
+		1373,//	Lord of Death
+		1147,//	Maya
+		1059,//	Mistress
+		1150,//	Moonlight Flower
+		1087,//	Orc Hero
+		1190,//	Orc Lord
+		1038,//	Osiris
+		1157,//	Pharaoh
+		1159,//	Phreeoni
+		1623,//	RSX 0806
+		1650,// Sniper Shecil
+		1583,//	Tao Gunka
+		1708,//	Thanatos
+		1312,//	Turtle General
+		1751,//	Valkyrie Randgris
+		1685,// Vesper
+		1648,// Whitesmith Harword
+		1917,// Wounded Morroc
+		1658;//	Ygnizem
+
+	// Configuración Mini boss
+	setarray $MinibossReward[0],
+		1096,// Angeling
+		1388,// Archangeling
+		1307,// Cat O' Nine Tail
+		1283,// Chimera
+		1582,// Deviling
+		1091,// Dragon Fly
+		1093,// Eclipse
+		1120,// Ghostring
+		1090,// Mastering
+		1289,// Maya Purple
+		1262,// Mutant Dragon
+		1089,// Toad
+		1092,// Vagabond Wolf
+		1765;// Valkyrie
+
+	
+	//Configuración de items especiales por MVP's
+	setarray $@MVPAtroce[0],1228;
+	setarray $@MVPBacsojin[0],1228; 
+	setarray $@MVPBaphomet[0],1228;
+	setarray $@MVPBeelzebub[0],1228;
+	setarray $@MVPDarkLord[0],1228;
+	setarray $@MVPDatale[0],1228;
+	setarray $@MVPDoppelgangger[0],1228;
+	setarray $@MVPDracula[0],1228;
+	setarray $@MVPDrake[0],1228;
+	setarray $@MVPEddga[0],1228;
+	setarray $@MVPEvilSnakeLord[0],1228;
+	setarray $@MVPFallenBishop[0],1228;
+	setarray $@MVPGarm[0],1228;
+	setarray $@MVPGloomUnderNight[0],1228;
+	setarray $@MVPGoldenThiefBug[0],1228;
+	setarray $@MVPGopinich[0],1228;
+	setarray $@MVPIfrit[0],1228;
+	setarray $@MVPKielD01[0],1228;
+	setarray $@MVPKnightofWindstorm[0],1228;
+	setarray $@MVPKtullanux[0],1228;
+	setarray $@MVPLadyTanee[0],1228;
+	setarray $@MVPLordofDeath[0],1228;
+	setarray $@MVPMaya[0],1228;
+	setarray $@MVPMistress[0],1228;
+	setarray $@MVPMoonlightFlower[0],1228;
+	setarray $@MVPMOrcHero[0],1228;
+	setarray $@MVPMOrcLord[0],1228;
+	setarray $@MVPPharaoh[0],1228;
+	setarray $@MVPPhreeoni[0],1228;
+	setarray $@MVPRSX0806[0],1228;
+	setarray $@MVPThanatos[0],1228;
+	setarray $@MVPValkyrieRandgris[0],1228;
+	setarray $@MVPVesper[0],1228;
+	setarray $@MVPWoundedMorroc[0],1228;
+	setarray $@MVPYgnizem[0],1228;
+
+
+	
+	for (set .@i, 0; .@i < getarraysize($MVPReward); set .@i, .@i + 1)
+	{
+		if ($MinibossReward[.@i] > 0)
+			continue;
+		else
+			setarray $MinibossReward[.@i], 0;
+	}
+	
+	//Configuración Puntos Cash
+	set $@MvP_Point, 60; //Puntos por matar MvP's
+	set $@Mini_Boss_Point, 30; //Puntos por matar Mini Boss
+	
+	for ( set .@i, 0; .@i < getarraysize(.mapsreward$); set .@i, .@i + 1)
+	{
+		setmapflag .mapsreward$[.@i],mf_loadevent;
+		setmapflag .mapsreward$[.@i],mf_nobranch;
+	}
+
+	// // Cambio de rankings TOP 3 MVP
+	//if(!$mvprankpos1$) set $mvprankpos1$,"";
+	//if(!$mvprankpos2$) set $mvprankpos2$,"";
+	//if(!$mvprankpos3$) set $mvprankpos3$,"";
+end;
+
+	
+	
+OnNPCKillEvent:
+	if (InMap != 1)
+		end;
+
+	set .@ismvp,0; //Banderilla para Saber si fue MVP o no lo que maté
+	set .@randlvl,rand(100);
+	if (.@randlvl > 70) && (.@randlvl <= 80){
+		switch(killedrid){
+			case 1785:// Atroce
+					set .@rand,rand(0,getarraysize($@MVPAtroce) - 1);
+					getitem $@MVPAtroce[.@rand],1; .MVPReward = $@MVPAtroce[.@rand]; set .@ismvp,1; break;
+
+			case 1630://Bacsojin
+					set .@rand,rand(0,getarraysize($@MVPBacsojin) - 1);
+					getitem $@MVPBacsojin[.@rand],1; .MVPReward = $@MVPBacsojin[.@rand]; set .@ismvp,1;  break;
+
+			case 1039:// Baphomet
+					set .@rand,rand(0,getarraysize($@MVPBaphomet) - 1);
+					getitem $@MVPBaphomet[.@rand],1; .MVPReward = $@MVPBaphomet[.@rand]; set .@ismvp,1;  break;
+
+			case 1874:// Beelzebub
+					set .@rand,rand(0,getarraysize($@MVPBeelzebub) - 1);
+					getitem $@MVPBeelzebub[.@rand],1; .MVPReward = $@MVPBeelzebub[.@rand]; set .@ismvp,1;  break;
+
+			case 1272:// Dark Lord
+					set .@rand,rand(0,getarraysize($@MVPDarkLord) - 1);
+					getitem $@MVPDarkLord[.@rand],1; .MVPReward = $@MVPDarkLord[.@rand]; set .@ismvp,1;  break;
+
+			case 1719:// Datale
+					set .@rand,rand(0,getarraysize($@MVPDatale) - 1);
+					getitem $@MVPDatale[.@rand],1; .MVPReward = $@MVPDatale[.@rand]; set .@ismvp,1;  break;
+
+			case 1046:// Doppelgangger
+					set .@rand,rand(0,getarraysize($@MVPDracula) - 1);
+					getitem $@MVPDracula[.@rand],1; .MVPReward = $@MVPDracula[.@rand]; set .@ismvp,1;  break;
+
+			case 1389:// Dracula
+					set .@rand,rand(0,getarraysize($@MVPBaphomet) - 1);
+					getitem $@MVPBaphomet[.@rand],1; .MVPReward = $@MVPBaphomet[.@rand]; set .@ismvp,1;  break;
+
+			case 1112:// Drake
+					set .@rand,rand(0,getarraysize($@MVPDrake) - 1);
+					getitem $@MVPDrake[.@rand],1; .MVPReward = $@MVPDrake[.@rand]; set .@ismvp,1;  break;
+
+			case 1115:// Eddga
+					set .@rand,rand(0,getarraysize($@MVPEddga) - 1);
+					getitem $@MVPEddga[.@rand],1; .MVPReward = $@MVPEddga[.@rand]; set .@ismvp,1;  break;
+
+			case 1418:// Evil Snake Lord
+					set .@rand,rand(0,getarraysize($@MVPEvilSnakeLord) - 1);
+					getitem $@MVPEvilSnakeLord[.@rand],1; .MVPReward = $@MVPEvilSnakeLord[.@rand]; set .@ismvp,1;  break;
+
+			case 1871:// Fallen Bishop
+					set .@rand,rand(0,getarraysize($@MVPFallenBishop) - 1);
+					getitem $@MVPFallenBishop[.@rand],1; .MVPReward = $@MVPFallenBishop[.@rand]; set .@ismvp,1;  break;
+
+			case 1252:// Garm
+					set .@rand,rand(0,getarraysize($@MVPGarm) - 1);
+					getitem $@MVPGarm[.@rand],1; .MVPReward = $@MVPGarm[.@rand]; set .@ismvp,1;  break;
+
+			case 1768:// Gloom Under Night
+					set .@rand,rand(0,getarraysize($@MVPGloomUnderNight) - 1);
+					getitem $@MVPGloomUnderNight[.@rand],1; .MVPReward = $@MVPGloomUnderNight[.@rand]; set .@ismvp,1;  break;
+
+			case 1086:// Golden Thief Bug
+					set .@rand,rand(0,getarraysize($@MVPGoldenThiefBug) - 1);
+					getitem $@MVPGoldenThiefBug[.@rand],1; .MVPReward = $@MVPGoldenThiefBug[.@rand]; set .@ismvp,1;  break;
+
+			case 1885:// Gopinich
+					set .@rand,rand(0,getarraysize($@MVPGopinich) - 1);
+					getitem $@MVPGopinich[.@rand],1; .MVPReward = $@MVPGopinich[.@rand]; set .@ismvp,1;  break;
+
+			case 1832:// Ifrit
+					set .@rand,rand(0,getarraysize($@MVPIfrit) - 1);
+					getitem $@MVPIfrit[.@rand],1; .MVPReward = $@MVPIfrit[.@rand]; set .@ismvp,1;  break;
+
+			case 1734:// Kiel D-01
+					set .@rand,rand(0,getarraysize($@MVPKielD01) - 1);
+					getitem $@MVPKielD01[.@rand],1; .MVPReward = $@MVPKielD01[.@rand]; set .@ismvp,1;  break;
+
+			case 1251:// Knight of Windstorm
+					set .@rand,rand(0,getarraysize($@MVPKnightofWindstorm) - 1);
+					getitem $@MVPKnightofWindstorm[.@rand],1; .MVPReward = $@MVPKnightofWindstorm[.@rand]; set .@ismvp,1;  break;
+
+			case 1779:// Ktullanux
+					set .@rand,rand(0,getarraysize($@MVPKtullanux) - 1);
+					getitem $@MVPKtullanux[.@rand],1; .MVPReward = $@MVPKtullanux[.@rand]; set .@ismvp,1;  break;
+
+			case 1688:// Lady Tanee
+					set .@rand,rand(0,getarraysize($@MVPLadyTanee) - 1);
+					getitem $@MVPLadyTanee[.@rand],1; .MVPReward = $@MVPLadyTanee[.@rand]; set .@ismvp,1;  break;
+
+			case 1373:// Lord of Death
+					set .@rand,rand(0,getarraysize($@MVPLordofDeath) - 1);
+					getitem $@MVPLordofDeath[.@rand],1; .MVPReward = $@MVPLordofDeath[.@rand]; set .@ismvp,1;  break;
+
+			case 1147:// Maya
+					set .@rand,rand(0,getarraysize($@MVPMaya) - 1);
+					getitem $@MVPMaya[.@rand],1; .MVPReward = $@MVPMaya[.@rand]; set .@ismvp,1;  break;
+
+			case 1059:// Mistress
+					set .@rand,rand(0,getarraysize($@MVPMistress) - 1);
+					getitem $@MVPMistress[.@rand],1; .MVPReward = $@MVPMistress[.@rand]; set .@ismvp,1;  break;
+
+			case 1150:// Moonlight Flower
+					set .@rand,rand(0,getarraysize($@MVPMoonlightFlower) - 1);
+					getitem $@MVPMoonlightFlower[.@rand],1; .MVPReward = $@MVPMoonlightFlower[.@rand]; set .@ismvp,1;  break;
+
+			case 1087:// Orc Hero
+					set .@rand,rand(0,getarraysize($@MVPMOrcHero) - 1);
+					getitem $@MVPMOrcHero[.@rand],1; .MVPReward = $@MVPMOrcHero[.@rand]; set .@ismvp,1;  break;
+
+			case 1190:// Orc Lord
+					set .@rand,rand(0,getarraysize($@MVPMOrcLord) - 1);
+					getitem $@MVPMOrcLord[.@rand],1; .MVPReward = $@MVPMOrcLord[.@rand]; set .@ismvp,1;  break;
+
+			case 1157:// Pharaoh
+					set .@rand,rand(0,getarraysize($@MVPPharaoh) - 1);
+					getitem $@MVPPharaoh[.@rand],1; .MVPReward = $@MVPPharaoh[.@rand]; set .@ismvp,1;  break;
+
+			case 1159:// Phreeoni
+					set .@rand,rand(0,getarraysize($@MVPPhreeoni) - 1);
+					getitem $@MVPPhreeoni[.@rand],1; .MVPReward = $@MVPPhreeoni[.@rand]; set .@ismvp,1;  break;
+
+			case 1623:// RSX 0806
+					set .@rand,rand(0,getarraysize($@MVPRSX0806) - 1);
+					getitem $@MVPRSX0806[.@rand],1; .MVPReward = $@MVPRSX0806[.@rand]; set .@ismvp,1;  break;
+
+			case 1708:// Thanatos
+					set .@rand,rand(0,getarraysize($@MVPThanatos) - 1);
+					getitem $@MVPThanatos[.@rand],1; .MVPReward = $@MVPThanatos[.@rand]; set .@ismvp,1;  break;
+
+			case 1751:// Valkyrie Randgris
+					set .@rand,rand(0,getarraysize($@MVPValkyrieRandgris) - 1);
+					getitem $@MVPValkyrieRandgris[.@rand],1; .MVPReward = $@MVPValkyrieRandgris[.@rand]; set .@ismvp,1;  break;
+
+			case 1685:// Vesper
+					set .@rand,rand(0,getarraysize($@MVPVesper) - 1);
+					getitem $@MVPVesper[.@rand],1; .MVPReward = $@MVPVesper[.@rand]; set .@ismvp,1;  break;
+
+			case 1917:// Wounded Morroc
+					set .@rand,rand(0,getarraysize($@MVPWoundedMorroc) - 1);
+					getitem $@MVPWoundedMorroc[.@rand],1; .MVPReward = $@MVPWoundedMorroc[.@rand]; set .@ismvp,1;  break;
+
+			case 1658:// Ygnizem
+					set .@rand,rand(0,getarraysize($@MVPYgnizem) - 1);
+					getitem $@MVPYgnizem[.@rand],1; .MVPReward = $@MVPYgnizem[.@rand]; set .@ismvp,1;  break;
+		}
+
+		if(.@ismvp == 1) announce "En hora buena el jugador [ "+strcharinfo(0)+" ] ha matado al MvP " + getmonsterinfo(killedrid, MOB_NAME )+" y ha ganado  1% "+ getitemname(.MVPReward[.@rand]) +"  - Muchas felicidades",bc_all;
+	}
+
+	for (set .@i, 0; .@i < getarraysize($mobsreward); set .@i, .@i + 1)
+	{
+		if(killedrid == $MVPReward[.@i])
+		{
+			set MVPKILLRANK,MVPKILLRANK+1; //Setear punto MVP rank para el jugador.
+			set #CASHPOINTS, #CASHPOINTS + $@MvP_Point; 
+			getitem 7086,2;
+			dispbottom " Has obtenido "+$@MvP_Point+" CP por matar el MvP : " + getmonsterinfo( $MVPReward[.@i] , MOB_NAME );
+			dispbottom "Saldo actual = "+#CASHPOINTS+" CashPoints";
+
+			//Validación de anuncios de jugadores al entrar a las primeras 3 posiciones del ranking MVP.
+			query_sql("SELECT `char`.`char_id` as IDJugador, `char`.`name` as Jugador, `char_reg_num`.`value` as Puntos FROM `char` INNER JOIN `char_reg_num` ON `char_reg_num`.`char_id` = `char`.`char_id` WHERE `char_reg_num`.`key` = 'MVPKILLRANK' ORDER BY `char_reg_num`.`value` DESC LIMIT 3",.@idplayermvp,.@playermvp$,.@puntos);
+			//announce getarraysize(.@idplayermvp)+" registros de MVPKILLRANK",bc_self;
+
+			if(getarraysize(.@idplayermvp) > 0) {
+				for (set .@i,0; .@i < getarraysize(.@idplayermvp); set .@i,.@i+1) {
+					if(.@i == 0 && (.@playermvp$[.@i] != $mvprankpos1$)) {	
+						if(.@playermvp$[.@i] == strcharinfo(0)) announce "Felicidades [ "+.@playermvp$[.@i]+" ], entraste en el Primer Lugar del TOP 3 de asesinos de MVP, llevas la delantera!! =D.",bc_self;
+						set $mvprankpos1$,.@playermvp$[.@i];
+					}
+					if(.@i == 1 && (.@playermvp$[.@i] != $mvprankpos2$)) {	
+						if(.@playermvp$[.@i] == strcharinfo(0)) announce "Felicidades [ "+.@playermvp$[.@i]+" ], entraste en el Segundo Lugar del TOP 3 de asesinos de MVP, sigue así. ^^",bc_self;
+						set $mvprankpos2$,.@playermvp$[.@i];
+					}
+					if(.@i == 2 && (.@playermvp$[.@i] != $mvprankpos3$)) {	
+						if(.@playermvp$[.@i] == strcharinfo(0)) announce "Felicidades [ "+.@playermvp$[.@i]+" ], entraste en el Tercer Lugar del TOP 3 de asesinos de MVP, estás en las ligas mayores. ^^",bc_self;
+						set $mvprankpos3$,.@playermvp$[.@i];
+					}
+				}
+			   end;
+			}
+
+		} else if(killedrid == $MinibossReward[.@i] && $MinibossReward[.@i] != 0) {
+			set #CASHPOINTS, #CASHPOINTS + $@Mini_Boss_Point; 
+			getitem 7086,4;
+			dispbottom " Has obtenido "+$@Mini_Boss_Point+" CP por matar al Mini Boss : " + getmonsterinfo( $MinibossReward[.@i] , MOB_NAME );
+			dispbottom "Saldo actual = "+#CASHPOINTS+" CashPoints";
+		}
+	}
+	end;
+}

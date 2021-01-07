@@ -1,0 +1,36 @@
+-	script	LoginEvent	-1,{
+
+OnPCLoginEvent:
+query_sql "SELECT `last_ip` FROM `login` WHERE `account_id` = "+getcharid(3), @mac$;
+query_sql "SELECT count(`account_id`) FROM `login` WHERE `last_ip` = '"+@mac$+"' and `last_ip` != ''",@total;
+
+if(#Nuevo == 1 || @total > 1 ) {
+	dispbottom "Bienvenido "+strcharinfo(0)+", que te diviertas.";
+	set #Nuevo,1;
+}
+
+if(Class == 0 &&  #Nuevo == 0 &&  @total == 1){
+	set .@n$,"[^6600CCGeneral^000000]"; 
+	cutin "aca_gunb_01",2;
+	dispbottom strcharinfo(0)+" bienvenido a Mavis-RO, esperamos tu estadia sea de tu agrado. Atte Staff Mavis-RO.";
+	mes .@n$;
+	mes "Hola "+strcharinfo(0)+". Bienvenido a ^FF8000Mavis-RO^000000!.";
+	next;
+	mes .@n$;
+	next;
+	set #Nuevo,1;
+	announce "¡El jugador "+strcharinfo(0)+" a llegado a Mavis-RO",bc_blue;
+	mes .@n$;
+	mes "Aqui esta tu ^0000FFPack de Bienvenida^000000";
+	getitembound2 5170, 1, 1, 4, 0, 0, 0, 0, 0, 1;
+	getitembound2 2114, 1, 1, 4, 0, 4058, 0, 0, 0, 1;
+	getitembound 14545,1,1;
+	getitembound 7828,25,1;
+	getitembound 671,2,1;
+	mes "Esperamos su estancia en el servidor sea de tu agrado.";
+	mes "Atte. Mavis-RO Staff";
+	close2;
+	end;
+}
+end;
+}

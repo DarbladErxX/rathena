@@ -5,6 +5,8 @@
 
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+#include <yaml-cpp/yaml.h>
 
 #include "../common/cbasetypes.hpp"
 #include "../common/cli.hpp"
@@ -108,6 +110,10 @@ static DBMap* charid_db=NULL; /// uint32 char_id -> struct map_session_data*
 static DBMap* regen_db=NULL; /// int id -> struct block_list* (status_natural_heal processing)
 static DBMap* map_msg_db=NULL;
 
+std::string cart_conf = "conf/carts.yml";
+std::unordered_map <int, s_cart_config_capacity> CartCapacityConfig; // type -> data
+std::unordered_map <int, s_cart_config_available> CartAvailableConfig; // skill_id -> data
+
 static int map_users=0;
 
 #define BLOCK_SIZE 8
@@ -120,7 +126,7 @@ static struct block_list *bl_list[BL_LIST_MAX];
 static int bl_list_count = 0;
 
 #ifndef MAP_MAX_MSG
-	#define MAP_MAX_MSG 1550
+	#define MAP_MAX_MSG 1600
 #endif
 
 struct map_data map[MAX_MAP_PER_SERVER];
@@ -1884,6 +1890,36 @@ int map_addflooritem(struct item *item, int amount, int16 m, int16 x, int16 y, i
 	return fitem->bl.id;
 }
 
+int map_addflooritem_area(struct block_list* bl, int16 m, int16 x, int16 y, int nameid, int amount)
+{
+	struct item item_tmp;
+	int count, range, i;
+	short mx, my;
+
+	memset(&item_tmp, 0, sizeof(item_tmp));
+	item_tmp.nameid = nameid;
+	item_tmp.identify = 1;
+
+	if( bl != NULL ) m = bl->m;
+
+	count = 0;
+	range = (int)sqrt(amount) +2;
+	for( i = 0; i < amount; i++ )
+	{
+		if( bl != NULL )
+			map_search_freecell(bl, 0, &mx, &my, range, range, 0);
+		else
+		{
+			mx = x; my = y;
+			map_search_freecell(NULL, m, &mx, &my, range, range, 1);
+		}
+
+		count += (map_addflooritem(&item_tmp, 1, m, mx, my, 0, 0, 0, 4, 0) != 0) ? 1 : 0;
+	}
+
+	return count;
+}
+
 /**
  * @see DBCreateData
  */
@@ -1951,7 +1987,24 @@ void map_reqnickdb(struct map_session_data * sd, int charid)
 	struct map_session_data* tsd;
 
 	nullpo_retv(sd);
+	
+	if (battle_config.bg_reserved_char_id && battle_config.bg_reserved_char_id == charid)
+	{
+		clif_solved_charname(sd->fd, charid, "Battleground");
+		return;
+	}
+ 
+	if (battle_config.woe_reserved_char_id && battle_config.woe_reserved_char_id == charid)
+	{
+		clif_solved_charname(sd->fd, charid, "WoE");
+		return;
+	}
 
+	if( battle_config.costume_reserved_char_id && battle_config.costume_reserved_char_id == charid )
+	{
+		clif_solved_charname(sd->fd, charid, "Costume");
+		return;
+	}
 	tsd = map_charid2sd(charid);
 	if( tsd )
 	{
@@ -4084,6 +4137,8 @@ int map_config_read(const char *cfgName)
 			safestrncpy(charhelp_txt, w2, sizeof(charhelp_txt));
 		else if (strcmpi(w1, "channel_conf") == 0)
 			safestrncpy(channel_conf, w2, sizeof(channel_conf));
+		else if (strcmpi(w1, "cart_conf") == 0)
+			cart_conf = cart_conf;
 		else if(strcmpi(w1,"db_path") == 0)
 			safestrncpy(db_path,w2,ARRAYLENGTH(db_path));
 		else if (strcmpi(w1, "console") == 0) {
@@ -4155,11 +4210,7 @@ void map_reloadnpc(bool clear)
 	if (clear)
 		npc_addsrcfile("clear", false); // this will clear the current script list
 
-#ifdef RENEWAL
-	map_reloadnpc_sub("npc/re/scripts_main.conf");
-#else
-	map_reloadnpc_sub("npc/pre-re/scripts_main.conf");
-#endif
+	map_reloadnpc_sub("npc/scripts_main.conf");
 }
 
 int inter_config_read(const char *cfgName)
@@ -4430,6 +4481,243 @@ int cleanup_sub(struct block_list *bl, va_list ap)
 	}
 
 	return 1;
+}
+
+/* Get max weight for player's cart
+* @param sd Player
+* @return Max weight or battle_config.max_cart_weight if not defined
+*/
+unsigned int map_cart_max_weight(struct map_session_data *sd) {
+	int type = 0;
+	if (!sd || !CartCapacityConfig.size())
+		return battle_config.max_cart_weight;
+#ifdef NEW_CARTS
+	if (&sd->sc && sd->sc.data[SC_PUSH_CART])
+		type = sd->sc.data[SC_PUSH_CART]->val1;
+#else
+	if (&sd->sc && sd->sc.option&OPTION_CART) {
+		if (sd->sc.option&OPTION_CART1)
+			type = 1;
+		else if (sd->sc.option&OPTION_CART2)
+			type = 2;
+		else if (sd->sc.option&OPTION_CART3)
+			type = 3;
+		else if (sd->sc.option&OPTION_CART4)
+			type = 4;
+		else if (sd->sc.option&OPTION_CART5)
+			type = 5;
+	}
+#endif
+	return map_cart_max_weight2(type);
+}
+
+/* Get max weight of item for cart type
+* @param type Player
+* @return Max weight or battle_config.max_cart_weight if not defined
+*/
+unsigned int map_cart_max_weight2(int type) {
+	if (type && CartCapacityConfig.size()) {
+		auto data = CartCapacityConfig.find(type);
+		if (data != CartCapacityConfig.end())
+			return data->second.max_weight;
+	}
+	return battle_config.max_cart_weight;
+}
+
+/* Get max numbers of item for player's cart
+* @param sd Player
+* @return Max number or MAX_CART if not defined
+*/
+unsigned short map_cart_max_items(struct map_session_data *sd) {
+	int type = 0;
+	if (!sd || !CartCapacityConfig.size())
+		return MAX_CART;
+#ifdef NEW_CARTS
+	if (&sd->sc && sd->sc.data[SC_PUSH_CART])
+		type = sd->sc.data[SC_PUSH_CART]->val1;
+#else
+	if (&sd->sc && sd->sc.option&OPTION_CART) {
+		if (sd->sc.option&OPTION_CART1)
+			type = 1;
+		else if (sd->sc.option&OPTION_CART2)
+			type = 2;
+		else if (sd->sc.option&OPTION_CART3)
+			type = 3;
+		else if (sd->sc.option&OPTION_CART4)
+			type = 4;
+		else if (sd->sc.option&OPTION_CART5)
+			type = 5;
+	}
+#endif
+	return map_cart_max_items2(type);
+}
+
+/* Get max numbers of item for cart type
+* @param type Player
+* @return Max number or MAX_CART if not defined
+*/
+unsigned short map_cart_max_items2(int type) {
+	if (type && CartCapacityConfig.size()) {
+		auto data = CartCapacityConfig.find(type);
+		if (data != CartCapacityConfig.end())
+			return data->second.max_items;
+	}
+	return MAX_CART;
+}
+
+/* Check if cart config was set to force MC_CHANGECART use clif_SelectCart [Cydh]
+* @return True if set, false otherwise
+*/
+bool map_cart_type_is_enabled(void) {
+#if PACKETVER >= 20150826
+	return (CartAvailableConfig.size() > 0);
+#else
+	return false;
+#endif
+}
+
+/* List available carts for player by clif_SelectCart (this 097f has power to bypass client level check!) [Cydh]
+* @param sd Player
+* @param skill_id Used Skill ID
+* @param buf Clif's buffer to send available cart sprites
+* @param n Buffer position
+* @return Number of available carts
+*/
+int map_cart_avail(struct map_session_data *sd, uint16 skill_id, unsigned char *buf, int n) {
+	int c = 0;
+	if (CartAvailableConfig.size() < 1)
+		return 0;
+	auto data = CartAvailableConfig.find(skill_id);
+	if (data != CartAvailableConfig.end()) {
+		int pcjob = pc_mapid2jobid(sd->status.class_, sd->status.sex);
+		for (auto it : data->second.carts) {
+			if (it.min_level > sd->status.base_level)
+				continue;
+			if (it.job_except.size() > 0) {
+				auto job = std::find(it.job_except.begin(), it.job_except.end(), pcjob);
+				if (job != it.job_except.end()) // Job Exluded
+					continue;
+			}
+			WBUFB(buf, n + c) = (uint8)it.type;
+			c++;
+		}
+	}
+	return c;
+}
+
+/* Check if cart that player requested is available [Cydh]
+* @param sd Player
+* @param skill_id Used Skill ID
+* @param type Cart type
+* @return 0 if success, or number of error
+*/
+int map_cart_check_type(struct map_session_data *sd, uint16 skill_id, uint8 type) {
+	nullpo_retr(1, sd);
+	if (CartAvailableConfig.size() < 1)
+		return 1;
+
+	auto data = CartAvailableConfig.find(skill_id);
+	if (data == CartAvailableConfig.end()) // Invalid Skill
+		return 2;
+
+	auto cart = std::find_if(data->second.carts.begin(), data->second.carts.end(),
+		[&type](const s_cart_config_value &e) { return type == e.type; });
+	if (cart == data->second.carts.end()) // No type found
+		return 3;
+
+	if (cart->min_level > sd->status.base_level) // Not enough level
+		return 4;
+
+	if (cart->job_except.size() > 0) {
+		int pcjob = pc_mapid2jobid(sd->status.class_, sd->status.sex);
+		auto job = std::find(cart->job_except.begin(), cart->job_except.end(), pcjob);
+		if (job != cart->job_except.end()) // Job Exluded
+			return 5;
+	}
+	return 0;
+}
+
+/* Read Cart config file [Cydh]
+*/
+static void map_cart_read_config(void) {
+	YAML::Node config;
+
+	try {
+		config = YAML::LoadFile(cart_conf);
+	}
+	catch (...) {
+		ShowError("map_cart_read_config: Cannot read '" CL_WHITE "%s" CL_RESET "'.\n", cart_conf.c_str());
+		return;
+	}
+
+	if (!config["Capacity"].IsDefined())
+		ShowError("map_cart_read_config: Cannot found 'Capacity' config in '%s'!\n", cart_conf.c_str());
+	else {
+		uint8 count = 0;
+		for (const auto &node : config["Capacity"]) {
+			if (node["Type"].IsDefined() && node["MaxItems"].IsDefined() && node["MaxWeight"].IsDefined()) {
+				struct s_cart_config_capacity data;
+				int type = node["Type"].as<int>();
+				unsigned short max_items = node["MaxItems"].as<unsigned short>();
+				if (max_items > MAX_CART) {
+					ShowError("map_cart_read_config: Defined MaxItems '%d' is higher than MAX_CART %d in '%s'!\n", max_items, MAX_CART, cart_conf.c_str());
+					max_items = MAX_CART;
+				}
+				data.max_items = max_items;
+				data.max_weight = node["MaxWeight"].as<unsigned int>() * 10;
+				CartCapacityConfig.insert({ type, data });
+				count++;
+			}
+		}
+		ShowStatus("Done reading '" CL_WHITE "%d" CL_RESET "' " CL_GREEN "Capacity" CL_RESET " entries in '" CL_WHITE "%s" CL_RESET "'\n", count, cart_conf.c_str());
+	}
+
+	if (!config["ChangeCart"].IsDefined())
+		ShowError("map_cart_read_config: Cannot found 'ChangeCart' config in '%s'!\n", cart_conf.c_str());
+	else {
+		uint8 count = 0;
+		for (const auto &skill : config["ChangeCart"]) {
+			struct s_cart_config_available cartdata;
+			int skill_id = 0;
+			uint8 n = 0;
+
+			if (!skill["Skill"].IsDefined() || !skill["Carts"].IsDefined())
+				continue;
+			if (!(skill_id = skill_name2id(skill["Skill"].as<std::string>().c_str()))) {
+				ShowError("map_cart_read_config: Invalid skill name '%s' in '%s'!\n", skill["Skill"].as<std::string>().c_str(), cart_conf.c_str());
+				continue;
+			}
+
+			for (const auto &node : skill["Carts"]) {
+				struct s_cart_config_value data;
+				int type;
+				if (!node["Type"].IsDefined() || !node["MinLevel"].IsDefined())
+					continue;
+				type = node["Type"].as<int>();
+				if (type < 1 || type > MAX_CARTS) {
+					ShowError("map_cart_read_config: Invalid cart type '%d' (1-%d) in '%s'!\n", type, MAX_CARTS, cart_conf.c_str());
+					continue;
+				}
+				data.type = (uint8)type;
+				data.min_level = node["MinLevel"].as<unsigned short>();
+				if (node["JobExcept"].IsDefined() && node["JobExcept"].IsSequence()) {
+					for (YAML::const_iterator it = node["JobExcept"].begin(); it != node["JobExcept"].end(); ++it) {
+						int jobid = 0;
+						if (script_get_constant(it->as<std::string>().c_str(), &jobid))
+							data.job_except.push_back(jobid);
+					}
+				}
+				cartdata.carts.push_back(data);
+				count++;
+				n++;
+			}
+
+			if (!n)
+				continue;
+			CartAvailableConfig.insert({ skill_id, cartdata });
+		}
+		ShowStatus("Done reading '" CL_WHITE "%d" CL_RESET "' " CL_GREEN "ChangeCart" CL_RESET " entries in '" CL_WHITE "%s" CL_RESET "'\n", count, cart_conf.c_str());
+	}
 }
 
 /**
@@ -4933,6 +5221,8 @@ void do_final(void){
 	do_final_vending();
 	do_final_buyingstore();
 	do_final_path();
+	CartAvailableConfig.clear();
+	CartCapacityConfig.clear();
 
 	map_db->destroy(map_db, map_db_final);
 
@@ -5244,6 +5534,7 @@ int do_init(int argc, char *argv[])
 	do_init_channel();
 	do_init_cashshop();
 	do_init_skill();
+	map_cart_read_config();
 	do_init_mob();
 	do_init_pc();
 	do_init_status();

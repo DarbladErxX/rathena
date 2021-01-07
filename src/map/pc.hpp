@@ -312,7 +312,14 @@ struct map_session_data {
 		bool mail_writing; // Whether the player is currently writing a mail in RODEX or not
 		bool cashshop_open;
 		bool sale_open;
+		// BG eAmod [Easycore]
+		unsigned bg_afk : 1;
+		unsigned int bg_listen : 1;
+		unsigned int only_walk : 1;
 		unsigned int block_action : 10;
+		bool check_equip_skill;
+		unsigned int security : 1; // @security [Cydh]
+		unsigned int showgain :1;
 	} state;
 	struct {
 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
@@ -346,7 +353,9 @@ struct map_session_data {
 	short equip_index[EQI_MAX];
 	short equip_switch_index[EQI_MAX];
 	unsigned int weight,max_weight,add_max_weight;
-	int cart_weight,cart_num,cart_weight_max;
+	int cart_weight,cart_weight_max;
+	int cart_num, // current item count in cart
+		cart_num_max; // max item count in cart. If cart_num > cart_num_max = no add more item
 	int fd;
 	unsigned short mapindex;
 	unsigned char head_dir; //0: Look forward. 1: Look right, 2: Look left.
@@ -380,6 +389,7 @@ struct map_session_data {
 	bool skillitem_keep_requirement;
 	uint16 skill_id_old,skill_lv_old;
 	uint16 skill_id_dance,skill_lv_dance;
+	uint16 changecart_skill; ///< Remember last used change cart skill [Cydh]
 	short cook_mastery; // range: [0,1999] [Inkfish]
 	struct skill_cooldown_entry * scd[MAX_SKILLCOOLDOWN]; // Skill Cooldown
 	short cloneskill_idx, ///Stores index of copied skill by Intimidate/Plagiarism
@@ -597,6 +607,11 @@ struct map_session_data {
 	unsigned char change_level_2nd; // job level when changing from 1st to 2nd class [jobchange_level in global_reg_value]
 	unsigned char change_level_3rd; // job level when changing from 2nd to 3rd class [jobchange_level_3rd in global_reg_value]
 
+	struct {
+		time_t session_start;
+		unsigned int session_base_exp, session_job_exp;
+	} custom_data;
+
 	char fakename[NAME_LENGTH]; // fake names [Valaris]
 
 	size_t duel_group; // duel vars [LuzZza]
@@ -606,6 +621,11 @@ struct map_session_data {
 
 	int cashPoints, kafraPoints;
 	int rental_timer;
+
+	// Premium Account System
+	int Premium_Tick;
+	int Premium_basegroup_id;
+	int Premium_timer;
 
 	// Auction System [Zephyrus]
 	struct s_auction{
@@ -650,8 +670,22 @@ struct map_session_data {
 	const char* debug_file;
 	int debug_line;
 	const char* debug_func;
-
+	
+	//======================
+	//BG eAmod [Easycore]
+	//======================
+	struct battleground_data *bmaster_flag;
+	unsigned short bg_kills; // Battleground Kill Count
+	struct queue_data *qd;
+	// Battleground and Queue System
+	unsigned short bg_team;
+	//======================
 	unsigned int bg_id;
+	short bg_color;
+	struct s_bgentry {
+		unsigned short mapid;
+		int x, y;
+	} bgentry;
 
 #ifdef SECURE_NPCTIMEOUT
 	/**
@@ -747,8 +781,16 @@ struct map_session_data {
 		t_tick tick;
 	} roulette;
 
+	/**
+	* Extended Vending system [Lilith]
+	**/
+	unsigned short vend_loot;
+	int vend_lvl;
+
 	unsigned short instance_id;
 	short setlook_head_top, setlook_head_mid, setlook_head_bottom, setlook_robe; ///< Stores 'setlook' script command values.
+
+	int ce_gid;
 
 #if PACKETVER >= 20150513
 	uint32* hatEffectIDs;
@@ -1013,6 +1055,11 @@ bool pc_can_sell_item(struct map_session_data* sd, struct item * item, enum npc_
 bool pc_can_give_items(struct map_session_data *sd);
 bool pc_can_give_bounded_items(struct map_session_data *sd);
 
+//eAmod
+bool pc_isPremium(struct map_session_data *sd); // Premium Account System
+void pc_calc_playtime(struct map_session_data* sd);
+
+
 bool pc_can_use_command(struct map_session_data *sd, const char *command, AtCommandType type);
 #define pc_has_permission(sd, permission) ( ((sd)->permissions&permission) != 0 )
 bool pc_should_log_commands(struct map_session_data *sd);
@@ -1085,6 +1132,7 @@ void pc_cart_delitem(struct map_session_data *sd,int n,int amount,int type,e_log
 void pc_putitemtocart(struct map_session_data *sd,int idx,int amount);
 void pc_getitemfromcart(struct map_session_data *sd,int idx,int amount);
 int pc_cartitem_amount(struct map_session_data *sd,int idx,int amount);
+int pc_getitem_map(struct map_session_data *sd,struct item it,int amt,int count,e_log_pick_type log_type); // [Xantara]
 
 bool pc_takeitem(struct map_session_data *sd,struct flooritem_data *fitem);
 bool pc_dropitem(struct map_session_data *sd,int n,int amount);
@@ -1267,6 +1315,8 @@ bool pc_set_hate_mob(struct map_session_data *sd, int pos, struct block_list *bl
 extern struct fame_list smith_fame_list[MAX_FAME_LIST];
 extern struct fame_list chemist_fame_list[MAX_FAME_LIST];
 extern struct fame_list taekwon_fame_list[MAX_FAME_LIST];
+extern struct fame_list bg_fame_list[MAX_FAME_LIST];
+extern struct fame_list woe_fame_list[MAX_FAME_LIST];
 
 void pc_readdb(void);
 void do_init_pc(void);
@@ -1297,6 +1347,34 @@ int pc_load_combo(struct map_session_data *sd);
 
 void pc_addspiritcharm(struct map_session_data *sd, int interval, int max, int type);
 void pc_delspiritcharm(struct map_session_data *sd, int count, int type);
+
+///Enum of @security system [Cydh]
+enum e_security_check {
+	SECU_DROP				= 0x00001,
+	SECU_VENDING			= 0x00002,
+	SECU_VENDING_OPEN		= 0x00004,
+	SECU_BUYINGSTORE		= 0x00008,
+	SECU_BUYINGSTORE_OPEN	= 0x00010,
+	SECU_TRADE				= 0x00020,
+	SECU_GUILD_STORAGE		= 0x00040,
+	SECU_BREAKGUILD			= 0x00080,
+	SECU_RESET_ITEM			= 0x00100,
+	SECU_NPCTRADE			= 0x00200,
+	SECU_REMOVE_OPT			= 0x00400,
+	SECU_COMPOUND			= 0x00800,
+	SECU_DELHOMUN			= 0x01000,
+	SECU_MAIL				= 0x02000,
+	SECU_AUCTION			= 0x04000,
+	SECU_RESET_SKILL_STAT	= 0x08000,
+	SECU_FEEDING			= 0x10000,
+	SECU_OTHER				= 0x20000,
+	SECU_ALL				= 0x3FFFF,
+};
+
+bool pc_check_security_(struct map_session_data *sd, enum e_security_check flag, bool notice);
+#define pc_check_security(sd,type) pc_check_security_((sd),(type),true)
+#define pc_check_security_retv(sd,type)   { if (pc_check_security_((sd),(type),true)) return; }
+#define pc_check_security_retr(sd,type,r) { if (pc_check_security_((sd),(type),true)) return (r); }
 
 void pc_baselevelchanged(struct map_session_data *sd);
 
@@ -1334,6 +1412,15 @@ void pc_show_questinfo(struct map_session_data *sd);
 void pc_show_questinfo_reinit(struct map_session_data *sd);
 
 bool pc_job_can_entermap(enum e_job jobid, int m, int group_lv);
+
+int pc_update_last_action(struct map_session_data *sd);
+void pc_rank_reset(int type, bool reward);
+
+void pc_record_damage(struct block_list *src, struct block_list *target, int damage);
+void pc_record_mobkills(struct map_session_data *sd, struct mob_data *md);
+void pc_addbgpoints(struct map_session_data *sd,int count);
+void pc_addwoepoints(struct map_session_data *sd,int count);
+void pc_battle_stats(struct map_session_data *sd, struct map_session_data *tsd, int flag);
 
 #if defined(RENEWAL_DROP) || defined(RENEWAL_EXP)
 int pc_level_penalty_mod(int level_diff, uint32 mob_class, enum e_mode mode, int type);

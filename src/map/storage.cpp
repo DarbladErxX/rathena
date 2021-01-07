@@ -13,6 +13,7 @@
 #include "../common/nullpo.hpp"
 #include "../common/showmsg.hpp"
 #include "../common/utilities.hpp"
+#include "../common/utils.hpp"
 
 #include "battle.hpp"
 #include "chrif.hpp"
@@ -769,6 +770,8 @@ bool storage_guild_additem(struct map_session_data* sd, struct s_storage* stor, 
 	if(item_data->nameid == 0 || amount <= 0)
 		return false;
 
+	pc_check_security_retr(sd, SECU_GUILD_STORAGE, false);
+
 	id = itemdb_search(item_data->nameid);
 
 	if( id->stack.guildstorage && amount > id->stack.amount ) // item stack limitation
@@ -782,6 +785,13 @@ bool storage_guild_additem(struct map_session_data* sd, struct s_storage* stor, 
 	if ((item_data->bound == BOUND_ACCOUNT || item_data->bound > BOUND_GUILD) && !pc_can_give_bounded_items(sd)) {
 		clif_displaymessage(sd->fd, msg_txt(sd,294));
 		return false;
+	}
+
+	//Brian Bg Items - updated by [AnubisK]
+	if( item_data->card[0]==CARD0_CREATE && (MakeDWord(item_data->card[2],item_data->card[3]) == (battle_config.bg_reserved_char_id || battle_config.woe_reserved_char_id)  && !battle_config.bg_can_trade))
+	{	// "Battleground's Items"
+		clif_displaymessage (sd->fd, msg_txt(sd,264));
+		return 1;
 	}
 
 	if(itemdb_isstackable2(id)) { //Stackable
@@ -953,6 +963,8 @@ void storage_guild_storageget(struct map_session_data* sd, int index, int amount
 
 	if(index < 0 || index >= stor->max_amount)
 		return;
+
+	pc_check_security_retv(sd, SECU_GUILD_STORAGE);
 
 	if(stor->u.items_guild[index].nameid == 0)
 		return;

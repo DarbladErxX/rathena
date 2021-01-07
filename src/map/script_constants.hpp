@@ -457,6 +457,11 @@
 	export_constant(MF_PRIVATEAIRSHIP_SOURCE);
 	export_constant(MF_PRIVATEAIRSHIP_DESTINATION);
 	export_constant(MF_SKILL_DURATION);
+	// Battleground eAmod [Easycore]
+	export_constant(MF_NOECALL);
+	export_constant(MF_BG_CONSUME);
+	export_constant(MF_WOE_CONSUME);
+	export_constant(MF_BG_TOPSCORE);
 
 	/* setcell types */
 	export_constant(CELL_WALKABLE);
@@ -1525,6 +1530,7 @@
 	export_constant(SC_LHZ_DUN_N3);
 	export_constant(SC_LHZ_DUN_N4);
 	export_constant(SC_ANCILLA);
+	export_constant(SC_ENTRY_QUEUE_APPLY_DELAY);
 #ifdef RENEWAL
 	export_constant(SC_EXTREMITYFIST2);
 #endif
@@ -3914,6 +3920,26 @@
 	export_constant2("SKILL_TEMPLEVEL",ADDSKILL_TEMP_ADDLEVEL);
 	export_constant2("SKILL_PERM_GRANT",ADDSKILL_PERMANENT_GRANTED);
 
+	/* @security flags */
+	export_constant(SECU_DROP);
+	export_constant(SECU_VENDING);
+	export_constant(SECU_VENDING_OPEN);
+	export_constant(SECU_BUYINGSTORE);
+	export_constant(SECU_BUYINGSTORE_OPEN);
+	export_constant(SECU_TRADE);
+	export_constant(SECU_GUILD_STORAGE);
+	export_constant(SECU_BREAKGUILD);
+	export_constant(SECU_RESET_ITEM);
+	export_constant(SECU_NPCTRADE);
+	export_constant(SECU_REMOVE_OPT);
+	export_constant(SECU_COMPOUND);
+	export_constant(SECU_DELHOMUN);
+	export_constant(SECU_MAIL);
+	export_constant(SECU_AUCTION);
+	export_constant(SECU_RESET_SKILL_STAT);
+	export_constant(SECU_FEEDING);
+	export_constant(SECU_OTHER);
+
 	/* bonus script flags */
 	export_constant(BSF_REM_ON_DEAD);
 	export_constant(BSF_REM_ON_DISPELL);
@@ -4040,6 +4066,7 @@
 	export_constant(UMOB_ADELAY);
 	export_constant(UMOB_DMOTION);
 	export_constant(UMOB_TARGETID);
+	export_constant(UMOB_GROUPID);
 
 	/* unit control - homunculus */
 	export_constant(UHOM_SIZE);
@@ -4082,6 +4109,7 @@
 	export_constant(UHOM_ADELAY);
 	export_constant(UHOM_DMOTION);
 	export_constant(UHOM_TARGETID);
+	export_constant(UHOM_GROUPID);
 
 	/* unit control - pet */
 	export_constant(UPET_SIZE);
@@ -4121,6 +4149,7 @@
 	export_constant(UPET_AMOTION);
 	export_constant(UPET_ADELAY);
 	export_constant(UPET_DMOTION);
+	export_constant(UPET_GROUPID);
 
 	/* unit control - mercenary */
 	export_constant(UMER_SIZE);
@@ -4160,6 +4189,7 @@
 	export_constant(UMER_ADELAY);
 	export_constant(UMER_DMOTION);
 	export_constant(UMER_TARGETID);
+	export_constant(UMER_GROUPID);
 
 	/* unit control - elemental */
 	export_constant(UELE_SIZE);
@@ -4201,6 +4231,7 @@
 	export_constant(UELE_ADELAY);
 	export_constant(UELE_DMOTION);
 	export_constant(UELE_TARGETID);
+	export_constant(UELE_GROUPID);
 
 	/* unit control - NPC */
 	export_constant(UNPC_DISPLAY);
@@ -4236,6 +4267,7 @@
 	export_constant(UNPC_AMOTION);
 	export_constant(UNPC_ADELAY);
 	export_constant(UNPC_DMOTION);
+	export_constant(UNPC_GROUPID);
 
 	export_constant(NAV_NONE);
 	export_constant(NAV_AIRSHIP_ONLY);
@@ -4900,6 +4932,18 @@
 	export_constant2("AG_SEE", AG_SEE);
 	export_constant2("AG_SPEND_ZENY", AG_SPEND_ZENY);
 	export_constant2("AG_TAMING", AG_TAMING);
+	// Extended Features [Easycore]
+	export_constant2("AG_BG_WIN",AG_BG_WIN);
+	export_constant2("AG_BG_LOSE",AG_BG_LOSE);
+	export_constant2("AG_BG_TIE",AG_BG_TIE);
+	export_constant2("AG_BG_KILL",AG_BG_KILL);
+	export_constant2("AG_BG_DIE",AG_BG_DIE);
+	export_constant2("AG_BG_DAMAGE",AG_BG_DAMAGE);
+	export_constant2("AG_BG_HEAL",AG_BG_HEAL);
+	export_constant2("AG_WOE_KILL",AG_WOE_KILL);
+	export_constant2("AG_WOE_DIE",AG_WOE_DIE);
+	export_constant2("AG_WOE_DAMAGE",AG_WOE_DAMAGE);
+	export_constant2("AG_WOE_HEAL",AG_WOE_HEAL);
 
 	/* achievement info */
 	export_constant(ACHIEVEINFO_COUNT1);
@@ -7260,6 +7304,7 @@
 	export_constant(MD_DETECTOR);
 	export_constant(MD_STATUS_IMMUNE);
 	export_constant(MD_SKILL_IMMUNE);
+	export_constant(MD_CANATTACKMOB);
 
 	/* guild storage flags */
 	export_constant(GSTORAGE_OPEN);

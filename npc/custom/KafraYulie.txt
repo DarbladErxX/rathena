@@ -1,0 +1,168 @@
+prontera.gat,147,191,6	script	Alysa::MK	861,{
+set .@name$, "^FF0000[Alysa]^000000";
+cutin "kafra_09",2;
+mes .@name$;
+switch( select("^10B2D2 [ > ] ^000000 Reset","^10B2D2 [ > ] ^000000 Homunculus Reset","^10B2D2 [ > ] ^000000 Job Master","^10B2D2 [ > ] ^000000 Rentador Universal")){
+
+case 1:
+	callfunc "Reset"; break;
+
+case 2:
+	if(!gethominfo(1)){
+		mes "Hola ^5882FA"+strcharinfo(0)+"^000000.";
+		mclose "Lo siento, Pero tu no tienes un homunculus";
+		}else {
+			mes "Hola ^5882FA"+strcharinfo(0)+"^000000.";
+			mes "En vedad quieres resetear tu Homunculus?";
+			mes "Este servicio cuesta, 100,000z";
+			mes "Tu homunculus debe estar en lvl 99";
+			next;
+				switch(select("sI:No, Gracias")) {
+				case 1:
+					if (Zeny < 100000){
+						mclose "Lo siento, no tienes el zeny necesario, ";
+						}
+					if(gethominfo(6) <= 98){
+						mclose "Lo siento, tu homunculus, no cumple los requisitos";
+						}
+
+					set zeny,zeny-100000;
+					homshuffle;
+					mes " ";
+					mes "Listo...";
+					mes " ";
+					mes "Tu homunculus ha sido reseteado";
+					next;
+					atcommand "@homstats "+strcharinfo(0);
+					mclose "Sus nuevos status";
+						
+				case 2:	
+					mes ""+StrCharInfo(0)+", Has cambiado de opinion,";
+					emotion e_kis;
+					mclose "Vuelve cuando quieras <3";
+				
+			}
+	}
+break;
+
+
+
+case 3:
+	callfunc "Job Master"; 	break;
+
+case 4:
+	mes "Hola, aqui puedes alquilar Carros, Halcones o Pecopecos.";
+	next;
+	switch(select("Cart:Falcon:Peco")) {
+		case 1:
+			if((BaseClass == Job_Merchant || BaseJob == Job_SuperNovice) && checkcart() == 0 && getskilllv("MC_PUSHCART")>0){
+			setcart;
+			mes .@name$;
+			mclose "Listo ya tienes tu carrito puesto";
+		}
+ 			break;
+			
+		case 2:
+			if(BaseJob != Job_Archer && BaseClass == Job_Archer && checkfalcon() == 0 && getskilllv("HT_FALCON")>0){
+			setfalcon;
+			mes .@name$;
+			mclose "Listo ahora ya tienes tu alcon";
+	      }
+			 break;
+			
+					
+		case 3:
+			if (BaseJob != Job_Swordman && BaseClass == Job_Swordman && checkriding() == 0 && getskilllv("KN_RIDING")>0){
+			setriding;
+			mes .@name$;
+			mclose "Listo ahora ya montas un peco, vuelve pronto";
+	  }	
+ 			break;
+		
+	}
+	mes .@name$;
+	mclose "Lo siento " + strcharinfo(0) + ", Asegúrate de ser el job requerido, tener el skill Requerido y no tener un alquiler activo.";
+} 
+   end;
+
+
+OnInit:
+	do {
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500; 
+		delwaitingroom;
+		waitingroom "Cambia de job!",0;
+		sleep 2500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500; 
+		delwaitingroom;
+		waitingroom "Resetea",0;
+		sleep 2500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 500; 
+		delwaitingroom;
+		waitingroom "Arrienda",0;
+		sleep 2500;
+ 		delwaitingroom;
+		waitingroom "Solo en....",0;
+		sleep 1500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 550;
+		delwaitingroom;
+		waitingroom "Solo en....",0;
+		sleep 1500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 550;
+		delwaitingroom;
+		waitingroom "Solo en....",0;
+		sleep 1500;
+		delwaitingroom;
+		waitingroom "",0;
+		sleep 250;
+		delwaitingroom;
+		waitingroom "MavisRO!!",0;
+		sleep 3500; // Evites super infinity loop
+	} while(1); // End Loop		close;
+
+}
+//******** Duplicate Kafra Alysa *******************************
+renta1,15,15,5	duplicate(MK)	Alysa#1	861
+renta2,15,15,5	duplicate(MK)	Alysa#2	861
+morocc,171,103,5	duplicate(MK)	Yuile#3	861
+geffen,128,63,5	duplicate(MK)	Alysa#4	861
+payon,165,103,5	duplicate(MK)	Alysa#5	861
+alberta,171,138,5	duplicate(MK)	Alysa#6	861
+payon,165,103,5	duplicate(MK)	Alysa#7	861
+izlude,118,102,5	duplicate(MK)	Alysa#8	861
+aldebaran,146,116,5	duplicate(MK)	Alysa#9	861
+xmas,154,126,5	duplicate(MK)	Alysa#10	861
+comodo,209,175,5	duplicate(MK)	Alysa#11	861
+yuno,136,182,5	duplicate(MK)	Alysa#12	861
+amatsu,216,234,5	duplicate(MK)	Alysa#13	861
+gonryun,152,121,5	duplicate(MK)	Alysa#14	861
+umbala,138,159,5	duplicate(MK)	Alysa#15	861
+louyang,254,104,5	duplicate(MK)	Alysa#16	861
+jawaii,211,232,5	duplicate(MK)	Alysa#17	861
+ayothaya,155,112,5	duplicate(MK)	Alysa#18	861
+einbroch,59,206,5	duplicate(MK)	Alysa#19	861
+lighthalzen,165,92,6	duplicate(MK)	Alysa#20	861
+einbech,143,242,6	duplicate(MK)	Alysa#21	861
+hugel,102,139,6	duplicate(MK)	Alysa#22	861
+rachel,121,112,6	duplicate(MK)	Alysa#23	861
+veins,216,133,6	duplicate(MK)	Alysa#24	861
+moscovia,229,197,6	duplicate(MK)	Alysa#25	861
+mid_camp,212,235,6	duplicate(MK)	Alysa#26	861
+manuk,291,244,6	duplicate(MK)	Alysa#27	861
+splendide,206,149,6	duplicate(MK)	Alysa#28	861
+brasilis,200,216,6	duplicate(MK)	Alysa#29	861
+dewata,209,171,6	duplicate(MK)	Alysa#30	861
+dicastes01,187,184,6	duplicate(MK)	Alysa#31	861
+arlandria,145,188,6	duplicate(MK)	Alysa#32	861

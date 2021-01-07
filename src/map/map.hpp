@@ -589,6 +589,10 @@ enum e_mapflag : int16 {
 	MF_PRIVATEAIRSHIP_SOURCE,
 	MF_PRIVATEAIRSHIP_DESTINATION,
 	MF_SKILL_DURATION,
+	MF_NOECALL, // [BattleGround System] [Easycore]
+	MF_BG_CONSUME, // allows using BG consumables [Easycore]
+	MF_WOE_CONSUME, // allows using WoE consumables [Easycore]
+	MF_BG_TOPSCORE,
 	MF_MAX
 };
 
@@ -724,7 +728,7 @@ struct map_data {
 	int16 m;
 	int16 xs,ys; // map dimensions (in cells)
 	int16 bxs,bys; // map dimensions (in blocks)
-	int16 bgscore_lion, bgscore_eagle; // Battleground ScoreBoard
+	int16 bgscore_lion, bgscore_eagle, bgscore_top; // Battleground ScoreBoard
 	int npc_num; // number total of npc on the map
 	int npc_num_area; // number of npc with a trigger area on the map
 	int npc_num_warp; // number of warp npc on the map
@@ -974,6 +978,24 @@ struct s_map_default {
 };
 extern struct s_map_default map_default;
 
+/// Cart capacity data [Cydh]
+struct s_cart_config_capacity {
+	unsigned short max_items;
+	unsigned int max_weight;
+};
+
+/// Cart availability single entry [Cydh]
+struct s_cart_config_value {
+	uint8 type;
+	unsigned short min_level;
+	std::vector <int> job_except;
+};
+
+/// Cart availability data by Skill [Cydh]
+struct s_cart_config_available {
+	std::vector <s_cart_config_value> carts;
+};
+
 /// Type of 'save_settings'
 enum save_settings_type {
 	CHARSAVE_NONE		= 0x000, /// Never
@@ -1032,6 +1054,7 @@ TIMER_FUNC(map_clearflooritem_timer);
 TIMER_FUNC(map_removemobs_timer);
 void map_clearflooritem(struct block_list* bl);
 int map_addflooritem(struct item *item, int amount, int16 m, int16 x, int16 y, int first_charid, int second_charid, int third_charid, int flags, unsigned short mob_id, bool canShowEffect = false);
+int map_addflooritem_area(struct block_list* bl, int16 m, int16 x, int16 y, int nameid, int amount); // [Zephyrus]
 
 // instances
 int map_addinstancemap(const char *name, unsigned short instance_id);
@@ -1121,6 +1144,14 @@ void map_spawnmobs(int16 m); // [Wizputer]
 void map_removemobs(int16 m); // [Wizputer]
 void map_addmap2db(struct map_data *m);
 void map_removemapdb(struct map_data *m);
+
+bool map_cart_type_is_enabled(void);
+int map_cart_avail(struct map_session_data *sd, uint16 skill_id, unsigned char *buf, int n);
+int map_cart_check_type(struct map_session_data *sd, uint16 skill_id, uint8 type);
+unsigned int map_cart_max_weight2(int type);
+unsigned int map_cart_max_weight(struct map_session_data *sd);
+unsigned short map_cart_max_items2(int type);
+unsigned short map_cart_max_items(struct map_session_data *sd);
 
 void map_skill_damage_add(struct map_data *m, uint16 skill_id, int rate[SKILLDMG_MAX], uint16 caster);
 void map_skill_duration_add(struct map_data *mapd, uint16 skill_id, uint16 per);

@@ -1,0 +1,26 @@
+arlandria.gat,155,170,4	script	Karlita	831,{
+
+	.winner_mob_id = 0;
+			.@mob_gid_1 = bg_monster(1,"arlandria", 150, 166, "--ja--", 1785,"Karlita::OnKill1");
+			.@mob_gid_2 = bg_monster(2,"arlandria", 160, 166, "--ja--", 1785,"Karlita::OnKill2");
+
+			//mobevent "arlandria", 150, 166,"Atroce",1785,0,1,0,1,0,1,0,1,0,0,0,0,0,"Karlita::OnKill1";
+			//mobevent "arlandria", 160, 166,"Atroce",1785,0,1,0,1,0,2,0,1,0,0,0,0,0,"Karlita::OnKill2";
+
+			
+			getunitdata .@mob_gid_1, .@unitdata;
+			setunitdata .@mob_gid_1, UMOB_MODE, .@unitdata[UMOB_MODE] | (MD_AGGRESSIVE|MD_CANATTACK|MD_CANATTACKMOB);
+			setunitdata .@mob_gid_2, UMOB_MODE, .@unitdata[UMOB_MODE] | (MD_AGGRESSIVE|MD_CANATTACK|MD_CANATTACKMOB);
+			
+				unitattack .@mob_gid_1, .@mob_gid_2;
+				unitattack .@mob_gid_2, .@mob_gid_1;
+				sleep 2000;
+			
+
+OnKill1:
+end;
+
+OnKill2:
+end;
+}
+

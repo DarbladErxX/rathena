@@ -12,6 +12,7 @@
 #include "../common/socket.hpp"  // RBUF*
 #include "../common/strlib.hpp"  // safestrncpy
 #include "../common/timer.hpp"  // gettick
+#include "../common/utils.hpp"
 
 #include "atcommand.hpp"  // msg_txt
 #include "battle.hpp"  // battle_config.*
@@ -73,6 +74,8 @@ int8 buyingstore_setup(struct map_session_data* sd, unsigned char slots){
 		return 1;
 	}
 
+	pc_check_security_retr(sd, SECU_BUYINGSTORE_OPEN, 1);
+
 	if( sd->sc.data[SC_NOCHAT] && (sd->sc.data[SC_NOCHAT]->val1&MANNER_NOROOM) )
 	{// custom: mute limitation
 		return 2;
@@ -126,7 +129,7 @@ int8 buyingstore_create(struct map_session_data* sd, int zenylimit, unsigned cha
 		return 5;
 	}
 
-	if( !battle_config.feature_buying_store || pc_istrading(sd) || sd->buyingstore.slots == 0 || count > sd->buyingstore.slots || zenylimit <= 0 || zenylimit > sd->status.zeny || !storename[0] )
+	if( !battle_config.feature_buying_store || pc_istrading(sd) || sd->buyingstore.slots == 0 || count > sd->buyingstore.slots || zenylimit <= 0 || zenylimit > sd->status.zeny || !storename[0] || pc_check_security(sd,SECU_BUYINGSTORE_OPEN) )
 	{// disabled or invalid input
 		sd->buyingstore.slots = 0;
 		clif_buyingstore_open_failed(sd, BUYINGSTORE_CREATE, 0);
@@ -335,6 +338,11 @@ void buyingstore_trade(struct map_session_data* sd, uint32 account_id, unsigned 
 		return;
 	}
 
+	if (pc_check_security(sd,SECU_BUYINGSTORE)) {
+		clif_buyingstore_trade_failed_seller(sd, BUYINGSTORE_TRADE_SELLER_FAILED, 0);
+		return;
+	}
+
 	if( !battle_config.feature_buying_store || pc_istrading(sd) )
 	{// not allowed to sell
 		clif_buyingstore_trade_failed_seller(sd, BUYINGSTORE_TRADE_SELLER_FAILED, 0);
@@ -401,7 +409,12 @@ void buyingstore_trade(struct map_session_data* sd, uint32 account_id, unsigned 
 			clif_buyingstore_trade_failed_seller(sd, BUYINGSTORE_TRADE_SELLER_FAILED, nameid);
 			return;
 		}
-
+		if (sd->inventory.u.items_inventory[index].card[0] == CARD0_CREATE && ((MakeDWord(sd->inventory.u.items_inventory[index].card[2], sd->inventory.u.items_inventory[index].card[3])) == (battle_config.bg_reserved_char_id || battle_config.woe_reserved_char_id) && !battle_config.bg_can_trade ))
+		{ // Items where creator's ID is important
+			clif_buyingstore_trade_failed_seller(sd, BUYINGSTORE_TRADE_SELLER_FAILED, nameid);
+			clif_displaymessage(sd->fd, "Cannot Trade event reserved Items (Battleground, WoE).");
+			return;
+		}
 		ARR_FIND( 0, pl_sd->buyingstore.slots, listidx, pl_sd->buyingstore.items[listidx].nameid == nameid );
 		if( listidx == pl_sd->buyingstore.slots || pl_sd->buyingstore.items[listidx].amount == 0 )
 		{// there is no such item or the buyer has already bought all of them

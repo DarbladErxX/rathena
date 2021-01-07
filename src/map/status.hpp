@@ -861,6 +861,8 @@ enum sc_type : int16 {
 
 	SC_ANCILLA,
 
+	SC_ENTRY_QUEUE_APPLY_DELAY,
+
 #ifdef RENEWAL
 	SC_EXTREMITYFIST2, //! NOTE: This SC should be right before SC_MAX, so it doesn't disturb if RENEWAL is disabled
 #endif
@@ -2524,6 +2526,13 @@ unsigned short status_base_matk_min(struct block_list *bl, const struct status_d
 unsigned short status_base_matk_max(struct block_list *bl, const struct status_data* status, int level);
 #endif
 
+#ifdef RENEWAL_ASPD
+short status_calc_aspd(struct block_list *bl, struct status_change *sc, bool fixed);
+int status_base_amotion_pc(struct map_session_data* sd, struct status_data* status);
+#endif
+short status_calc_fix_aspd(struct block_list *bl, struct status_change *sc, int);
+
+short status_calc_aspd_rate(struct block_list *,struct status_change *,int);
 unsigned short status_base_atk(const struct block_list *bl, const struct status_data *status, int level);
 
 void initChangeTables(void);

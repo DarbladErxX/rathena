@@ -1,0 +1,13 @@
+//===== Battleground Rank Rewards =======================================
+//    Extended Battleground
+//= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// Structure of Database:
+// ItemID,Amount,Zeny
+//= = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+
+//Rank 1
+501,11,10000
+//Rank 2
+501,10,9000
+//Rank 3
+501,9,8000

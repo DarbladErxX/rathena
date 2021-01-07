@@ -97,6 +97,8 @@ int guild_castledatasave(int castle_id,int index,int value);
 int guild_castledataloadack(int len, struct guild_castle *gc);
 void guild_castle_reconnect(int castle_id, int index, int value);
 
+bool guild_isenemy(int guild_id, int tguild_id);
+
 bool guild_agit_start(void);
 bool guild_agit_end(void);
 

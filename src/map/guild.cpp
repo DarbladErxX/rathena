@@ -17,6 +17,7 @@
 #include "../common/timer.hpp"
 #include "../common/utilities.hpp"
 #include "../common/utils.hpp"
+#include "../common/socket.hpp"
 
 #include "battle.hpp"
 #include "channel.hpp"
@@ -208,6 +209,29 @@ static short guild_skill_get_index(uint16 skill_id) {
 	if (skill_id >= MAX_GUILDSKILL)
 		return -1;
 	return skill_id;
+}
+
+
+bool guild_isenemy(int guild_id, int tguild_id)
+{
+	struct guild *g = guild_search(guild_id), *tg;
+	int i;
+
+	if( !( g && g->war && guild_id && tguild_id) )
+		return false;
+
+	ARR_FIND(0, MAX_GUILDALLIANCE, i, g->alliance[i].guild_id == tguild_id);
+	if( i >= MAX_GUILDALLIANCE ) return false;
+
+	tg = guild_search(tguild_id);
+
+	if( tg && g->alliance[i].war && g->alliance[i].opposition )
+	{
+		g->war_tick = tg->war_tick = last_tick + 600;
+		return true;
+	}
+
+	return false;
 }
 
 /*==========================================
@@ -1915,6 +1939,7 @@ int guild_gm_change(int guild_id, uint32 char_id) {
 int guild_gm_changed(int guild_id, uint32 account_id, uint32 char_id, time_t time) {
 	struct guild *g;
 	struct guild_member gm;
+	char output[128];
 	int pos, i;
 
 	g=guild_search(guild_id);
@@ -1936,6 +1961,9 @@ int guild_gm_changed(int guild_id, uint32 account_id, uint32 char_id, time_t tim
 	g->member[pos].position = g->member[0].position;
 	g->member[0].position = 0; //Position 0: guild Master.
 	strcpy(g->master, g->member[0].name);
+
+	sprintf(output, "El Guild Master de [%s] ha sido cambiado a [%s]", g->name, g->master);
+	clif_broadcast(NULL, output, strlen(output) + 1, 0, ALL_CLIENT);
 
 	if (g->member[pos].sd && g->member[pos].sd->fd) {
 		clif_displaymessage(g->member[pos].sd->fd, msg_txt(g->member[pos].sd,678)); //"You no longer are the Guild Master."
@@ -1988,6 +2016,9 @@ int guild_break(struct map_session_data *sd,char *name) {
 		return 0;
 	if (!sd->state.gmaster_flag)
 		return 0;
+
+	pc_check_security_retr(sd, SECU_BREAKGUILD, 0);
+
 	for (i = 0; i < g->max_member; i++) {
 		if(	g->member[i].account_id>0 && (
 			g->member[i].account_id!=sd->status.account_id ||

@@ -1,0 +1,147 @@
+//===== rAthena Script =======================================
+//= OnPCLogin NPC
+//===== By: ==================================================
+//= Akkarin
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena Project
+//===== Description: =========================================
+//= This NPC saves your settings so the next time you login, it
+//= will auto perform the commands you selected. Easy to edit
+//= or duplicate/modify based on cmds you want to allow.
+//===== Additional Comments: =================================
+//= 1.0 First Version.
+//= 2.0 Complete rewrite to make use of binary values and 
+//      switch(select()) instead of menu();
+//============================================================
+arlandria,164,171,3	script	Settings	10053,{
+OnCommand:
+	set .@reset$,"^000000";
+	set .@disabled$,"^BE1C1C";
+	set .@enabled$,"^0DB40D";
+	
+while(1){
+	cutin "settings1",2;
+	mes "[^AA36B9Settings^000000]";
+	mes "¡Hola "+strcharinfo(0)+"! Puedo cambiar las siguientes configuraciones de tu cuenta de ^B45353Mavis^FF9900RO^000000.";
+	mes "¿Qué configuración deseas mantener activados al ingresar?";
+	mes "^777777~ Reingresa para aplicar cambios ~^000000";
+	if (#at&1) { set .@st_autoloot$,.@enabled$+#pcloginalp+"%"+.@reset$; } else { set .@st_autoloot$,.@disabled$+"Off"+.@reset$; }
+	if (#at&2) { set .@st_showdelay$,.@enabled$+"On"+.@reset$; } else { set .@st_showdelay$,.@disabled$+"Off"+.@reset$; }
+	if (#at&4) { set .@st_rates$,.@enabled$+"On"+.@reset$; } else { set .@st_rates$,.@disabled$+"Off"+.@reset$; }
+	if (#at&8) { set .@st_showexp$,.@enabled$+"On"+.@reset$; } else { set .@st_showexp$,.@disabled$+"Off"+.@reset$; }
+	if (#at&16) { set .@st_showzeny$,.@enabled$+"On"+.@reset$; } else { set .@st_showzeny$,.@disabled$+"Off"+.@reset$; }
+	if (#at&32) { set .@st_uptime$,.@enabled$+"On"+.@reset$; } else { set .@st_uptime$,.@disabled$+"Off"+.@reset$; }
+	if (#at&64) { set .@st_restock$,.@enabled$+"On"+.@reset$; } else { set .@st_restock$,.@disabled$+"Off"+.@reset$; }
+	switch(select(" ~ Autoloot ["+.@st_autoloot$+"]: ~ Show Delay ["+.@st_showdelay$+"]: ~ Show Rates ["+.@st_rates$+"]: ~ Show Exp ["+.@st_showexp$+"]: ~ Show Zeny ["+.@st_showzeny$+"]: ~ Show Uptime ["+.@st_uptime$+"]: ~ Restock ["+.@st_restock$+"]")) {
+		case 1:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Autoloot está actualmente: "+.@st_autoloot$;
+			mes "Descripción:";
+			mes "El comando @autoloot recoge los Items automáticamente según un porcentaje.";
+			next;
+			if(select(" ~ "+((#at&1)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&1) { set #at, #at &~ 1; } else {
+				mes "[^AA36B9Settings^000000]";
+				mes "El autoloot está actualmente en "+.@st_autoloot$;
+				mes "Ingresa el porcentage de Drop desde el cual quieres recojer un item. Ejemplo:";
+				mes "El 100% para todos los Items, 1% para las cartas, 0% para deshabilitar.";
+				next;
+				input .@rate;
+				if ((.@rate >= 0) && (.@rate <= 100)) set #pcloginalp,.@rate;
+				set #at, #at | 1;
+			}
+			break;
+		case 2:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Show Delay está actualmente: "+.@st_showdelay$;
+			mes "Descripción:";
+			mes "Ocultar el aviso de Delay de las Skills (Skill Failed).";
+			next;
+			if(select(" ~ "+((#at&2)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&2) { set #at, #at &~ 2; } else { set #at, #at | 2; }
+			break;
+
+		case 3:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Show Rates está actualmente: "+.@st_rates$;
+			mes "Descripción:"; 
+			mes "Mostrar los rates actuales del servidor al ingresar.";
+			next;
+			if(select(" ~ "+((#at&4)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&4) { set #at, #at &~ 4; } else { set #at, #at | 4; }
+			break;
+		case 4:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Show Exp está actualmente: "+.@st_showexp$;
+			mes "Descripción:";
+			mes "Mostrar la experiencia adquirida al eliminar un Monstruo.";
+			next;	
+			if(select(" ~ "+((#at&8)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&8) { set #at, #at &~ 8; } else { set #at, #at | 8; }
+			break;
+		case 5:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Show Zeny está actualmente: "+.@st_showzeny$;
+			mes "Descripción:";
+			mes "Mostrar el zeny que vas adquiriendo.";
+			next;
+			if(select(" ~ "+((#at&16)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&16) { set #at, #at &~ 16; } else { set #at, #at | 16; }
+			break;
+		case 6:
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Show Uptime está actualmente: "+.@st_uptime$;
+			mes "Descripción:";
+			mes "Mostrar el tiempo transcurrido desde el último Reload.";
+			next;
+			if(select(" ~ "+((#at&32)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&32) { set #at, #at &~ 32; } else { set #at, #at | 32; }
+			break;
+
+		case 7:	
+			next;
+			cutin "settings2",2;
+			mes "[^AA36B9Settings^000000]";
+			mes "Restock está actualmente: "+.@st_restock$;
+			mes "Descripción:";
+			mes "Activar automáticamente el @restock al ingresar con cualquier personaje de tu cuenta.";
+			next;	
+			if(select(" ~ "+((#at&64)?"Desactivar":"Activar")+": ~ ^777777Volver al Menú^000000")==2) break;
+			cutin "settings4",2;
+			if (#at&64) { set #at, #at &~ 64; } else { set #at, #at | 64; }
+			break;
+
+	}
+}
+	
+OnPCLoginEvent:
+	sleep2 1000;
+	if (#at&1)		atcommand "@autoloot rate " + #pcloginalp;
+	if (#at&2)		atcommand "@showdelay";
+	if (#at&4)		atcommand "@rates";
+	if (#at&8)		atcommand "@showexp";
+	if (#at&16)	atcommand "@showzeny";
+	if (#at&32)	atcommand "@uptime";
+	if (#at&64)	atcommand "@restock";
+	end;
+}

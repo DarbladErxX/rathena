@@ -1394,6 +1394,29 @@ int inter_check_length(int fd, int length)
 	return length;
 }
 
+/**
+ * Check if account is unlocked for char deletion
+ * @param account_id
+ * @return False:If can't, True:If can be deleted.
+ * @author [Cydh]
+ **/
+bool inter_can_delete_char(unsigned int account_id) {
+	bool can_delete = true;
+
+	if (SQL_ERROR == Sql_Query(sql_handle, "SELECT `value` FROM `%s` WHERE `account_id`='%d' AND `key` = '#CyACCOUNTLOCK' LIMIT 1", schema_config.acc_reg_num_table, account_id)) {
+		Sql_ShowDebug(sql_handle);
+		return true;
+	}
+
+	if (Sql_NumRows(sql_handle) > 0 && SQL_SUCCESS == Sql_NextRow(sql_handle)) {
+		char *data;
+		Sql_GetData(sql_handle, 0, &data, NULL);
+		can_delete = atoi(data) ? false : true;
+	}
+	Sql_FreeResult(sql_handle);
+	return can_delete;
+}
+
 int inter_parse_frommap(int fd)
 {
 	int cmd;

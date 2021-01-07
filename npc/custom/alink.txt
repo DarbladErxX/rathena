@@ -1,0 +1,23 @@
+-	script	Wlink	-1,{
+		end;
+
+OnWhisperGlobal:
+	if ( getgmlevel() <= 60 ) end;
+ 		if (@whispervar0$ != "activar") end;
+
+OnInit:
+    bindatcmd "link",strnpcinfo(3)+"::OnWlink";
+    end;
+
+	
+OnWlink:
+ 	if(alink <= gettimetick(2) && Class == 4049) {
+   	 sc_start4 sc_spirit, 360000,5,461,0,0;
+         skilleffect 461, 5;
+         set alink,gettimetick(2) + 45;
+
+	} else dispbottom "[Auto Link]: Lo siento " + (Class != 4049 ? "este servicio solo es para Soul Linker":"aun tienes que esperar "+(alink - gettimetick(2))+" para usar el comando")+"";
+  end;
+}
+
+

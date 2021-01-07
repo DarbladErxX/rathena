@@ -1,0 +1,69 @@
+-	script	ride	-1,{
+		end;
+
+OnPCLoadMapEvent:
+	for( set .@i,0; .@i < getarraysize(.MapNRiding$); set .@i, .@i + 1 ) {
+		if (strcharinfo(3) == .MapNRiding$[.@i] && ismounting()) setmounting();
+	}
+	end;
+
+OnMount:
+	for( set .@i,0; .@i < getarraysize(.MapNRiding$); set .@i, .@i + 1 ) {
+		if (strcharinfo(3) == .MapNRiding$[.@i] ) { 
+		dispbottom  "En este mapa no puedes usar @ride";
+		    end;
+  	 	}
+	}
+	if (checkriding() && isequipped(60020) || isequipped(60019) ){
+		dispbottom  "Tu ya estas montando un " + ((Class == Job_Knight ) ? "Dragón" : "") + ((Class == Job_Crusader) ? "Gryphon" : "") + ((Class == Job_Paladin) ? "Gryphon" : "") + ((Class == Job_Lord_Knight) ? "Dragón" : "");
+		end;
+
+	} else 	if( checkriding()) {
+		dispbottom  "Tu ya estas montando un " + ((Class == Job_Knight) ? "Peco" : "") + ((Class == Job_Crusader) ? "Peco Peco" : "") + ((Class == Job_Paladin) ? "Gran peco peco" : "") + ((Class == Job_Lord_Knight) ? "Gran Peco" : "");
+	   	   end;
+	}
+ 
+	setmounting();
+	end;
+	
+	
+
+OnWhisperGlobal:
+	if ( getgmlevel() <= 60 ) end;
+ 		if (@whispervar0$ != "activar") end;
+
+OnInit:
+	bindatcmd("ride", strnpcinfo(3)+"::OnMount");
+	setarray .MapNRiding$[0],"schg_cas01",
+				"schg_cas02",
+				"schg_cas03",
+				"schg_cas04",
+				"schg_cas05",
+				"arug_cas01",
+				"arug_cas02",
+				"arug_cas03",
+				"arug_cas04",
+				"arug_cas05",
+				"mocg_cas01",
+				"arena_01",
+				"arena_1",
+				"schg_cas06",
+				"schg_cas07",
+				"schg_cas08",
+				"rush_cas01",
+				"rush_cas02",
+				"rush_cas03",
+				"rush_cas04",
+				"guild_vs1",
+				"guild_vs2",
+				"pvp_n_1-5",
+				"guild_vs3",
+				"guild_vs4",
+				"prtg_cas01",
+				"prtg_cas02",
+				"prtg_cas03",
+				"prtg_cas04",
+				"prtg_cas05";
+				    end;
+}
+

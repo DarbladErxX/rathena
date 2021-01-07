@@ -929,7 +929,16 @@ int battle_calc_cardfix(int attack_type, struct block_list *src, struct block_li
 
 	return (int)cap_value(damage - original_damage, INT_MIN, INT_MAX);
 }
+int get_ele_fix(struct map_session_data *tsd, int rh_ele) {
+	int ele_fix = tsd->subele[rh_ele] + tsd->subele[ELE_ALL] + tsd->subele_script[rh_ele] + tsd->subele_script[ELE_ALL];
 
+	for (const auto &it : tsd->subele2) {
+		if (it.ele != rh_ele)
+			continue;
+		ele_fix += it.rate;
+	}
+	return ele_fix;
+}
 /**
 * Absorb damage based on criteria
 * @param bl
@@ -1065,6 +1074,20 @@ int64 battle_calc_damage(struct block_list *src,struct block_list *bl,struct Dam
 	if( map_getcell(bl->m, bl->x, bl->y, CELL_CHKMAELSTROM) && skill_get_type(skill_id) != BF_MISC
 		&& skill_get_casttype(skill_id) == CAST_GROUND )
 		return 0;
+
+	if( bl->type == BL_MOB )
+	{ // Event Emperiums works like GvG Emperiums
+		struct mob_data *md = BL_CAST(BL_MOB, bl);
+		if( md && md->option.is_event && md->mob_id == MOBID_EMPERIUM && flag&BF_SKILL )
+			switch( skill_id )
+			{
+				case MO_TRIPLEATTACK:
+				case HW_GRAVITATION:
+					break;
+				default:
+					return 0;
+			}
+	}
 
 	if (bl->type == BL_PC) {
 		sd=(struct map_session_data *)bl;
@@ -2246,10 +2269,13 @@ static int battle_skill_damage(struct block_list *src, struct block_list *target
 int battle_calc_chorusbonus(struct map_session_data *sd) {
 	int members = 0;
 
-	if (!sd || !sd->status.party_id)
+	if (!sd || (!sd->status.party_id && !sd->bg_id))
 		return 0;
 
-	members = party_foreachsamemap(party_sub_count_class, sd, 0, MAPID_THIRDMASK, MAPID_MINSTRELWANDERER);
+	if (battle_config.bg_party_skills && sd->bg_id)
+		members = bg_team_foreachsamemap(party_sub_count_class, sd, 0, MAPID_THIRDMASK, MAPID_MINSTRELWANDERER);
+	else
+		members = party_foreachsamemap(party_sub_count_class, sd, 0, MAPID_THIRDMASK, MAPID_MINSTRELWANDERER);
 
 	if (members < 3)
 		return 0; // Bonus remains 0 unless 3 or more Minstrels/Wanderers are in the party.
@@ -3518,7 +3544,7 @@ static int battle_calc_attack_skill_ratio(struct Damage* wd, struct block_list *
 		case MC_CARTREVOLUTION:
 			skillratio += 50;
 			if(sd && sd->cart_weight)
-				skillratio += 100 * sd->cart_weight / sd->cart_weight_max; // +1% every 1% weight
+				skillratio += 100 * sd->cart_weight / map_cart_max_weight(sd); // +1% every 1% weight
 			else if (!sd)
 				skillratio += 100; //Max damage for non players.
 			break;
@@ -5081,8 +5107,15 @@ static void battle_calc_weapon_final_atk_modifiers(struct Damage* wd, struct blo
 		rnd()%100 < tsc->data[SC_REJECTSWORD]->val2
 		)
 	{
+		int rejected = 0; // Fix reflect to eAmod
 		ATK_RATER(wd->damage, 50)
-		status_fix_damage(target,src,wd->damage,clif_damage(target,src,gettick(),0,0,wd->damage,0,DMG_NORMAL,0,false));
+
+		if( battle_config.reflect_damage_fix&1 )
+			rejected = min(wd->damage,status_get_hp(target)); // Fix eAmod to DarbladErxX, solo se puede reflejar maximo HP
+		else
+			rejected = wd->damage;
+
+		status_fix_damage(target,src,wd->damage,clif_damage(target,src,gettick(),0,0,rejected,0,DMG_NORMAL,0,false));
 		clif_skill_nodamage(target,target,ST_REJECTSWORD,tsc->data[SC_REJECTSWORD]->val1,1);
 		if( --(tsc->data[SC_REJECTSWORD]->val3) <= 0 )
 			status_change_end(target, SC_REJECTSWORD, INVALID_TIMER);
@@ -6880,12 +6913,17 @@ struct Damage battle_calc_attack(int attack_type,struct block_list *bl,struct bl
 int64 battle_calc_return_damage(struct block_list* bl, struct block_list *src, int64 *dmg, int flag, uint16 skill_id, bool status_reflect){
 	struct map_session_data* sd;
 	int64 rdamage = 0, damage = *dmg;
-	int max_damage = status_get_max_hp(bl);
+	int max_damage;
 	struct status_change *sc, *ssc;
 
 	sd = BL_CAST(BL_PC, bl);
 	sc = status_get_sc(bl);
 	ssc = status_get_sc(src);
+
+	if( battle_config.reflect_damage_fix&1 ) //fix eAmod to DarbladErxX fix reflect 
+		max_damage = status_get_max_hp(bl);
+	else
+		max_damage = INT_MAX; // No limit
 
 	if (sc && sc->data[SC_WHITEIMPRISON])
 		return 0; // White Imprison does not reflect any damage
@@ -7819,6 +7857,23 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
 			struct map_session_data *sd = BL_CAST(BL_PC, s_bl);
 			if( s_bl != t_bl )
 			{
+
+			if( t_bl->type == BL_MOB && ((TBL_MOB*)t_bl)->option.is_event )
+				{
+					struct mob_data *md = BL_CAST(BL_MOB,t_bl);
+
+					if( map_getmapflag(m, MF_GVG) && md->option.guild_id && !sd->status.guild_id )
+						return 0;
+
+					if( md->option.is_war && (!sd->status.guild_id || !guild_isenemy(sd->status.guild_id,md->option.guild_id) ) )
+						return 0;
+
+					if( md->option.ai_type == 1 )
+						state |= BCT_PARTY;
+					else if( md->option.ai_type == 3 )
+						return 0;
+				}
+
 				if( sd->state.killer )
 				{
 					state |= BCT_ENEMY; // Can kill anything
@@ -7844,7 +7899,36 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
 			if( md->guardian_data && md->guardian_data->guild_id && !mapdata_flag_gvg(mapdata) )
 				return 0; // Disable guardians/emperium owned by Guilds on non-woe times.
 
-			if( !md->special_state.ai )
+
+			if( md->option.is_event )
+			{
+				if( t_bl->type == BL_PC )
+				{
+					struct map_session_data *sd = BL_CAST(BL_PC, t_bl);
+					if(  md->option.is_war && !map_flag_vs(m) && !guild_isenemy(md->option.guild_id, sd->status.guild_id) )
+						return 0; // War mobs ignores non enemy guilds
+					if( md->option.ai_type == 1 )
+						state |= BCT_PARTY;
+					else if( md->option.ai_type == 3 )
+						return 0;
+				}
+				else if( t_bl->type == BL_MOB && ((TBL_MOB*)t_bl)->option.is_event )
+				{ // Mob VS Mob
+					struct mob_data *t_md = BL_CAST(BL_MOB, t_bl);
+					if( map_getmapflag(m, MF_GVG) && md->option.guild_id != t_md->option.guild_id && !guild_isallied(md->option.guild_id, t_md->option.guild_id) ) {
+						state |= BCT_ENEMY;
+						strip_enemy = 0;
+					}
+					else if( map_getmapflag(m, MF_PVP) && md->option.party_id != t_md->option.party_id ) {
+						state |= BCT_ENEMY;
+						strip_enemy = 0;
+					}
+				}
+			}
+
+			if ( status_has_mode( &md->status, MD_CANATTACKMOB ) )
+				state |= BCT_ENEMY;
+			else if ( !md->special_state.ai )
 			{ //Normal mobs
 				if(
 					( target->type == BL_MOB && t_bl->type == BL_PC && ( ((TBL_MOB*)target)->special_state.ai != AI_ZANZOU && ((TBL_MOB*)target)->special_state.ai != AI_ATTACK ) ) ||
@@ -7893,6 +7977,8 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
 		{
 			sbg_id = bg_team_get_id(s_bl);
 			tbg_id = bg_team_get_id(t_bl);
+			if (battle_config.bg_party_skills && flag&(BCT_PARTY) && sbg_id == tbg_id)
+				state |= BCT_PARTY;
 		}
 		if( flag&(BCT_PARTY|BCT_ENEMY) )
 		{
@@ -8383,6 +8469,7 @@ static const struct _battle_data {
 	{ "bg_magic_attack_damage_rate",        &battle_config.bg_magic_damage_rate,            60,     0,      INT_MAX,        },
 	{ "bg_misc_attack_damage_rate",         &battle_config.bg_misc_damage_rate,             60,     0,      INT_MAX,        },
 	{ "bg_flee_penalty",                    &battle_config.bg_flee_penalty,                 20,     0,      INT_MAX,        },
+	{ "security_mode",						&battle_config.security_mode,					SECU_ALL,	SECU_DROP,	SECU_ALL,	}, // @security [Cydh]
 // rAthena
 	{ "max_third_parameter",				&battle_config.max_third_parameter,				135,	10,		SHRT_MAX,		},
 	{ "max_baby_third_parameter",			&battle_config.max_baby_third_parameter,		108,	10,		SHRT_MAX,		},
@@ -8476,7 +8563,7 @@ static const struct _battle_data {
 	{ "homunculus_evo_intimacy_reset",      &battle_config.homunculus_evo_intimacy_reset,   1000,   0,      INT_MAX,        },
 	{ "monster_loot_search_type",           &battle_config.monster_loot_search_type,        1,      0,      1,              },
 	{ "feature.roulette",                   &battle_config.feature_roulette,                1,      0,      1,              },
-	{ "monster_hp_bars_info",               &battle_config.monster_hp_bars_info,            1,      0,      1,              },
+	{ "monster_hp_bars_info",               &battle_config.monster_hp_bars_info,            1,      0,      2,              },
 	{ "min_body_style",                     &battle_config.min_body_style,                  0,      0,      SHRT_MAX,       },
 	{ "max_body_style",                     &battle_config.max_body_style,                  4,      0,      SHRT_MAX,       },
 	{ "save_body_style",                    &battle_config.save_body_style,                 0,      0,      1,              },
@@ -8527,7 +8614,47 @@ static const struct _battle_data {
 	{ "min_shop_sell",                      &battle_config.min_shop_sell,                   0,      0,      INT_MAX,        },
 	{ "feature.equipswitch",                &battle_config.feature_equipswitch,             1,      0,      1,              },
 	{ "pet_walk_speed",                     &battle_config.pet_walk_speed,                  1,      1,      3,              },
-
+	{ "bg_eAmod_mode",                      &battle_config.bg_eAmod_mode,                   1,      0,      1,              },
+	{ "bg_idle_announce",                   &battle_config.bg_idle_announce,                0,      0,      INT_MAX,        },
+	{ "bg_idle_autokick",                   &battle_config.bg_idle_autokick,                0,      0,      INT_MAX,        },
+	{ "bg_reward_rates",                    &battle_config.bg_reward_rates,                 100,    0,      INT_MAX,        },
+	{ "bg_reportafk_leaderonly",            &battle_config.bg_reportafk_leaderonly,         1,      0,      1,              },
+	{ "bg_queue2team_balanced",             &battle_config.bg_queue2team_balanced,          1,      0,      1,              },
+	{ "bg_queue_onlytowns",                 &battle_config.bg_queue_onlytowns,              1,      0,      1,              },
+	{ "bg_order_behavior",                  &battle_config.bg_order_behavior,               1,      0,      1,              },
+	{ "bg_reserved_char_id",                &battle_config.bg_reserved_char_id,             999996, 0,      INT_MAX,        },
+	{ "woe_reserved_char_id",				&battle_config.woe_reserved_char_id,            999997, 0,      INT_MAX,        },
+	{ "bg_can_trade",				        &battle_config.bg_can_trade,                    1,      0,      1,              },
+	{ "bg_double_login",				    &battle_config.bg_double_login,                 1,      0,      1,              },
+	{ "bg_team_color",				        &battle_config.bg_team_color,                   1,      0,      1,              },
+	{ "bg_party_skills",				    &battle_config.bg_party_skills,                 1,      0,      1,              },
+	{ "bg_join_location",				    &battle_config.bg_join_location,                1,      0,      1,              },
+	{ "bg_team_ccolor_blue",				&battle_config.bg_team_ccolor_blue,           376,      0,      INT_MAX,        },
+	{ "bg_team_ccolor_red",				    &battle_config.bg_team_ccolor_red,            409,      0,      INT_MAX,        },
+	{ "bg_team_ccolor_green",				&battle_config.bg_team_ccolor_green,          390,      0,      INT_MAX,        },
+	{ "bg_extended_check_equip",			&battle_config.bg_extended_check_equip,         1,      0,      1,              },
+	{ "bg_queue_interface",					&battle_config.bg_queue_interface,              1,      0,      1,              },
+	// Premium Account System
+	{ "premium_group_id",                   &battle_config.premium_group_id,                0,      0,      INT_MAX,        },
+	{ "premium_bonusexp",                   &battle_config.premium_bonusexp,                0,      0,      INT_MAX,        },
+	{ "premium_base_exp_increase",                   &battle_config.premium_bonusexp,                0,      0,      INT_MAX,        },
+	{ "premium_job_exp_increase",                   &battle_config.premium_bonusexp,                0,      0,      INT_MAX,        },
+	{ "premium_dropboost",                  &battle_config.premium_dropboost,               0,      0,      INT_MAX,        },
+	{ "premium_gemstone",                       &battle_config.premium_gemstone,                    2,      0,      2,              },
+	// Extended Vending system [Lilith]
+	{ "extended_vending",			&battle_config.extended_vending,	1,		0,		1,		},
+	{ "show_broadcas_info",			&battle_config.show_broadcas_info,	1,		0,		1,		},
+	{ "show_item_vending",			&battle_config.show_item_vending,	1,		0,		1,		},
+	{ "ex_vending_info",			&battle_config.ex_vending_info,		1,		0,		1,		},
+	{ "ex_vending_report",			&battle_config.ex_vending_report,	1,		0,		1,		}, // [Easycore]
+	{ "item_zeny",				&battle_config.item_zeny,		0,		0,		MAX_ITEMID,	},
+	{ "item_cash",				&battle_config.item_cash,		0,		0,		MAX_ITEMID,	},
+	//eAmod Codes
+	{ "costume_reserved_char_id",           &battle_config.costume_reserved_char_id,        999998, 0,      INT_MAX,        },
+	{ "mob_slave_adddrop",                  &battle_config.mob_slave_adddrop,               0,      0,      1,              },
+	{ "reflect_damage_fix",                 &battle_config.reflect_damage_fix,              1|2,    0,      1|2,            },
+	{ "unmount_on_damage",                  &battle_config.unmount_on_damage,               0,      0,      1,       	},
+	{ "mount_delay", 	             	&battle_config.mount_delay, 	         	0,      0,      60000,        	},
 #include "../custom/battle_config_init.inc"
 };
 

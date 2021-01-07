@@ -1,0 +1,66 @@
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// eAmod Project - Scripts
+// --------------------------------------------------------------------------
+// Script Name : Headgear to Costume converter
+// --------------------------------------------------------------------------
+// Description :
+// Allows a user to convert the equipped headgear (on Top, Mid or Low) into a
+// costume item. It will remove any card and refine of the Item.
+// --------------------------------------------------------------------------
+
+arlandria,180,189,6	script	Costumes Equip::Costume-IT	717,{
+	set .Cash,150;
+	mes "[ ^F70358Costume^000000 ]";
+	mes "¡Hola y bienvenido al servicio de Costume!";
+	mes "Aquí puedes convertir tus Hat en Costume a cambio de Cash Points.";
+	next;
+	mes "[ ^F70358Costume^000000 ]";
+	mes "Por favor, elige el hat que quieras convertir.";
+	mes "^2E2EFERecuerda, los refines y cartas añadidas serán borrados,^000000";
+	mes "y te costará "+.Cash+" Cash Points.";
+	mes "50 medallas de cada una";
+	next;
+
+	setarray .@Position$[1],"Top","Mid","Low";
+	setarray .@Position[1],     6,    5,   4;
+
+	set .@Menu$,"";
+	for( set .@i, 1; .@i < 4; set .@i, .@i + 1 )
+	{
+		if( getequipisequiped(.@Position[.@i]) )
+			set .@Menu$, .@Menu$ + .@Position$[.@i] + "-" + "[" + getequipname(.@Position[.@i]) + "]";
+
+		set .@Menu$, .@Menu$ + ":";
+	}
+
+	set .@Part, .@Position[ select(.@Menu$) ];
+	if( !getequipisequiped(.@Part) )
+	{
+		mes "[ ^F70358Costume^000000 ]";
+		mclose "Tú no llevas nada...";
+	}
+
+	mes "[ ^F70358Costume^000000 ]";
+	mes "¿Quieres hacer Costume tu ^DF0101" + getitemname(getequipid(.@Part)) + "^000000?";
+	next;
+	if( select("Sí:No, lo siento.") == 2 )
+	{
+		mes "[ ^F70358Costume^000000 ]";
+		mes "¿Necesitas algo de tiempo para pensar en ello, ¿No?";
+		mclose "Bien, puedo entenderlo. Espero verte pronto por aquí.";
+	}
+	if( #CASHPOINTS < .cash || countitem(7773) < 50 || countitem(7829) < 50 || countitem(7828) < 50  ){
+		mes "[ ^F70358Costume^000000 ]";
+		mes "Uh, ¿No tienes "+.Cash+" Cash Points?.";
+		mclose "o te faltan medallas";
+	}
+	set #CASHPOINTS,#CASHPOINTS - .Cash;
+	delitem 7773,50;
+	delitem 7829,50;
+	delitem 7828,50;
+	costume .@Part; // Convert the Headgear
+	mes "[ ^F70358Costume^000000 ]";
+	mes "Listo, disfrute de su Costume y de Mavis-RO.";
+	close;
+}

@@ -1,86 +1,132 @@
-//===== rAthena Script =======================================
-//= Healer
-//===== By: ==================================================
-//= Euphy
-//===== Current Version: =====================================
-//= 1.1
-//===== Compatible With: =====================================
-//= rAthena Project
-//===== Description: =========================================
-//= Basic healer script.
-//===== Additional Comments: =================================
-//= 1.0 Initial script.
-//= 1.1 Aligned coordinates with @go.
-//============================================================
-
--	script	Healer	-1,{
-
-	.@Price = 0;	// Zeny required for heal
-	.@Buffs = 0;	// Also buff players? (1: yes / 0: no)
-	.@Delay = 0;	// Heal delay, in seconds
-
-	if (@HD > gettimetick(2))
-		end;
-	if (.@Price) {
-		message strcharinfo(0), "Healing costs " + callfunc("F_InsertComma",.@Price) + " Zeny.";
-		if (Zeny < .@Price)
-			end;
-		if (select("^0055FFHeal^000000:^777777Cancel^000000") == 2)
-			end;
-		Zeny -= .@Price;
+arlandria,149,188,5	script	Sanadora::HL	811,{
+	if (getbrokenid(1) != 0) {
+		while (getbrokenid(1) != 0){
+			specialeffect2 101;
+			repairall;
+		}
 	}
-	specialeffect2 EF_HEAL2;
-	percentheal 100,100;
-	if (.@Buffs) {
-		specialeffect2 EF_INCAGILITY;
-		sc_start SC_INCREASEAGI,240000,10;
-		specialeffect2 EF_BLESSING;
-		sc_start SC_BLESSING,240000,10;
-	}
-	if (.@Delay)
-		@HD = gettimetick(2) + .@Delay;
-	end;
+OnTouch:
+	if (readparam(5) == 0 )
+		atcommand "@alive";
+
+sc_start 32,  240000, 10;  // Increase Agi
+sc_start 30, 240000, 10; // Blessing
+percentheal 100,100;
+skilleffect 29,0; // Increase Agi
+skilleffect 34,0; // Blessing
+specialeffect2 312;
+percentheal 100,100;
+
+	// Identifica todos los elementos no identificados
+	identifyall;
+end;
 }
+//-------------------------------
+//       Duplicates Healer
+//-------------------------------
+morocc,158,144,4	duplicate(HL)	Sanadora#1	811
+geffen,115,70,5	duplicate(HL)	Sanadora#2	811
+payon,176,107,3	duplicate(HL)	Sanadora#3	811
+alberta,185,143,5	duplicate(HL)	Sanadora#4	811
+izlude,123,142,5	duplicate(HL)	Sanadora#5	811
+aldebaran,135,116,5	duplicate(HL)	Sanadora#6	811
+xmas,143,133,3	duplicate(HL)	Sanadora#7	811
+comodo,208,179,5	duplicate(HL)	Sanadora#8	811
+yuno,136,186,5	duplicate(HL)	Sanadora#9	811
+amatsu,220,234,5	duplicate(HL)	Sanadora#10	811
+gonryun,156,122,5	duplicate(HL)	Sanadora#11	811
+umbala,145,165,3	duplicate(HL)	Sanadora#12	811
+dicastes01,201,197,3	duplicate(HL)	Sanadora#13	811
+louyang,220,109,3	duplicate(HL)	Sanadora#14	811
+ayothaya,202,193,5	duplicate(HL)	Sanadora#15	811
+einbroch,58,202,5	duplicate(HL)	Sanadora#16	811
+lighthalzen,165,97,3	duplicate(HL)	Sanadora#17	811
+einbech,67,96,6	duplicate(HL)	Sanadora#18	811
+hugel,91,149,5	duplicate(HL)	Sanadora#19	811
+rachel,122,115,5	duplicate(HL)	Sanadora#20	811
+veins,212,132,5	duplicate(HL)	Sanadora#21	811
+moscovia,219,195,5	duplicate(HL)	Sanadora#22	811
+mid_camp,213,239,5	duplicate(HL)	Sanadora#23	811
+manuk,286,237,3	duplicate(HL)	Sanadora#24	811
+splendide,198,153,5	duplicate(HL)	Sanadora#25	811
+brasilis,194,221,5	duplicate(HL)	Sanadora#26	811
+dewata,198,183,5	duplicate(HL)	Sanadora#27	811
+morocc,156,96,5	duplicate(HL)	Sanadora#28	811
+ayothaya,146,116,5	duplicate(HL)	Sanadora#29	811
+einbech,135,245,5	duplicate(HL)	Sanadora#30	811
+jawaii,223,228,5	duplicate(HL)	Sanadora#31	811
+arena_4,143,105,5	duplicate(HL)	Sanadora#91	811
 
 
-// Duplicates
-//============================================================
-alberta,25,240,6	duplicate(Healer)	Healer#alb	909
-aldebaran,135,118,6	duplicate(Healer)	Healer#alde	909
-amatsu,200,79,4	duplicate(Healer)	Healer#ama	909
-ayothaya,207,169,6	duplicate(Healer)	Healer#ayo	909
-comodo,184,158,6	duplicate(Healer)	Healer#com	909
-einbech,57,36,6	duplicate(Healer)	Healer#einbe	909
-einbroch,57,202,6	duplicate(Healer)	Healer#einbr	909
-geffen,115,72,6	duplicate(Healer)	Healer#gef	909
-gonryun,156,122,6	duplicate(Healer)	Healer#gon	909
-hugel,89,150,6	duplicate(Healer)	Healer#hug	909
-izlude,121,150,6	duplicate(Healer)	Healer#izl	909	//Pre-RE: (125,118)
-jawaii,250,139,4	duplicate(Healer)	Healer#jaw	909
-lighthalzen,152,100,6	duplicate(Healer)	Healer#lhz	909
-louyang,226,103,4	duplicate(Healer)	Healer#lou	909
-manuk,272,144,6	duplicate(Healer)	Healer#man	909
-mid_camp,203,289,6	duplicate(Healer)	Healer#mid	909
-moc_ruins,72,164,4	duplicate(Healer)	Healer#moc	909
-morocc,153,97,6	duplicate(Healer)	Healer#mor	909
-moscovia,220,191,4	duplicate(Healer)	Healer#mos	909
-niflheim,212,182,5	duplicate(Healer)	Healer#nif	909
-payon,179,106,4	duplicate(Healer)	Healer#pay	909
-prontera,162,193,4	duplicate(Healer)	Healer#prt	909
-rachel,125,116,6	duplicate(Healer)	Healer#rac	909
-splendide,201,153,4	duplicate(Healer)	Healer#spl	909
-thor_camp,249,74,4	duplicate(Healer)	Healer#thor	909
-umbala,105,148,3	duplicate(Healer)	Healer#umb	909
-veins,217,121,4	duplicate(Healer)	Healer#ve	909
-xmas,143,136,4	duplicate(Healer)	Healer#xmas	909
-yuno,164,45,4	duplicate(Healer)	Healer#yuno	909
+//------------------Duplicate VILLAS PRT------------
 
-// Duplicates (Renewal)
-//============================================================
-brasilis,194,221,6	duplicate(Healer)	Healer#bra	909
-dewata,195,187,4	duplicate(Healer)	Healer#dew	909
-dicastes01,201,194,4	duplicate(Healer)	Healer#dic	909
-ecl_in01,45,60,4	duplicate(Healer)	Healer#ecl	909
-malangdo,132,114,6	duplicate(Healer)	Healer#mal	909
-malaya,227,204,6	duplicate(Healer)	Healer#ma	909
-mora,55,152,4	duplicate(Healer)	Healer#mora	909
+rentb1,29,19,3	duplicate(HL)	Sanadora#32	811
+rentb2,29,19,3	duplicate(HL)	Sanadora#33	811
+rentb3,29,19,3	duplicate(HL)	Sanadora#34	811
+rentb4,29,19,3	duplicate(HL)	Sanadora#35	811
+rentb5,29,19,3	duplicate(HL)	Sanadora#36	811
+rentb6,29,19,3	duplicate(HL)	Sanadora#37	811
+rentb7,29,19,3	duplicate(HL)	Sanadora#38	811
+rentb8,29,19,3	duplicate(HL)	Sanadora#39	811
+rentb9,29,19,3	duplicate(HL)	Sanadora#41	811
+rentb10,29,19,3	duplicate(HL)	Sanadora#42	811
+rentb11,29,19,3	duplicate(HL)	Sanadora#43	811
+rentb12,29,19,3	duplicate(HL)	Sanadora#44	811
+rentb13,29,19,3	duplicate(HL)	Sanadora#45	811
+rentb14,29,19,3	duplicate(HL)	Sanadora#46	811
+rentb15,29,19,3	duplicate(HL)	Sanadora#47	811
+rentb16,29,19,3	duplicate(HL)	Sanadora#48	811
+rentb17,29,19,3	duplicate(HL)	Sanadora#49	811
+rentb18,29,19,3	duplicate(HL)	Sanadora#50	811
+rentb20,29,19,3	duplicate(HL)	Sanadora#51	811
+rentb21,29,19,3	duplicate(HL)	Sanadora#52	811
+rentb22,29,19,3	duplicate(HL)	Sanadora#53	811
+rentb23,29,19,3	duplicate(HL)	Sanadora#54	811
+rentb24,29,19,3	duplicate(HL)	Sanadora#55	811
+rentb25,29,19,3	duplicate(HL)	Sanadora#56	811
+rentb26,29,19,3	duplicate(HL)	Sanadora#57	811
+rentb27,29,19,3	duplicate(HL)	Sanadora#58	811
+
+
+// GR Rooms Sanadora
+gr_1,50,65,6	duplicate(HL)	Sanadora#59	811
+gr_2,50,65,6	duplicate(HL)	Sanadora#60	811
+gr_3,50,65,6	duplicate(HL)	Sanadora#61	811
+gr_4,50,65,6	duplicate(HL)	Sanadora#62	811
+gr_5,50,65,6	duplicate(HL)	Sanadora#63	811
+gr_6,50,65,6	duplicate(HL)	Sanadora#64	811
+gr_7,50,65,6	duplicate(HL)	Sanadora#65	811
+gr_8,50,65,6	duplicate(HL)	Sanadora#66	811
+gr_9,50,65,6	duplicate(HL)	Sanadora#67	811
+gr_10,50,65,6	duplicate(HL)	Sanadora#68	811
+gr_11,50,65,6	duplicate(HL)	Sanadora#69	811
+gr_12,50,65,6	duplicate(HL)	Sanadora#70	811
+gr_13,50,65,6	duplicate(HL)	Sanadora#71	811
+gr_14,50,65,6	duplicate(HL)	Sanadora#72	811
+gr_15,50,65,6	duplicate(HL)	Sanadora#73	811
+gr_16,50,65,6	duplicate(HL)	Sanadora#74	811
+gr_17,50,65,6	duplicate(HL)	Sanadora#75	811
+gr_18,50,65,6	duplicate(HL)	Sanadora#76	811
+gr_19,50,65,6	duplicate(HL)	Sanadora#77	811
+gr_20,50,65,6	duplicate(HL)	Sanadora#78	811
+gr_21,50,65,6	duplicate(HL)	Sanadora#79	811
+gr_22,50,65,6	duplicate(HL)	Sanadora#80	811
+gr_23,50,65,6	duplicate(HL)	Sanadora#81	811
+gr_24,50,65,6	duplicate(HL)	Sanadora#82	811
+gr_25,50,65,6	duplicate(HL)	Sanadora#83	811
+gr_26,50,65,6	duplicate(HL)	Sanadora#84	811
+gr_27,50,65,6	duplicate(HL)	Sanadora#85	811
+gr_28,50,65,6	duplicate(HL)	Sanadora#86	811
+gr_29,50,65,6	duplicate(HL)	Sanadora#87	811
+gr_30,50,65,6	duplicate(HL)	Sanadora#88	811
+
+2009rwc_04,13,44,5	duplicate(HL)	Sanadora#89	811
+2009rwc_04,86,55,5	duplicate(HL)	Sanadora#90	811
+
+
+
+
+
+
+
+

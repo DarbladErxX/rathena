@@ -484,6 +484,11 @@ bool cashshop_buylist( struct map_session_data* sd, uint32 kafrapoints, int n, u
 		return false;
 	}
 
+	if (pc_check_security(sd, SECU_NPCTRADE)) {
+		clif_cashshop_result( sd, 0, CASHSHOP_RESULT_ERROR_PC_STATE );
+		return false;
+	}
+
 	new_ = 0;
 
 	for( i = 0; i < n; ++i ){

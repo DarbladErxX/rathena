@@ -1,0 +1,147 @@
+
+prontera,1,1,1	script	NoChatVendPront	-1,{
+
+OnInit:
+	setcell "arlandria.gat",148,176,163,176,cell_nochat,1;
+	setcell "arlandria.gat",148,175,163,175,cell_nochat,1;
+	setcell "arlandria.gat",148,174,163,174,cell_nochat,1;
+	setcell "arlandria.gat",148,173,163,173,cell_nochat,1;
+	setcell "arlandria.gat",148,172,163,172,cell_nochat,1;
+	setcell "arlandria.gat",148,171,163,171,cell_nochat,1;
+	setcell "arlandria.gat",148,170,163,170,cell_nochat,1;
+	setcell "arlandria.gat",148,169,163,169,cell_nochat,1;
+	setcell "arlandria.gat",148,168,163,168,cell_nochat,1;
+	setcell "arlandria.gat",148,167,163,167,cell_nochat,1;
+	setcell "arlandria.gat",148,166,163,166,cell_nochat,1;
+	setcell "arlandria.gat",148,165,163,165,cell_nochat,1;
+	setcell "arlandria.gat",148,164,163,164,cell_nochat,1;
+	setcell "arlandria.gat",148,163,163,163,cell_nochat,1;
+	setcell "arlandria.gat",148,162,163,162,cell_nochat,1;
+	setcell "arlandria.gat",148,161,163,161,cell_nochat,1;
+	setcell "arlandria.gat",148,160,163,160,cell_nochat,1;
+	setcell "arlandria.gat",148,159,163,159,cell_nochat,1;
+	setcell "arlandria.gat",148,158,163,158,cell_nochat,1;
+	setcell "arlandria.gat",148,157,163,157,cell_nochat,1;
+	setcell "arlandria.gat",148,156,163,156,cell_nochat,1;
+	setcell "arlandria.gat",148,155,163,155,cell_nochat,1;
+	setcell "arlandria.gat",148,154,163,154,cell_nochat,1;
+	setcell "arlandria.gat",148,153,163,153,cell_nochat,1;
+	setcell "arlandria.gat",148,152,163,152,cell_nochat,1;
+	setcell "arlandria.gat",148,151,163,151,cell_nochat,1;
+	setcell "arlandria.gat",148,150,163,150,cell_nochat,1;
+	setcell "arlandria.gat",148,149,163,149,cell_nochat,1;
+	setcell "arlandria.gat",148,148,163,148,cell_nochat,1;
+	setcell "arlandria.gat",148,147,163,147,cell_nochat,1;
+	setcell "arlandria.gat",148,146,163,146,cell_nochat,1;
+	setcell "arlandria.gat",148,145,163,145,cell_nochat,1;
+	setcell "arlandria.gat",148,144,163,144,cell_nochat,1;
+	setcell "arlandria.gat",148,143,163,143,cell_nochat,1;
+	setcell "arlandria.gat",148,142,163,142,cell_nochat,1;
+	setcell "arlandria.gat",148,141,163,141,cell_nochat,1;
+
+	setcell "arlandria.gat",148,176,163,176,cell_novending,1;
+	setcell "arlandria.gat",148,175,163,175,cell_novending,1;
+	setcell "arlandria.gat",148,174,163,174,cell_novending,1;
+	setcell "arlandria.gat",148,173,163,173,cell_novending,1;
+	setcell "arlandria.gat",148,172,163,172,cell_novending,1;
+	setcell "arlandria.gat",148,171,163,171,cell_novending,1;
+	setcell "arlandria.gat",148,170,163,170,cell_novending,1;
+	setcell "arlandria.gat",148,169,163,169,cell_novending,1;
+	setcell "arlandria.gat",148,168,163,168,cell_novending,1;
+	setcell "arlandria.gat",148,167,163,167,cell_novending,1;
+	setcell "arlandria.gat",148,166,163,166,cell_novending,1;
+	setcell "arlandria.gat",148,165,163,165,cell_novending,1;
+	setcell "arlandria.gat",148,164,163,164,cell_novending,1;
+	setcell "arlandria.gat",148,163,163,163,cell_novending,1;
+	setcell "arlandria.gat",148,162,163,162,cell_novending,1;
+	setcell "arlandria.gat",148,161,163,161,cell_novending,1;
+	setcell "arlandria.gat",148,160,163,160,cell_novending,1;
+	setcell "arlandria.gat",148,159,163,159,cell_novending,1;
+	setcell "arlandria.gat",148,158,163,158,cell_novending,1;
+	setcell "arlandria.gat",148,157,163,157,cell_novending,1;
+	setcell "arlandria.gat",148,156,163,156,cell_novending,1;
+	setcell "arlandria.gat",148,155,163,155,cell_novending,1;
+	setcell "arlandria.gat",148,154,163,154,cell_novending,1;
+	setcell "arlandria.gat",148,153,163,153,cell_novending,1;
+	setcell "arlandria.gat",148,152,163,152,cell_novending,1;
+	setcell "arlandria.gat",148,151,163,151,cell_novending,1;
+	setcell "arlandria.gat",148,150,163,150,cell_novending,1;
+	setcell "arlandria.gat",148,149,163,149,cell_novending,1;
+	setcell "arlandria.gat",148,148,163,148,cell_novending,1;
+	setcell "arlandria.gat",148,147,163,147,cell_novending,1;
+	setcell "arlandria.gat",148,146,163,146,cell_novending,1;
+	setcell "arlandria.gat",148,145,163,145,cell_novending,1;
+	setcell "arlandria.gat",148,144,163,144,cell_novending,1;
+	setcell "arlandria.gat",148,143,163,143,cell_novending,1;
+	setcell "arlandria.gat",148,142,163,142,cell_novending,1;
+	setcell "arlandria.gat",148,141,163,141,cell_novending,1;
+
+	
+	setcell "mercado",1,1,312,392,cell_novending,0;
+	setcell "mercado",86,9,116,9,cell_novending,1;
+	setcell "mercado",90,10,111,10,cell_novending,1;
+	setcell "mercado",90,11,111,11,cell_novending,1;
+	setcell "mercado",117,12,80,12,cell_novending,1;
+	setcell "mercado",80,13,121,13,cell_novending,1;
+	setcell "mercado",111,14,90,14,cell_novending,1;
+	setcell "mercado",90,15,111,15,cell_novending,1;
+	setcell "mercado",121,16,80,16,cell_novending,1;
+	setcell "mercado",80,17,121,17,cell_novending,1;
+	setcell "mercado",111,18,90,18,cell_novending,1;
+	setcell "mercado",90,19,111,19,cell_novending,1;
+	setcell "mercado",116,20,85,20,cell_novending,1;
+	setcell "mercado",85,21,116,21,cell_novending,1;
+	setcell "mercado",111,22,90,22,cell_novending,1;
+	setcell "mercado",90,23,111,23,cell_novending,1;
+	setcell "mercado",121,24,80,24,cell_novending,1;
+	setcell "mercado",80,25,121,25,cell_novending,1;
+	setcell "mercado",111,26,90,26,cell_novending,1;
+	setcell "mercado",90,27,111,27,cell_novending,1;
+	setcell "mercado",121,28,80,28,cell_novending,1;
+	setcell "mercado",80,29,121,29,cell_novending,1;
+	setcell "mercado",111,30,90,30,cell_novending,1;
+	setcell "mercado",90,31,111,31,cell_novending,1;
+	setcell "mercado",116,32,85,32,cell_novending,1;
+	setcell "mercado",85,33,116,33,cell_novending,1;
+	setcell "mercado",111,34,90,34,cell_novending,1;
+	setcell "mercado",90,35,111,35,cell_novending,1;
+	setcell "mercado",121,36,80,36,cell_novending,1;
+	setcell "mercado",80,37,121,37,cell_novending,1;
+	setcell "mercado",111,38,90,38,cell_novending,1;
+	setcell "mercado",90,39,111,39,cell_novending,1;
+	setcell "mercado",121,40,80,40,cell_novending,1;
+	setcell "mercado",80,41,121,41,cell_novending,1;
+	setcell "mercado",90,42,111,42,cell_novending,1;
+	setcell "mercado",90,43,111,43,cell_novending,1;
+	setcell "mercado",85,44,116,44,cell_novending,1;
+	setcell "mercado",116,45,85,45,cell_novending,1;
+	setcell "mercado",111,46,90,46,cell_novending,1;
+	setcell "mercado",90,47,111,47,cell_novending,1;
+	setcell "mercado",80,48,121,48,cell_novending,1;
+
+	setcell "morocc",168,95,148,95,cell_nochat,1;
+	setcell "morocc",169,94,149,94,cell_nochat,1;
+	setcell "morocc",170,93,150,93,cell_nochat,1;
+	setcell "morocc",171,92,151,92,cell_nochat,1;
+	setcell "morocc",172,91,152,91,cell_nochat,1;
+	setcell "morocc",173,90,153,90,cell_nochat,1;
+	setcell "morocc",174,89,154,89,cell_nochat,1;
+	setcell "morocc",175,88,155,88,cell_nochat,1;
+	setcell "morocc",176,87,156,87,cell_nochat,1;
+	setcell "morocc",177,86,157,86,cell_nochat,1;
+	setcell "morocc",178,85,158,85,cell_nochat,1;
+	setcell "morocc",179,84,159,84,cell_nochat,1;
+	setcell "morocc",180,83,160,83,cell_nochat,1;
+	setcell "morocc",181,82,161,82,cell_nochat,1;
+	setcell "morocc",182,81,162,81,cell_nochat,1;
+
+
+}
+
+arlandria,195,198,0	warp	arlandria01	1,1,prt_in,60,73
+arlandria,104,208,0	warp	arlandria02	1,2,prt_in,131,71
+arlandria,155,129,0	warp	arlandria03	1,3,prt_fild08,170,375
+
+
+
+

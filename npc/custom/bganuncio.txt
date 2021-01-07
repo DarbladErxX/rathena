@@ -1,0 +1,26 @@
+arena_4,146,94,8	script	Broad BG	790,{
+
+	mes "[ ^0257ABBattleground Broad^000000 ]";
+	mes " ";
+	query_sql ("SELECT `BLOCK_PJ` FROM `login` WHERE `account_id`='"+getcharid(3)+"'", .@BAN$);
+	if ( .@BAN$ == "1" ) 
+	{ 
+	mclose "Estas baneado Nose te permite tirar broadcast"; 
+
+	}
+	if (Baselevel < 99 || #BROADCASTTICK > gettimetick(2) ) 
+	{
+		mes "Requisitos para enviar un Broad:";
+		mes "Ser Renacido base 99.";
+		mes "No estar Baneado en Broad Sistem";
+		mes "Espera hasta que puedas enviar el mensaje después de uno ya anunciado.";
+		close;
+	}
+
+	mes "¿Deseas anunciar BattleGround?. Así se fomenta el uso de BG.";
+	if ( select("Si : No") == 2 ) close;
+
+	set #BROADCASTTICK , gettimetick(2) + 45;
+	announce "[ " +strcharinfo(0) +" ] los invita a participar a BattleGround.",bc_all,0xFF8000;
+	close;
+}

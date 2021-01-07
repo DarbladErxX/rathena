@@ -1,0 +1,165 @@
+prontera,156,178,5	script	MvP vs MvP	837,{
+	end;
+
+	end;
+OnWhisperGlobal:
+	if ( getgmlevel() <= 89 ) end;
+ 		if (@whispervar0$ != "activar") end;
+OnInit:
+	donpcevent "MvP vs MvP::OnLoop";
+end;
+OnLoop:
+	do {
+                sleep 14000;
+			if ($@reload == 1)
+                        set .@msg$ , "" + $@monsterName1$ + " vs " + $@monsterName2$ + "";
+                 else if($@Reload == 2)
+                        set .@msg$ , "" + $@monsterName1$ + " vs " + $@monsterName2$ + "";
+                else if($@Reload == 3)
+                        set .@msg$ , "" + $@monsterName1$ + " vs " + $@monsterName2$ + "";
+	                else
+                        set .@msg$ , "MvP vs MvP";
+                delwaitingroom "MvP vs MvP";
+                waitingroom .@msg$ , 0;
+        } while(1);
+end;
+}
+
+-	script	mvpvsmvp	-1,{
+OnWhisperGlobal:
+	if ( getgmlevel() >= 60 ) 
+	{
+		if (@whispervar0$ == "activar")
+			donpcevent "mvpvsmvp::OnWatingRoom";
+	}
+end;
+
+OnInit:
+	set $@termino,0;
+	set $@Reload, 0;
+	setwall "mvp_room",57,57,16,4,0,"MvPVSMvPW1"; 
+	setwall "mvp_room",42,57,16,4,0,"MvPVSMvPW2";
+	setwall "mvp_room",43,57,14,6,0,"MvPVSMvPW3";
+	setwall "mvp_room",43,42,14,6,0,"MvPVSMvPW4";
+
+end;
+	
+OnEventReload:
+	set $@Reload, $@Reload + 1;
+	if ($@Reload == 4)
+	{
+		set $@Reload, 0;
+		set $@termino, 0;
+		stopnpctimer;
+		announce " [MvP vs MvP]: El evento ha terminado! gracias por participar.",bc_all;
+		end;
+	}
+OnClock1300:
+OnClock1600:
+OnClock1900:
+OnClock2100:
+OnWatingRoom:
+	stopnpctimer;
+	set $@termino, 1;
+	killmonsterall "mvp_room",2;
+	setarray $@monsterId[0],1511,1785,1039,1874,2068,1272,1719,1046,1871,1768,1734,2022,1087,1190,1623,1751,1832,1916,1708,3025,3017,2202,3074,3016,3012,1889,2156,1991,1650,1649,1648,1647,1646;
+	do 
+	{
+		$@Rand1 = (rand(0,getarraysize($@monsterId) - 1) );
+		$@Rand2 = (rand(0,getarraysize($@monsterId) - 1) );
+		$@Rand = rand(0,1);
+
+		$@monsterName1$ = getmonsterinfo($@monsterId[$@Rand1],MOB_NAME );
+		$@monsterHp1 = getmonsterinfo($@monsterId[$@Rand1],MOB_MAXHP);
+		$@monsterLvl1 = getmonsterinfo($@monsterId[$@Rand1],MOB_LV);
+		$@monsterName2$ = getmonsterinfo($@monsterId[$@Rand2],MOB_NAME );
+		$@monsterHp2 = getmonsterinfo($@monsterId[$@Rand2],MOB_MAXHP);
+		$@monsterLvl2 = getmonsterinfo($@monsterId[$@Rand1],MOB_LV);
+		
+		if (
+			($@monsterLvl1 > $@monsterLvl2 && ($@monsterLvl1 - $@monsterLvl2) > 15) ||
+			($@monsterLvl2 > $@monsterLvl1 && ($@monsterLvl2 - $@monsterLvl1) > 15)
+		)
+			$@error = 1;
+		else
+			$@error = 0;
+
+	} while (
+			 $@monsterName1$ == "null" || $@monsterName2$ == "null" || $@monsterHp1 == 0 ||
+			 $@monsterHp2 == 0 || $@monsterId[$@Rand1] == 0 || $@monsterId[$@Rand2] == 0 ||
+			$@monsterId[$@Rand1] == $@monsterId[$@Rand2] || $@error == 1			
+	);
+	
+	if ( $@Reload == 0 ){
+		set $@Reload, $@Reload + 1; // DarbladErxX
+		announce " [MvP vs MvP]: El Warp esta abierto en Prontera y El Round "+$@Reload+" está por comenzar ["+$@monsterName1$+"] vs ["+$@monsterName2$+"] por 4 Poring Coins, que esperas!!!.",bc_all;
+	} else
+		announce " [MvP vs MvP]: El Round "+$@Reload+" está por comenzar ["+$@monsterName1$+"] vs ["+$@monsterName2$+"] por 4 Poring Coins.",bc_all;
+
+	sleep 14000;
+	announce "[MvP vs MvP]: En 1 minuto se deshabilitaran las apuestas...",bc_all;
+	sleep 60000;
+	donpcevent "mvpvsmvp::OnStart";
+end;
+
+
+OnStart:
+	announce "[MvP vs MvP]: Se cerraron las puertas.",bc_all;
+	set $@termino , 2;
+	initnpctimer;
+	// mobevent <map>,  <x>,<y>,<fakename>,        <monsterId>,<size>,<amount>,<teamid>,<showhp>,<increasehp>,<allied>,<noslaves>,<noexpnodrop>,<poringcoins>,<event>
+	mobevent "mvp_room",46,49,$@monsterName1$,$@monsterId[$@Rand1],0,1,0,1,( $@monsterHp2 - ($@monsterHp2/2) ),1,$@Rand,1,0,0,0,0,0,"mvpvsmvp::OnEquip2Win";
+	mobevent "mvp_room",53,49,$@monsterName2$,$@monsterId[$@Rand2],0,1,0,1,( $@monsterHp1 - ($@monsterHp1/2) ),2,$@Rand,1,0,0,0,0,0,"mvpvsmvp::OnEquip1Win";
+end;
+	//para resetear cartel || DarbladErxX
+	OnTimer180000: // 3 minutos
+	if( getmapusers("mvp_room") == 0 ) {
+			set $@Reload, 0;
+			 set $@termino, 0;
+			  announce " [MvP vs MvP]: El evento ha terminado! gracias por participar.",bc_all;
+			   stopnpctimer;
+			    killmonsterall "mvp_room",2;
+			     end;
+			      } end;
+
+OnEquip2Win: 
+    announce "[MvP vs MvP]: "+$@monsterName2$+" Ganó, Felicidades a los ganadores",bc_all;
+	sleep 3500;
+    mapeventwarp("mvp_room","arlandria",137,157,"@OPT_mvpvsmvp",2,7539,4);
+    donpcevent "mvpvsmvp::OnEventReload";
+end;
+
+OnEquip1Win:
+    announce "[MvP vs MvP]: "+$@monsterName1$+" Ganó, Felicidades a los ganadores",bc_all;
+	sleep 3500;
+    mapeventwarp("mvp_room","arlandria",137,157,"@OPT_mvpvsmvp",1,7539,4);
+    donpcevent "mvpvsmvp::OnEventReload";
+end;
+
+}
+
+prontera,156,178,5	script	Entrada MVP	45,2,2,{
+	if ( $@termino == 1 )
+	{
+		mes "^10B2D2 MvP vs MvP^000000"; 
+		mes " "; 
+
+		mes "A que mvp queres apostar";
+		set @OPT_mvpvsmvp, select("^10B2D2 [ > ] ^000000 " + $@monsterName1$ + ":^10B2D2 [ > ] ^000000 " + $@monsterName2$);
+
+		close2;
+			dispbottom "Has apostado por : " + ( @OPT_mvpvsmvp == 1 ? $@monsterName1$ : $@monsterName2$) + ", Opción: " + @OPT_mvpvsmvp; 
+			warp "mvp_room",50,38;
+		end;
+	}
+	end;
+}
+
+mvp_room	mapflag	monster_noteleport
+mvp_room	mapflag	noteleport
+mvp_room	mapflag	nobranch
+mvp_room	mapflag	nosave
+mvp_room	mapflag	noloot
+mvp_room	mapflag	novending
+mvp_room	mapflag	nowarp
+mvp_room	mapflag	hidemobhpbar

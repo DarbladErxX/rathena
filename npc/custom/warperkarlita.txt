@@ -1,0 +1,464 @@
+//= ==== rAthena Script ============================================= =\\
+//= Aglao's SQL Warper(Warper Karlita)                                 \\
+//= ==== By: ======================================================== =\\
+//= Aglao/Esthar (aglaophotisro@gmail.com)                             \\
+//= Copyright © 2020 Aglaosoft C.A. - Todos los derechos reservados    \\
+//= ==== Current Version: =========================================== =\\
+//= Version: 1.1                                                       \\
+//= ==== Compatible With: =========================================== =\\
+//= rAthena SVN	SQL y TXT					       \\
+//= ==== Description: =============================================== =\\
+//= NPC Warper con menú dinámico desde tablas custom SQL y funciones   \\
+//= de activación/desactivación de Evolution/Checkpoint mode tanto por \\
+//= char como por cuenta, a su vez mostrar y ocultar cantidad de       \\
+//= usuarios por mapa.                                                 \\
+//= ==== Additional Comments: ======================================= =\\
+//= NPC original del server Aglaophotis III Ragnarok Online y licencia \\
+//= para MediaFire (Israel Gonzalez Urrutia) para MavisRO.             \\
+//= IMPORTANTE: Prohibido revender o compartir este script.            \\
+//= ================================================================= =\\
+arlandria.gat,162,188,4	script	Karlita	831,{
+
+	set .@meserrc$, "No hay Ciudades disponibles para llevarte. Vuelve más tarde.";
+	set .@meserrd$, "No hay Dungeons disponibles para llevarte. Vuelve más tarde.";
+	set .@meserrf$, "No hay Fields disponibles para llevarte. Vuelve más tarde.";
+	set .@zenycolor$, "00AA00";
+	cutin "831",2;
+	percentheal 100,100;
+	set .@n$, "^FF0000[Karlita]^000000";
+	mes .@n$;
+	mes "Hola, "+ strcharinfo(0) + ". Yo yo soy la encargada por el administrador para poder llevarte a donde tu quieras.";	
+
+	//Recorre la tabla principal de mapas para actualizar las coordenadas de Ultimo Warp y Zeny en caso de realizar modificaciones de estos valores.
+	set .@regat, query_sql ("SELECT `tipo_mapa`, `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w`",.@tpmapat$,.@gpmapat$,.@nbmapat$,.@gatmapat$,.@mapxt,.@mapyt,.@mapcostt);
+	if(.@regat > 0) {
+		for(set .@i,0; .@i<.@regat; set .@i,.@i+1) {
+			if($wpadmcheck && $wpadmcheck == 1) query_sql ("UPDATE `karlita_w_users` SET `coordx` = "+.@mapxt[.@i]+", `coordy` = "+.@mapyt[.@i]+", `cost` = "+.@mapcostt[.@i]+" WHERE `mapagat` = '"+.@gatmapa$[.@i]+"' AND "+($wpadmmode && $wpadmmode == 1 ? "`account_id` = " + getcharid(3) : "`char_id` = " + getcharid(0)));
+			if(warpmap$ == .@gatmapat$[.@i]) {
+				set warpmapnb$,.@nbmapat$[.@i];
+				set warpmapx,.@mapxt[.@i];
+				set warpmapy,.@mapyt[.@i];
+				set warpmapzeny,.@mapcostt[.@i];
+			}
+		}
+		goto L_warpernext;
+	} else goto L_warpererror;
+	end;
+		
+L_warpererror:
+	next;
+	mes .@n$;
+	mclose "No hay mapas disponibles.";
+	
+L_warpernext:
+	mes "Ahora dime, ¿A dónde deseas ir?";
+	
+	//Menú principal
+	switch(select("^FF0000Last ^0000FF"+ warpmapnb$ +""+($wpadmusv && $wpadmusv == 2 && warpmap$ != "" ? " [^FF0000"+getmapusers(warpmap$)+"^000000]" : "")+"^000000^FF0000^000000:^5959FF>^000000 Viajar a una Ciudadad:^5959FF>^000000 Viajar a un Dungeon:^5959FF>^000000 Viajar a un Field:^5959FF>^000000 Zonas Especiales:^5959FF>^000000 Castillos de WOE:^5959FF>^000000 Guardar Punto de Inicio" + (getgmlevel() >= 80 ? ":^5959FF>^000000 Administrar Warper" : ""))) {
+		
+		case 1: //Último Warp
+			if (warpmap$ == "") mclose "No has visitado ningún mapa conmigo.";
+			else if (warpmapzeny && Zeny < warpmapzeny) mclose "No posees suficiente dinero para ir a un mapa.";
+			else {
+				if(warpmapzeny && warpmapzeny > 0) set Zeny,Zeny-warpmapzeny;
+						specialeffect2 71;
+						sleep2 250;
+						specialeffect2 402;
+						sleep2 250;
+						emotion 12;
+						specialeffect2 6;
+						sleep2 250;
+						specialeffect2 304;
+				warp warpmap$,warpmapx,warpmapy;
+			}
+			break;
+
+		case 2: //Ciudades
+			if($wpadmcheck && $wpadmcheck == 1) {
+				if($wpadmmode && $wpadmmode == 1) {
+					set .@regc, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Ciudad%' AND `account_id` = '"+getcharid(3)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+					set .@item_ciudad$,"";
+					if(.@regc > 0) {
+						for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+							.@item_ciudad$ = .@item_ciudad$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+						}
+						set .@ic,select(.@item_ciudad$) - 1;
+						for(set .@i,0; .@i<.@regc; set .@i,.@i+1) {
+							if(.@nbmapa$[.@ic] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+						}
+					} else mclose .@meserrc$;
+				} else if($wpadmmode && $wpadmmode == 2) {
+					set .@regc, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Ciudad%' AND `char_id` = '"+getcharid(0)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+					set .@item_ciudad$,"";
+					if(.@regc > 0) {
+						for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+							.@item_ciudad$ = .@item_ciudad$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+						}
+						set .@ic,select(.@item_ciudad$) - 1;
+						for(set .@i,0; .@i<.@regc; set .@i,.@i+1) {
+							if(.@nbmapa$[.@ic] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+						}
+					} else mclose .@meserrc$;
+				} else mclose .@meserrc$;
+			} else {
+				set .@regc, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w` WHERE `tipo_mapa` like '%Ciudad%' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+				set .@item_ciudad$,"";
+				if(.@regc > 0) {
+					for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+						.@item_ciudad$ = .@item_ciudad$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+					}
+					set .@ic,select(.@item_ciudad$) - 1;
+					for(set .@i,0; .@i<.@regc; set .@i,.@i+1) {
+						if(.@nbmapa$[.@ic] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+					}
+				} else mclose .@meserrc$;
+			}
+			break;
+
+		case 3: //Dungeons
+			if($wpadmcheck && $wpadmcheck == 1) {
+				if($wpadmmode && $wpadmmode == 1) {
+					set .@regdg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Dungeon%' AND `account_id` = '"+getcharid(3)+"'",.@gpmapa$);
+					set .@item_gdungeon$,"";
+					if(.@regdg > 0) {
+						.@item_gdungeon$ = implode(.@gpmapa$, ":");
+						set .@idg,select(.@item_gdungeon$) - 1;
+						set .@regd, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Dungeon%' AND `grupo_mapa` = '"+.@gpmapa$[.@idg]+"' AND `account_id` = '"+getcharid(3)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+						set .@item_dungeon$,"";
+						if(.@regd > 0) {
+							for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+								.@item_dungeon$ = .@item_dungeon$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+							}
+							set .@id,select(.@item_dungeon$) - 1;
+							for(set .@i,0; .@i<.@regd; set .@i,.@i+1) {
+								if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+							}
+						} else mclose .@meserrd$;
+					} else mclose .@meserrd$;
+				} else if($wpadmmode && $wpadmmode == 2) {
+					set .@regdg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Dungeon%' AND `char_id` = '"+getcharid(0)+"'",.@gpmapa$);
+					set .@item_gdungeon$,"";
+					if(.@regdg > 0) {
+						.@item_gdungeon$ = implode(.@gpmapa$, ":");
+						set .@idg,select(.@item_gdungeon$) - 1;
+						set .@regd, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Dungeon%' AND `grupo_mapa` = '"+.@gpmapa$[.@idg]+"' AND `char_id` = '"+getcharid(0)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+						set .@item_dungeon$,"";
+						if(.@regd > 0) {
+							for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+								.@item_dungeon$ = .@item_dungeon$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+							}
+							set .@id,select(.@item_dungeon$) - 1;
+							for(set .@i,0; .@i<.@regd; set .@i,.@i+1) {
+								if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+							}
+						} else mclose .@meserrd$;
+					} else mclose .@meserrd$;
+				} else mclose .@meserrd$;
+			} else {
+				set .@regdg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w` WHERE `tipo_mapa` like '%Dungeon%'",.@gpmapa$);
+				set .@item_gdungeon$,"";
+				if(.@regdg > 0) {
+					.@item_gdungeon$ = implode(.@gpmapa$, ":");
+					set .@idg,select(.@item_gdungeon$) - 1;
+					set .@regd, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy` FROM `karlita_w` WHERE `tipo_mapa` like '%Dungeon%' AND `grupo_mapa` = '"+.@gpmapa$[.@idg]+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+					set .@item_dungeon$,"";
+					if(.@regd > 0) {
+						for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+							.@item_dungeon$ = .@item_dungeon$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+						}
+						set .@id,select(.@item_dungeon$) - 1;
+						for(set .@i,0; .@i<.@regd; set .@i,.@i+1) {
+							if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+						}
+					} else mclose .@meserrd$;
+				} else mclose .@meserrd$;
+			}
+			break;
+
+		case 4: //Fields
+			if($wpadmcheck && $wpadmcheck == 1) {
+				if($wpadmmode && $wpadmmode == 1) {
+					set .@regfg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Field%' AND `account_id` = '"+getcharid(3)+"'",.@gpmapa$);
+					set .@item_gfield$,"";
+					if(.@regfg > 0) {
+						.@item_gfield$ = implode(.@gpmapa$, ":");
+						set .@ifg,select(.@item_gfield$) - 1;
+						set .@regf, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Field%' AND `grupo_mapa` = '"+.@gpmapa$[.@ifg]+"' AND `account_id` = '"+getcharid(3)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+						set .@item_field$,"";
+						if(.@regf > 0) {
+							for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+								.@item_field$ = .@item_field$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+							}
+							set .@id,select(.@item_field$) - 1;
+							for(set .@i,0; .@i<.@regf; set .@i,.@i+1) {
+								if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+							}
+						} else mclose .@meserrf$;
+					} else mclose "No hay Dungeons disponibles para llevarte. Vuelve más tarde.";
+				} else if($wpadmmode && $wpadmmode == 2) {
+					set .@regfg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Field%' AND `char_id` = '"+getcharid(0)+"'",.@gpmapa$);
+					set .@item_gfield$,"";
+					if(.@regfg > 0) {
+						.@item_gfield$ = implode(.@gpmapa$, ":");
+						set .@ifg,select(.@item_gfield$) - 1;
+						set .@regf, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `tipo_mapa` like '%Field%' AND `grupo_mapa` = '"+.@gpmapa$[.@ifg]+"' AND `char_id` = '"+getcharid(0)+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+						set .@item_field$,"";
+						if(.@regf > 0) {
+							for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+								.@item_field$ = .@item_field$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+							}
+							set .@id,select(.@item_field$) - 1;
+							for(set .@i,0; .@i<.@regf; set .@i,.@i+1) {
+								if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+							}
+						} else mclose .@meserrf$;
+					} else mclose .@meserrf$;
+				} else mclose .@meserrf$;
+			} else {
+				set .@regfg, query_sql ("SELECT DISTINCT `grupo_mapa` FROM `karlita_w` WHERE `tipo_mapa` like '%Field%'",.@gpmapa$);
+				set .@item_gfield$,"";
+				if(.@regfg > 0) {
+					.@item_gfield$ = implode(.@gpmapa$, ":");
+					set .@ifg,select(.@item_gfield$) - 1;
+					set .@regf, query_sql ("SELECT `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w` WHERE `tipo_mapa` like '%Field%' AND `grupo_mapa` = '"+.@gpmapa$[.@ifg]+"' ORDER BY `mapagat` ASC",.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+					set .@item_field$,"";
+					if(.@regf > 0) {
+						for(set .@i,0; .@i<getarraysize(.@nbmapa$); .@i++) {
+							.@item_field$ = .@item_field$ + (.@i > 0 ? ":" : "") + .@nbmapa$[.@i] + ($wpadmusv && $wpadmusv == 2 ? " [^FF0000"+getmapusers(.@gatmapa$[.@i])+"^000000]" : "");
+						}
+						set .@id,select(.@item_field$) - 1;
+						for(set .@i,0; .@i<.@regf; set .@i,.@i+1) {
+							if(.@nbmapa$[.@id] == .@nbmapa$[.@i]) {	callsub (warpmapa,.@nbmapa$[.@i],.@gatmapa$[.@i],.@mapx[.@i],.@mapy[.@i],.@mapcost[.@i]);	break;	}
+						}
+					} else mclose .@meserrf$;
+				} else mclose .@meserrf$;
+			}
+			break;
+			
+		case 5: // Zonas especiales
+	switch(select("Merchants ^5959FF["+getmapusers("mercado")+"]^000000:Zona Quest ^5959FF["+getmapusers("job3_rune02")+"]^000000:Mercado NPC ^5959FF["+getmapusers("ayothaya")+"]^000000"))
+{
+	case 1:
+		callsub (warpmapa,"Mercado","mercado",101,11,0);	break;
+	case 2:
+		callsub (warpmapa,"Zona Quest","job3_rune02",38,41,0);	break;
+
+	case 3:
+		callsub (warpmapa,"Mercado Npc","ayothaya",151,166,0);	break;
+
+	}
+		   break;
+
+	    case 6: // Mapas de WOE
+switch(select("Woe Jueves Prontera ^5959FF["+getmapusers("prt_gld")+"]^000000:WOE Domingo 2.0 ^5959FF["+getmapusers("sch_gld")+"]^000000:WOE Sabado 2.0 ^5959FF["+getmapusers("sch_gld")+"]^000000"))
+{
+	if ( getcharid(2) == 0 ) mclose "Usted debe tener una Guild para llegar ^FF0000A los mapas de WOE^000000.";
+
+	case 1:
+		callsub (warpmapa,"Valkyrie Realm","prt_gld",141,64,0);	break;
+
+	case 2:
+		callsub (warpmapa,"Schwarzwald Realm","sch_gld",294,100,0);	break; /* DOMINGO HIMINN */
+
+	case 3:
+		callsub (warpmapa,"Arunafelz Guild Map","aru_gld",160,268,0);	break; /* SABADO MARDOL */
+
+	     }
+		break;
+
+		case 7: //Save Point
+		next;
+		mes .@n$;
+		setarray .@Villas$[1],"rentb2","rentb3","rentb4","rentb5","rentb6","rentb7","rentb8","rentb9","rentb10","rentb11";
+		for ( set .@i , 0; .@i < getarraysize(.@Villas$); set .@i , .@i + 1 ) if (strcharinfo(3) == .@Villas$[.@i]) mclose "Lo siento, pero esta prohibido guardar en las villas";
+			getmapxy .@m$,.@x,.@y,0;
+      			 mes "Muy bien.";
+			 save .@m$,.@x,.@y;
+			 specialeffect2 500;
+			 emotion 12;
+			 mclose "A partir de ahora este lugar quedará guardado como tu Punto de Inicio.";
+			break;
+
+		case 8: //Administración GM
+			next;
+			mes "Para servirle "+ strcharinfo(0) + ", ¿Qué función deseas seleccionar?";
+			switch(select((!$wpadmcheck || $wpadmcheck == 0 ? "Activar" : "Desactivar") + " checkpoint mapas:Activar Mapas Modo Cuenta " + (!$wpadmcheck || $wpadmcheck == 0 ? "(^FF0000Deshabilitado^000000)" : ($wpadmmode && $wpadmmode == 1 ? "(^00FF00Activado^000000)" : "")) + ":Activar Modo Char " + (!$wpadmcheck || $wpadmcheck == 0 ? "(^FF0000Deshabilitado^000000)" : ($wpadmmode && $wpadmmode == 2 ? "(^00FF00Activado^000000)" : "")) + ":" + ($wpadmusv && $wpadmusv == 1 ? "Mostrar" : "Ocultar") + " cantidad users por mapa")) {
+				case 1:
+					if($wpadmcheck && $wpadmcheck == 1) {	set $wpadmcheck,0;	} else {	set $wpadmcheck,1;	if(!$wpadmmode) set $wpadmmode,1;	}
+					mclose "Función modificada exitosamente. ^^";	break;
+				case 2:
+					if($wpadmcheck && $wpadmcheck == 1) {
+						set $wpadmmode,1;	mes "Función modificada exitosamente. ^^";
+					} else mclose "Esta opción está deshabilitada, active primero el modo Checkpoint para proceder."; break;
+				case 3:
+					if($wpadmcheck && $wpadmcheck == 1) {
+						set $wpadmmode,2;	mes "Función modificada exitosamente. ^^";
+					} else mclose "Esta opción está deshabilitada, active primero el modo Checkpoint para proceder."; break;
+				case 4:
+					if($wpadmusv && $wpadmusv == 1) {	set $wpadmusv,2;	} else {	set $wpadmusv,1;	}
+					mclose "Función modificada exitosamente. ^^"; break;
+			}
+			break;
+	}
+  end;
+
+warpmapa: // Callsub(warpmapa,"Nombre Mapa,"mapa",CordenadaX,CordenadaY,Zeny); // Formato de uso del submemu
+	if(Zeny < getarg(4)) mclose "Para utilizar este servicio deberás pagar ^880000"+getarg(4)+" z^000000.";
+	else {
+		set warpmapnb$,getarg(0);
+		set warpmap$,getarg(1);
+		set warpmapx,getarg(2);
+		set warpmapy,getarg(3);
+		set warpmapzeny,getarg(4);
+		if(warpmapzeny > 0) set Zeny,Zeny-warpmapzeny;
+		specialeffect2 71;
+		sleep2 250;
+		specialeffect2 402;
+		sleep2 250;
+		emotion 12;
+		specialeffect2 6;
+		sleep2 250;
+		specialeffect2 304;
+		warp warpmap$,warpmapx,warpmapy;
+	}
+	end;
+}
+
+-	script	maploads	-1,{
+	OnPCLoadMapEvent: // Activación de Destinos:
+		getmapxy .@m$,.@x,.@y,0;
+		set .@zenycolor$, "00AA00";
+		set .@rega, query_sql ("SELECT `tipo_mapa`, `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w`",.@tpmapa$,.@gpmapa$,.@nbmapa$,.@gatmapa$,.@mapx,.@mapy,.@mapcost);
+		if(.@rega > 0) {
+			for(set .@i,0; .@i<.@rega; set .@i,.@i+1) {
+				if($wpadmcheck && $wpadmcheck == 1) {
+					set .@regaus, query_sql ("SELECT `account_id`, `char_id`, `tipo_mapa`, `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost` FROM `karlita_w_users` WHERE `mapagat` = '"+.@m$+"' AND " + ($wpadmmode && $wpadmmode == 1 ? "`account_id` = " + getcharid(3) : "`char_id` = " + getcharid(0)),.@accmapus,.@charmapus,.@tpmapaus$,.@gpmapaus$,.@nbmapaus$,.@gatmapaus$,.@mapxus,.@mapyus,.@mapcostus);
+					if(.@m$ == .@gatmapa$[.@i] && .@regaus == 0) {
+						query_sql ("INSERT INTO `karlita_w_users` (`account_id`, `char_id`, `tipo_mapa`, `grupo_mapa`, CONCAT(`nombre_mapa`, (CASE WHEN `cost` > 0 THEN CONCAT(' ("+(.@zenycolor$ != "" ? "^"+.@zenycolor$ : "")+"',`cost`,'z"+(.@zenycolor$ != "" ? "^000000" : "")+")') ELSE '' END)) as nombre_mapa, `mapagat`, `coordx`, `coordy`, `cost`) VALUES ("+getcharid(3)+","+getcharid(0)+",'"+.@tpmapa$[.@i]+"','"+.@gpmapa$[.@i]+"','"+.@nbmapa$[.@i]+"','"+.@gatmapa$[.@i]+"',"+.@mapx[.@i]+","+.@mapy[.@i]+","+.@mapcost[.@i]+")");
+						announce "Nuevo mapa registrado. "+.@tpmapa$[.@i]+" "+.@nbmapa$[.@i]+".",bc_self,0x00ccdd;
+					} else {
+						//Se actualizan las coordenadas y costo zeny en caso de existir un mapa bajo char o cuenta
+						query_sql ("UPDATE `karlita_w_users` SET `coordx` = "+.@mapx[.@i]+", `coordy` = "+.@mapy[.@i]+", `cost` = "+.@mapcost[.@i]+" WHERE `mapagat` = '"+.@gatmapa$[.@i]+"' AND "+($wpadmmode && $wpadmmode == 1 ? "`account_id` = " + getcharid(3) : "`char_id` = " + getcharid(0)));
+					}
+				}
+				if(warpmap$ == .@gatmapa$[.@i]) {
+					set warpmapnb$,.@nbmapa$[.@i];
+					set warpmapx,.@mapx[.@i];
+					set warpmapy,.@mapy[.@i];
+					set warpmapzeny,.@mapcost[.@i];
+				}				
+			}
+		}
+		end;
+	
+	//Se inician variables
+	OnInit:
+		if(!$wpadmusv) set $wpadmusv,1;
+		if(!$wpadmcheck) set $wpadmcheck,0;
+		if(!$wpadmmode) set $wpadmmode,1;	
+		set .@regmf, query_sql ("SELECT `mapagat` FROM `karlita_w`",.@gatmapa$);
+		if(.@regmf > 0) {
+			for(set .@i,0; .@i<.@regmf; set .@i,.@i+1) setmapflag .@gatmapa$[.@i],mf_loadevent;
+		}
+		end;
+}
+
+//================================================
+// --------- Duplicastes Warper Karlita ----------
+//================================================
+
+morocc.gat,161,144,4	duplicate(Karlita)	Karlita#1	831
+geffen.gat,124,67,3	duplicate(Karlita)	Karlita#2	831
+payon.gat,182,110,3	duplicate(Karlita)	Karlita#3	831
+alberta.gat,182,143,3	duplicate(Karlita)	Karlita#4	831
+izlude.gat,131,154,3	duplicate(Karlita)	Karlita#5	831
+aldebaran.gat,135,123,3	duplicate(Karlita)	Karlita#6	831
+xmas.gat,151,135,3	duplicate(Karlita)	Karlita#7	831
+comodo.gat,212,187,3	duplicate(Karlita)	Karlita#8	831
+yuno.gat,143,189,4	duplicate(Karlita)	Karlita#9	831
+amatsu.gat,225,234,4	duplicate(Karlita)	Karlita#10	831
+gonryun.gat,162,122,3	duplicate(Karlita)	Karlita#11	831
+umbala.gat,141,165,5	duplicate(Karlita)	Karlita#12	831
+louyang.gat,216,109,4	duplicate(Karlita)	Karlita#13	831
+//new_1.gat,51,114,5	duplicate(Karlita)	Karlita#14	831
+ayothaya.gat,213,193,3	duplicate(Karlita)	Karlita#15	831
+einbroch.gat,69,202,3	duplicate(Karlita)	Karlita#16	831
+lighthalzen.gat,153,97,5	duplicate(Karlita)	Karlita#17	831
+hugel.gat,102,149,3	duplicate(Karlita)	Karlita#18	831
+rachel.gat,130,119,3	duplicate(Karlita)	Karlita#19	831
+veins.gat,220,132,3	duplicate(Karlita)	Karlita#20	831
+moscovia.gat,225,197,3	duplicate(Karlita)	Karlita#21	831
+manuk.gat,282,236,5	duplicate(Karlita)	Karlita#22	831
+splendide.gat,205,153,3	duplicate(Karlita)	Karlita#23	831
+brasilis.gat,197,221,3	duplicate(Karlita)	Karlita#24	831
+mid_camp.gat,222,239,3	duplicate(Karlita)	Karlita#25	831
+dicastes01.gat,195,197,5	duplicate(Karlita)	Karlita#26	831
+dewata.gat,201,183,3	duplicate(Karlita)	Karlita#27	831
+moc_fild04.gat,207,331,4	duplicate(Karlita)	Karlita#28	831
+izlu2dun.gat,104,82,4	duplicate(Karlita)	Karlita#29	831
+mjolnir_02.gat,85,363,4	duplicate(Karlita)	Karlita#30	831
+prt_fild05.gat,273,215,4	duplicate(Karlita)	Karlita#31	831
+glast_01.gat,370,308,4	duplicate(Karlita)	Karlita#32	831
+yuno_fild03.gat,37,135,4	duplicate(Karlita)	Karlita#33	831
+gef_fild10.gat,71,339,4	duplicate(Karlita)	Karlita#34	831
+pay_arche.gat,39,135,4	duplicate(Karlita)	Karlita#35	831
+moc_ruins.gat,64,166,4	duplicate(Karlita)	Karlita#36	831
+moc_fild19.gat,106,97,4	duplicate(Karlita)	Karlita#37	831
+alb2trea.gat,73,101,4	duplicate(Karlita)	Karlita#38	831
+tur_dun01.gat,148,239,4	duplicate(Karlita)	Karlita#39	831
+quiz_02,226,383,6	duplicate(Karlita)	Karlita#40	831
+itemmall,187,85,4	duplicate(Karlita)	Karlita#41	831
+ayothaya.gat,154,120,3	duplicate(Karlita)	Karlita#42	831
+ayothaya.gat,142,171,3	duplicate(Karlita)	Karlita#43	831
+einbech.gat,135,248,3	duplicate(Karlita)	Karlita#44	831
+morocc.gat,162,96,3	duplicate(Karlita)	Karlita#45	831
+jawaii.gat,223,232,3	duplicate(Karlita)	Karlita#46	831
+
+
+//========================================================
+// --------- Duplicastes Guild Rooms----------
+//========================================================
+gr_1,47,62,6	duplicate(Karlita)	Karlita#47	831
+gr_2,47,62,6	duplicate(Karlita)	Karlita#48	831
+gr_3,47,62,6	duplicate(Karlita)	Karlita#49	831
+gr_4,47,62,6	duplicate(Karlita)	Karlita#50	831
+gr_5,47,62,6	duplicate(Karlita)	Karlita#51	831
+gr_6,47,62,6	duplicate(Karlita)	Karlita#52	831
+gr_7,47,62,6	duplicate(Karlita)	Karlita#53	831
+gr_8,47,62,6	duplicate(Karlita)	Karlita#54	831
+gr_9,47,62,6	duplicate(Karlita)	Karlita#55	831
+gr_10,47,62,6	duplicate(Karlita)	Karlita#56	831
+gr_11,47,62,6	duplicate(Karlita)	Karlita#57	831
+gr_12,47,62,6	duplicate(Karlita)	Karlita#58	831
+gr_13,47,62,6	duplicate(Karlita)	Karlita#59	831
+gr_14,47,62,6	duplicate(Karlita)	Karlita#60	831
+gr_15,47,62,6	duplicate(Karlita)	Karlita#61	831
+gr_16,47,62,6	duplicate(Karlita)	Karlita#62	831
+gr_17,47,62,6	duplicate(Karlita)	Karlita#63	831
+gr_18,47,62,6	duplicate(Karlita)	Karlita#64	831
+gr_19,47,62,6	duplicate(Karlita)	Karlita#65	831
+gr_20,47,62,6	duplicate(Karlita)	Karlita#66	831
+gr_21,47,62,6	duplicate(Karlita)	Karlita#67	831
+gr_22,47,62,6	duplicate(Karlita)	Karlita#68	831
+gr_23,47,62,6	duplicate(Karlita)	Karlita#69	831
+gr_24,47,62,6	duplicate(Karlita)	Karlita#70	831
+gr_25,47,62,6	duplicate(Karlita)	Karlita#71	831
+gr_26,47,62,6	duplicate(Karlita)	Karlita#72	831
+gr_27,47,62,6	duplicate(Karlita)	Karlita#73	831
+gr_28,47,62,6	duplicate(Karlita)	Karlita#74	831
+gr_29,47,62,6	duplicate(Karlita)	Karlita#75	831
+gr_30,47,62,6	duplicate(Karlita)	Karlita#76	831
+//========================================================
+// --------- Duplicastes Villas ----------
+//========================================================
+rentb2,23,24,4	duplicate(Karlita)	Karlita#77	831
+rentb3,23,24,4	duplicate(Karlita)	Karlita#78	831
+rentb4,23,24,4	duplicate(Karlita)	Karlita#79	831
+rentb5,23,24,4	duplicate(Karlita)	Karlita#80	831
+rentb6,23,24,4	duplicate(Karlita)	Karlita#81	831
+rentb7,23,24,4	duplicate(Karlita)	Karlita#82	831
+rentb8,23,24,4	duplicate(Karlita)	Karlita#83	831
+rentb9,23,24,4	duplicate(Karlita)	Karlita#84	831
+rentb10,23,24,4	duplicate(Karlita)	Karlita#85	831
+rentb11,23,24,4	duplicate(Karlita)	Karlita#86	831
+

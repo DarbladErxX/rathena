@@ -1,0 +1,52 @@
+arlandria,156,176,5	script	Card Recycle#card	563,{
+	mes "hola ^0055FF"+strcharinfo(0)+"^000000 veo que estas interesando en esta gatcha";
+	mes "para jugar necesitas lo siguiente:";
+	mes "Necesitas: ^FF0000"+F_InsertComma( .zeny_cost )+"^000000 Zeny";
+	mes "Necesitas: ^FF0000"+.RuleCost+"^000000 ~ "+getitemname(.RuleItem);
+
+			if ( select("^009933 > ^000000 Vamos a jugar","^009933 > ^000000 Cancelar") == 2 ) close;
+
+			if( countitem(.RuleItem) < .RuleCost ||  Zeny < .zeny_cost){
+				next;
+				mes "Me gustaría seguir adelante, pero te falta lo siguiente:";
+				mes "^FF9900 1 ^000000: ^0000FF "+(.zeny_cost - Zeny <= 0 ? "[^00FF00Completo^000000]" :(.zeny_cost  - Zeny))+"^000000 Zeny";
+				mes "^FF9900 2 ^000000: ^0000FF "+(.RuleCost - countitem(.RuleItem) <= 0 ? "[^00FF00Completo^000000]":(.RuleCost  - countitem(.RuleItem)))+"^000000 ~ "+getitemname(.RuleItem);
+				close;
+			}
+
+
+			next;
+			delitem .RuleItem,.RuleCost;
+			set Zeny,Zeny - .zeny_cost;
+			mes "Rolando nueva carta.....";
+				for(set .@i,0; .@i < 25 ; set .@i,.@i + 1 ){
+					if( .@i == 20 )
+						mes "^777777-- Parando --^000000";
+					cutin callfunc( "card_illust",rand( .card_id_range[0],.card_id_range[1] ) ),4;
+					sleep2 ( .@i * 25 + 100 );
+				}
+				
+				do
+				set .@new_card,rand( .card_id_range[0],.card_id_range[1] );
+				while( compare( .black_list$, .@new_card +"|" ) );
+				cutin callfunc( "card_illust",.@new_card ),4;
+				mes " ";
+				mes "Has ganado una nueva carta: ";
+				mes " ~ ^0055FF"+getitemname( .@new_card )+"^000000";
+				getitem .@new_card,1;
+				close2;
+				cutin "",255;
+				end;
+
+
+OnInit:
+	// zeny required for this process.
+	set .zeny_cost,10000;
+	set .RuleCost,30;
+	set .RuleItem,7539;
+	// list of card that cant be used to exchange/get.
+	set .black_list$, "4144|4147|4142|4132|4128|4143|4137|4123|4146|4131|4148|4121|4135|4318|4324|4168|4305|4276|4134|4330|4263|4236|4302|4342|4372|4357|4359|4361|4363|4367|4365|4352|4374|4376|4399|4386|4403|4407|4408|4419|4425|4430|4441|4145|4183|4054|4047|4171|4207|4198|4238|4169|4290|4237|4241|4174|4354"; // black list ID
+	// current card id range.
+	setarray .card_id_range,4001,4453;
+	end;
+}

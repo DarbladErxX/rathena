@@ -1,0 +1,200 @@
+/*	INTELIGENT @BROADCAST COMMAND BY iSaaC***** Edit By MediaFire
+		PROX UP-GRADE: PHP TRADING - BUYING INTELIGENT SYSTEM
+
+[ ======================================== ]
+ 	 BROADCAST SYSTEM -> iSaaC SRC
+	 EDIT SCRIPT BY MediaFire
+[ ======================================== ]
+
+int atcommand_broadcast(const int fd, struct map_session_data *sd, const char *command, const char *message)
+{
+	nullpo_retr(-1,sd);
+	if( sd->npc_id || sd->vender_id || sd->buyer_id || sd->state.trading || sd->state.storage_flag )
+		return -1;
+
+	npc_event(sd,"brzg::OnSettings",0);
+	return 0;
+}
+
+{ "broadcast",           1,1,    0,     atcommand_broadcast },
+
+[ ======================================== ]
+ 	 BROADCAST SYSTEM -> iSaaC SQL
+	 EDIT SCRIPT BY MediaFire
+[ ======================================== ]
+CREATE TABLE `broadcast` (
+`ID__MSJ` int(11) unsigned NOT NULL default '0',
+`name` varchar(30) NOT NULL default '',
+`last__broadcast` varchar(100) NOT NULL default 'no se encontro mensjae'
+);
+ALTER TABLE `login` ADD COLUMN `BLOCK_PJ` varchar(10) NOT NULL Default '0'
+ALTER TABLE `broadcast` MODIFY `ID__MSJ` INT(11) AUTO_INCREMENT PRIMARY KEY			
+
+*/
+
+
+-	script	brzg	-1,{
+end;
+OnSettings:
+if (!.costo) set .costo , 500000;
+	mes name$; 
+	mes ""; 
+	/* if ( getcharid(0) == ID) { //Moderador
+
+		mes "Moderador digita mensaje a mandar, sin costo de Zeny, o dijite 0 para salir";
+		input .@msj$;
+
+		if ( .@msj$ == "0" ) 
+		{
+			mclose " El mensaje debe contener algo";	
+		}
+		close2;
+		setarray .@colores$[0],"ff0000","ff4000","ff8000","ffbf00","ffff00","bfff00","80ff00","40ff00","00ff00","00ff40","00ff80","00ffbf","00ffff";
+		set .@i , rand ( 0 , getarraysize( .@colores$ ) );				
+			announce "[ Moderador ~ ] "+strcharinfo(0)+": "+.@msj$,0,"0x"+.@colores$[.@i];
+		end;
+	
+	} */
+	
+	if (getgmlevel() >= 80 ) {
+	MenuGM:
+	switch(select("^10B2D2 [ > ] ^000000 Menu de User:^10B2D2 [ > ] ^000000 Desbloquear broad ID [ "+#ACCOUNT__ID+" ] :^10B2D2 [ > ] ^000000 Bloquear broad ID [ "+#ACCOUNT__ID+" ] :^10B2D2 [ > ] ^000000 Cambiar el precio ")) {
+					case 1:
+					goto MenuUser;
+					case 2:
+					next; 
+						mes name$; 
+						mes ""; 
+						mes "Dijite el nombre que quieres desbloquear"; 
+						input .@names$;
+						query_sql("SELECT `account_id` FROM `char` WHERE `name`='"+.@names$+"'",#ACCOUNT__ID);
+						 if ( #ACCOUNT__ID == 0 ) { 
+						mclose " La id es incorrecta";
+		}
+						next; 
+						mes name$; 
+						mes ""; 
+						mes " El ID es : ^000000 " + #ACCOUNT__ID + " ^10B2D2.";
+						mes " La Desbloqueamos?";
+						switch(select("Si,hagamoslo: No, Mejor luego")) {
+						case 1:	
+						if (#ACCOUNT__ID != 0 ) {
+						query_sql "UPDATE `login` SET `BLOCK_PJ` = '0' WHERE `account_id` = '"+#ACCOUNT__ID+"'";
+						mes "ID "+#ACCOUNT__ID+" actualizado";
+						mclose "Desbloqueado correctamente vuelve pronto GM";
+	}
+						case 2:
+						mes "Vuelve Pronto GM";
+						next;
+						goto MenuGM;
+
+			}				
+					
+					case 3:
+					next; 
+						mes name$; 
+						mes ""; 
+						mes "Dijite el nombre que quieres Bloquear"; 
+						input .@names$;
+						query_sql("SELECT `account_id` FROM `char` WHERE `name`='"+.@names$+"'",#ACCOUNT__ID);
+						 if ( #ACCOUNT__ID == 0 ) { 
+						mclose " La id es incorrecta"; 
+	}
+						next; 
+						mes name$; 
+						mes ""; 
+						mes " El ID es : ^000000 " + #ACCOUNT__ID + " ^10B2D2.";
+						mes " La bloqueamos?";
+						switch(select("Si,hagamoslo: No, Mejor luego")) {
+						case 1:	
+						if (#ACCOUNT__ID != 0 ) {
+						query_sql "UPDATE `login` SET `BLOCK_PJ` = '1' WHERE `account_id` = '"+#ACCOUNT__ID+"'";
+						mes "ID "+#ACCOUNT__ID+" actualizado";
+						mclose "Baneado correctamente vuelve pronto GM";
+		}
+						case 2:
+						mes "Vuelve Pronto GM";
+						next;
+						goto MenuGM;
+
+			}
+
+					case 4:
+					next;
+			mes name$; 
+			mes "Ok, pon el precio deseado.";
+			mes "Precio actual: ^ff0000"+ .costo +"^000000.";
+			next;
+			input .@n,1,10000000; //Input minimo: 0 - Input maximo: 10.000.000.
+
+			mes name$;
+			mes "¿Estás seguro de querer cambiar el precio a ^ff0000"+ .@n +"^000000?";
+			next;
+			if (select("Si.:No.") == 2) close;
+
+			mes name$;
+			mes "¡Muy bien!, el cambio fué efectuado correctamente.";
+			set .costo,.@n;
+			close;
+		
+	}
+}
+	MenuUser:
+	query_sql ("SELECT `BLOCK_PJ` FROM `login` WHERE `account_id`='"+getcharid(3)+"'", .@BAN$);
+	if ( .@BAN$ == "1" ) 
+	{ 
+
+	mclose "Estas baneado Nose te permite tirar broadcast"; 
+
+	}
+	if (Baselevel < 90) {
+		mclose "Tienes que ser al menos nivel 90 para utilizar el Broadcast.";
+	}
+
+	if (gettimetick(2) < WAITTIME ) 
+	{
+
+		 mes "Solo se puede mandar 1 Broadcast cada 45 segundos"; 
+		close;
+
+	} else if ( zeny < .costo ) 
+	{ 
+
+		mes "Tienes que tener "+.costo+" Zeny minimo para poder enviar el mensaje.";
+		close;
+
+	} else {
+		if (select("^10B2D2 [ > ] ^000000Hacer Broadcast :^10B2D2 [ > ] ^000000Ver ultimos Broadcast") == 1 ) 
+		{
+			mes "Costo del Broadcast: " + .costo + " Zeny";
+			mes "";
+			mes " Digite el mensaje que quieres , 0 para salir"; 
+			input .@msj$; 
+			if ( .@msj$ == "0" ) 
+			{
+				mes " El mensaje debe contener algo";	
+				close;
+			}
+			
+			set zeny , zeny - .costo;
+			set WAITTIME ,gettimetick(2)+45;
+			setarray .@colores$[0],"ff0000","ff4000","ff8000","ffbf00","ffff00","bfff00","80ff00","40ff00","00ff00","00ff40","00ff80","00ffbf","00ffff";
+			set .@i , rand ( 0 , getarraysize( .@colores$ ) );				
+				announce "[ Usuario ~ ] "+strcharinfo(0)+": "+.@msj$,0,"0x"+.@colores$[.@i];
+				//dispbottom "Saldo actual = "+#CASHPOINTS+" Cashpoints";
+				query_sql "INSERT INTO `broadcast`(`name`,`last__broadcast`) VALUES ('"+strcharinfo(0)+"','"+.@msj$+"')";
+			close;
+		} next;
+		
+		query_sql ("SELECT `name`,`last__broadcast` FROM `broadcast` ORDER BY `ID__MSJ` DESC LIMIT 10", .@NAMES$[0] , .@MSJS$[0]);
+		for (set .@i , 0; .@i < getarraysize( .@MSJS$ ); set .@i , .@i + 1 ) 
+		{
+		
+			mes name$; 
+			mes ""; 
+			mes .@NAMES$[.@i] + " : " + .@MSJS$[.@i];
+			if ( Select ( "^10B2D2 [ > ] ^000000Continuar:^10B2D2 [ > ] ^000000Salir" ) == 2 ) close;
+		}
+		close;
+	} end;
+}

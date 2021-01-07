@@ -44,5 +44,6 @@ extern Sql* lsql_handle;
 
 void inter_savereg(uint32 account_id, uint32 char_id, const char *key, unsigned int index, intptr_t val, bool is_string);
 int inter_accreg_fromsql(uint32 account_id, uint32 char_id, int fd, int type);
+bool inter_can_delete_char(unsigned int account_id);
 
 #endif /* INTER_HPP */

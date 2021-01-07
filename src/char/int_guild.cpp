@@ -368,6 +368,7 @@ struct guild * inter_guild_fromsql(int guild_id)
 	CREATE(g, struct guild, 1);
 
 	g->guild_id = guild_id;
+	g->war_tick = 0;
 	Sql_GetData(sql_handle,  0, &data, &len); memcpy(g->name, data, zmin(len, NAME_LENGTH));
 	Sql_GetData(sql_handle,  1, &data, &len); memcpy(g->master, data, zmin(len, NAME_LENGTH));
 	Sql_GetData(sql_handle,  2, &data, NULL); g->guild_lv = atoi(data);

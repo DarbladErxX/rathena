@@ -1,0 +1,17 @@
+function	script	ArenaRewards	{
+	setarray .@ArenaReward[0],7828,7829,7773,671,7539;
+	setarray .@ArenaAmount[0],55,55,55,2,2;
+	for (set .@i,0; .@i < getarraysize(.@ArenaReward); set .@i,.@i+1) getitem_map(.@ArenaReward[.@i],.@ArenaAmount[.@i],getarg(0));
+	return;
+}
+
+function	script	ArenaMvpSummon	{
+	setarray .@RandMVP[0],1511,1785,1630,1039,1272,1719,1046,1389,1112,1115,1418,1252,1086,1885,1492,1734,1251,1373,1147,1059,1150,1087,1190,1038,1157,1159,1623,1583,1312,1685;
+	set .@MVPSelect,.@RandMVP[rand(getarraysize(.@RandMVP))];
+	set .@MVPName$,getmonsterinfo(.@MVPSelect,0);
+	monster getarg(0),getarg(1),getarg(2),.@MVPName$,.@MVPSelect,getarg(3),getarg(4);
+	return;
+}
+
+
+

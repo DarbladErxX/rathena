@@ -261,10 +261,14 @@ DBMap* char_get_chardb(); // uint32 char_id -> struct mmo_charstatus*
 extern int fame_list_size_chemist;
 extern int fame_list_size_smith;
 extern int fame_list_size_taekwon;
+extern int fame_list_size_bg;
+extern int fame_list_size_woe;
 // Char-server-side stored fame lists [DracoRPG]
 extern struct fame_list smith_fame_list[MAX_FAME_LIST];
 extern struct fame_list chemist_fame_list[MAX_FAME_LIST];
 extern struct fame_list taekwon_fame_list[MAX_FAME_LIST];
+extern struct fame_list bg_fame_list[MAX_FAME_LIST];
+extern struct fame_list woe_fame_list[MAX_FAME_LIST];
 
 #define DEFAULT_AUTOSAVE_INTERVAL 300*1000
 #define MAX_CHAR_BUF 150 //Max size (for WFIFOHEAD calls)
@@ -291,6 +295,9 @@ int char_rename_char_sql(struct char_session_data *sd, uint32 char_id);
 int char_divorce_char_sql(int partner_id1, int partner_id2);
 int char_memitemdata_to_sql(const struct item items[], int max, int id, enum storage_type tableswitch, uint8 stor_id);
 bool char_memitemdata_from_sql(struct s_storage* p, int max, int id, enum storage_type tableswitch, uint8 stor_id);
+
+int char_item_remove4all(int nameid); // eAmod Codes
+
 
 int char_married(int pl1,int pl2);
 int char_child(int parent_id, int child_id);

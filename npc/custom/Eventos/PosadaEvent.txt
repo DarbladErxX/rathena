@@ -1,0 +1,185 @@
+-	script	Posada	-1,{
+OnWhisperGlobal:
+	if ( getgmlevel() >= 60 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto PosadaON;
+	}
+end;
+
+PosadaON:
+switch(select("Empezar evento:Terminar evento:Cantidad de Tesoros:Nada"))
+	{
+	case 1:
+	mes "Cerrar esta ventana para empzar el evento!";
+	close2;
+	goto OnWatingRoom;
+	case 2:
+		switch(select("Si:No"))
+		{
+		case 1:
+			mes "Cerrar esta ventana para detener el evento!";
+			close2;
+			goto OnStopGM;
+		case 2:
+			mes "Ok, Nada!";
+			close;
+		}
+case 3:
+	mes "Digita la cantidad de cofres para la posada";
+	mes "digita 0 para cancelar";
+	mes "Cantidad de Cofres a salir ^E50000 " +$posada+"^000000";
+	input .@monstercant;
+	if(.@monstercant <= 0) { next; goto PosadaON;}
+	set $posada, .@monstercant;
+	next;
+	goto PosadaON;
+
+		case 4:
+		next;
+		mes "Nada!";
+		close;
+	}
+OnWatingRoom:
+if (agitcheck() || agitcheck2() )
+end;
+		setarray .posada$[0],"alberta","aldebaran","amatsu","ayothaya","comodo","einbroch","geffen","gonryun","hugel","izlude","jawaii","lighthalzen","louyang","morocc","moscovia","payon","prontera","rachel","veins","umbala","xmas","yuno";
+		set .posadaM$, .posada$[rand(1,getarraysize(.posada$))];
+		announce "El evento de cofres de Spiral RO, comenzara en "+.posadaM$ +"! ",8;
+		sleep2 3500;
+		announce "Esta vez seran  "+$posada +" Cofres Piñatas ! ",8;
+		mobevent .posadaM$, .@x, .@y, "Cofre Piñata", 1324, 0,$posada, 0, 0,50000, 0, 0, 1, 0, 0, 0, 0, 0, "Posada::OnTBoxKilled";
+		setmapflag .posadaM$,12; //no skill
+		set .mobs_posada,$posada;
+		startnpctimer;
+		end;
+
+OnTimer60000:
+		announce "El evento de Cofres de Spiral RO, comenzo en "+.posadaM$ +"! ",8;
+		sleep2 3500;
+		announce "Quedan  ["+.mobs_posada+"/"+$posada+"]Cofres Piñatas ! ",8;
+		end;
+
+OnTimer100200:
+		announce "El evento de Cofres de Spiral RO, comenzo en "+.posadaM$ +"! ",8;
+		sleep2 3500;
+		announce "Quedan  ["+.mobs_posada+"/"+$posada+"]Cofres Piñatas ! ",8;
+		end;
+
+
+OnTimer600000:	// 10 minutes later, kills all the mobs.
+	set .mobs_posada,0;
+	removemapflag .posadaM$,12;// no skill
+	killmonster .posadaM$,"Posada::OnTBoxKilled";
+	stopnpctimer;
+	end;
+
+OnStopGM:
+	set .mobs_posada,0;
+	removemapflag .posadaM$,12;// no skill
+	killmonster .posadaM$,"Posada::OnTBoxKilled";
+	stopnpctimer;
+	announce "Un GM ha terminado la posada, gracias a todos por asistir, esperen la siguiente!",bc_all;
+	end;
+
+OnTBoxKilled:
+set .mobs_posada, .mobs_posada-1;
+	if (.mobs_posada==0)
+	 {
+	set .mobs_posada,0;
+	removemapflag .posadaM$,12;// no skill
+	killmonster .posadaM$,"Posada::OnTBoxKilled";
+	stopnpctimer;
+	announce "Grandioso han rompido todas las piñatas, gracias a todos por asistir, esperen la siguiente!",bc_all;
+	}
+
+getmapxy(.posadaM$,.@x,.@y,0);
+set .@x, @killedx;
+set .@y, @killedy;
+	flooritem2xy .posadaM$,.@x,.@y,7539,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,616,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12103,10;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12132,20;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,13832,20;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,13833,20;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12247,30;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,671,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12205,15;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7621,1;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12203,15;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12204,15;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12206,15;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12207,15;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,5000,30;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,8934,20;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,8935,20;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7773,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7829,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7828,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,8916,10;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,8924,10;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,8925,10;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,530,50;
+sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,538,50;
+sleep 1000;
+switch( rand(4) )
+	{
+	case 0:
+	flooritem2xy .posadaM$,.@x,.@y,7620,20;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7619 ,20;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12031,50;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12029,50;
+		break;
+	case 1:
+	flooritem2xy .posadaM$,.@x,.@y,12030,50;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12033,50;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12298,50;
+		break;
+	case 2:
+	flooritem2xy .posadaM$,.@x,.@y,7539,10;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,12210,10;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7621,10;
+		break;
+	case 3:
+	flooritem2xy .posadaM$,.@x,.@y,12214,10;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,13830,10;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,13831,10;
+		sleep 1000;
+	flooritem2xy .posadaM$,.@x,.@y,7608,1;
+		break;
+	}
+	end;
+}

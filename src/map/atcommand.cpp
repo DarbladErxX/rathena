@@ -22,6 +22,7 @@
 
 #include "achievement.hpp"
 #include "battle.hpp"
+#include "battleground.hpp"
 #include "channel.hpp"
 #include "chat.hpp"
 #include "chrif.hpp"
@@ -46,6 +47,7 @@
 #include "pc_groups.hpp"
 #include "pet.hpp"
 #include "quest.hpp"
+#include "skill.hpp"
 #include "script.hpp"
 #include "storage.hpp"
 #include "trade.hpp"
@@ -1251,11 +1253,12 @@ ACMD_FUNC(heal)
 /*==========================================
  * @item command (usage: @item <itemdid1:itemid2:itemname:..> <quantity>) (modified by [Yor] for pet_egg)
  * @itembound command (usage: @itembound <name/id_of_item> <quantity> <bound_type>)
+ * eAmod CostumeItem Fix
  *------------------------------------------*/
 ACMD_FUNC(item)
 {
 	char item_name[100];
-	int number = 0, bound = BOUND_NONE;
+	int number = 0, bound = BOUND_NONE, costume = 0; // Costume item edit
 	char flag = 0;
 	struct item item_tmp;
 	struct item_data *item_data[10];
@@ -1280,7 +1283,25 @@ ACMD_FUNC(item)
 			clif_displaymessage(fd, msg_txt(sd,298)); // Invalid bound type
 			return -1;
 		}
-	} else if (!message || !*message || (
+	}
+	else if( !strcmpi(parent_cmd,"costumeitem") )
+	{
+		if( !battle_config.costume_reserved_char_id )
+		{
+			clif_displaymessage(fd, "Costume convertion is disable. Set a value for costume_reserved_char_id on your eAmod.conf file.");
+			return -1;
+		}
+		
+		if (!message || !*message || (
+			sscanf(message, "\"%99[^\"]\" %11d", item_name, &number) < 1 &&
+			sscanf(message, "%99s %11d", item_name, &number) < 1)
+		){
+			clif_displaymessage(fd, "Please enter an item name or ID (usage: @costumeitem <item name/ID> <quantity>).");
+			return -1;
+		}
+		costume = 1;
+	}
+	 else if (!message || !*message || (
 		sscanf(message, "\"%99[^\"]\" %11d", item_name, &number) < 1 &&
 		sscanf(message, "%99s %11d", item_name, &number) < 1
 	)) {
@@ -1294,6 +1315,7 @@ ACMD_FUNC(item)
 			clif_displaymessage(fd, msg_txt(sd,19)); // Invalid item ID or name.
 			return -1;
 		}
+
 		itemlist = strtok(NULL, ":"); //next itemline
 		j++;
 	}
@@ -1315,6 +1337,12 @@ ACMD_FUNC(item)
 				item_tmp.nameid = item_id;
 				item_tmp.identify = 1;
 				item_tmp.bound = bound;
+				// Costume item edit
+				if (costume == 1) {
+					item_tmp.card[0] = CARD0_CREATE;
+					item_tmp.card[2] = GetWord(battle_config.costume_reserved_char_id, 0);
+					item_tmp.card[3] = GetWord(battle_config.costume_reserved_char_id, 1);
+				} // End edit
 				if ((flag = pc_additem(sd, &item_tmp, get_count, LOG_TYPE_COMMAND)))
 					clif_additem(sd, 0, 0, flag);
 			}
@@ -1431,6 +1459,8 @@ ACMD_FUNC(itemreset)
 {
 	int i;
 	nullpo_retr(-1, sd);
+
+	pc_check_security_retr(sd, SECU_RESET_ITEM, -1);
 
 	for (i = 0; i < MAX_INVENTORY; i++) {
 		if (sd->inventory.u.items_inventory[i].amount && sd->inventory.u.items_inventory[i].equip == 0) {
@@ -1869,7 +1899,7 @@ ACMD_FUNC(go)
 		char map[MAP_NAME_LENGTH];
 		int x, y;
 	} data[] = {
-		{ MAP_PRONTERA,    156, 191 }, //  0=Prontera
+		{ MAP_ARLANDRIA,   155, 192 }, //  0=Arlandria
 		{ MAP_MORROC,      156,  93 }, //  1=Morroc
 		{ MAP_GEFFEN,      119,  59 }, //  2=Geffen
 		{ MAP_PAYON,       162, 233 }, //  3=Payon
@@ -1914,6 +1944,9 @@ ACMD_FUNC(go)
 		{ MAP_MALAYA,      242, 211 }, // 34=Malaya Port
 		{ MAP_ECLAGE,      110,  39 }, // 35=Eclage
 		{ MAP_LASAGNA,     193, 182 }, // 36=Lasagna
+		{ MAP_PRONTERA,    156, 191 }, //  37=Prontera
+		{ MAP_MERCADOZENY,  100, 13 },  // 38 = Mercado Zeny
+		{ MAP_MERCADONPC,  151, 166 },  // 39 = Mercado NPC
 	};
 
 	nullpo_retr(-1, sd);
@@ -1951,7 +1984,8 @@ ACMD_FUNC(go)
 	for (i = 0; map_name[i]; i++)
 		map_name[i] = TOLOWER(map_name[i]);
 	// try to identify the map name
-	if (strncmp(map_name, "prontera", 3) == 0) {
+	if (strncmp(map_name, "arlandria", 3) == 0 ||
+	    strncmp(map_name, "alandria", 3) == 0) {
 		town = 0;
 	} else if (strncmp(map_name, "morocc", 4) == 0 ||
 	           strncmp(map_name, "morroc", 4) == 0) {
@@ -2035,6 +2069,14 @@ ACMD_FUNC(go)
 		town = 35;
 	} else if (strncmp(map_name, "lasagna", 2) == 0) {
 		town = 36;
+	} else if (strncmp(map_name, "prontera", 3) == 0) {
+		town = 37;
+	} else if (strncmp(map_name, "Mercado Zeny", 3) == 0 ||
+		   strncmp(map_name, "Zeny", 3) == 0) {
+		town = 38;
+	} else if (strncmp(map_name, "Mercado npc", 3) == 0 ||
+		   strncmp(map_name, "npc", 3) == 0) {
+		town = 39;
 	}
 
 	if (town >= 0 && town < ARRAYLENGTH(data))
@@ -5509,6 +5551,8 @@ ACMD_FUNC(dropall)
 	struct item_data *item_data = NULL;
 
 	nullpo_retr(-1, sd);
+
+	pc_check_security_retr(sd, SECU_DROP, -1);
 	
 	if( message[0] ) {
 		type = atoi(message);
@@ -5584,6 +5628,8 @@ ACMD_FUNC(clearstorage)
 	int i, j;
 	nullpo_retr(-1, sd);
 
+	pc_check_security_retr(sd, SECU_RESET_ITEM, -1);
+
 	if (sd->state.storage_flag == 1) {
 		clif_displaymessage(fd, msg_txt(sd,250)); // You have already opened your storage. Close it first.
 		return -1;
@@ -5610,6 +5656,8 @@ ACMD_FUNC(cleargstorage)
 	struct guild *g;
 	struct s_storage *gstorage;
 	nullpo_retr(-1, sd);
+
+	pc_check_security_retr(sd, SECU_RESET_ITEM, -1);
 
 	g = sd->guild;
 
@@ -5654,6 +5702,8 @@ ACMD_FUNC(clearcart)
 {
 	int i;
 	nullpo_retr(-1, sd);
+
+	pc_check_security_retr(sd, SECU_RESET_ITEM, -1);
 
 	if (pc_iscarton(sd) == 0) {
 		clif_displaymessage(fd, msg_txt(sd,1396)); // You do not have a cart to be cleaned.
@@ -6780,6 +6830,8 @@ ACMD_FUNC(users)
  *------------------------------------------*/
 ACMD_FUNC(reset)
 {
+	pc_check_security_retr(sd, SECU_RESET_SKILL_STAT, -1);
+
 	pc_resetstate(sd);
 	pc_resetskill(sd,1);
 	sprintf(atcmd_output, msg_txt(sd,208), sd->status.name); // '%s' skill and stats points reseted!
@@ -7222,15 +7274,16 @@ ACMD_FUNC(mobinfo)
 		count = MAX_SEARCH;
 	}
 	for (k = 0; k < count; k++) {
-		unsigned int j,base_exp,job_exp;
+		unsigned int j,base_exp,job_exp,bonus;
 		mob = mob_db(mob_ids[k]);
 		base_exp = mob->base_exp;
 		job_exp = mob->job_exp;
 
-		if (pc_isvip(sd)) { // Display EXP rate increase for VIP
-			base_exp = (base_exp * battle_config.vip_base_exp_increase) / 100;
-			job_exp = (job_exp * battle_config.vip_job_exp_increase) / 100;
+	     	if( pc_isPremium(sd) ){ // Muestra la experiencia incrementa en cuentas premium
+			base_exp = (base_exp * battle_config.premium_base_exp_increase) / 100;
+			job_exp = (job_exp * battle_config.premium_job_exp_increase) / 100;
 		}
+		
 #ifdef RENEWAL_EXP
 		if( battle_config.atcommand_mobinfo_type ) {
 			base_exp = base_exp * pc_level_penalty_mod(mob->lv - sd->status.base_level, mob->status.class_, mob->status.mode, 1) / 100;
@@ -7272,8 +7325,10 @@ ACMD_FUNC(mobinfo)
 					droprate = 1;
 			}
 #endif
-			if (pc_isvip(sd)) // Display drop rate increase for VIP
-				droprate += (droprate * battle_config.vip_drop_increase) / 100;
+
+			if ( pc_isPremium(sd)) // Muestra el aumento de drop rate de las cuentas premium
+				droprate += (droprate * battle_config.premium_dropboost) / 100;
+
 			if (item_data->slot)
 				sprintf(atcmd_output2, " - %s[%d]  %02.02f%%", item_data->jname, item_data->slot, (float)droprate / 100);
 			else
@@ -7808,8 +7863,8 @@ ACMD_FUNC(whodrops)
 				if( battle_config.atcommand_mobinfo_type )
 					dropchance = dropchance * pc_level_penalty_mod(mob_db(item_data->mob[j].id)->lv - sd->status.base_level, mob_db(item_data->mob[j].id)->status.class_, mob_db(item_data->mob[j].id)->status.mode, 2) / 100;
 #endif
-				if (pc_isvip(sd)) // Display item rate increase for VIP
-					dropchance += (dropchance * battle_config.vip_drop_increase) / 100;
+				if ( pc_isPremium(sd)) // Muestra el aumento de rate de items de las cuentas premium
+					dropchance += (dropchance * battle_config.premium_dropboost) / 100;
 				sprintf(atcmd_output, "- %s (%d): %02.02f%%", mob_db(item_data->mob[j].id)->jname, item_data->mob[j].id, dropchance/100.);
 				clif_displaymessage(fd, atcmd_output);
 			}
@@ -7933,34 +7988,34 @@ ACMD_FUNC(rates)
 	memset(buf, '\0', sizeof(buf));
 
 	snprintf(buf, CHAT_SIZE_MAX, msg_txt(sd,1298), // Experience rates: Base %.2fx / Job %.2fx
-		(battle_config.base_exp_rate + (pc_isvip(sd) ? (battle_config.vip_base_exp_increase * battle_config.base_exp_rate) / 100 : 0)) / 100.,
-		(battle_config.job_exp_rate + (pc_isvip(sd) ? (battle_config.vip_job_exp_increase * battle_config.job_exp_rate) / 100 : 0)) / 100.);
+		(battle_config.base_exp_rate + (pc_isPremium(sd) ? (battle_config.premium_base_exp_increase * battle_config.base_exp_rate) / 100 : 0)) / 100.,
+		(battle_config.job_exp_rate + (pc_isPremium(sd) ? (battle_config.premium_job_exp_increase * battle_config.job_exp_rate) / 100 : 0)) / 100.);
 	clif_displaymessage(fd, buf);
 	snprintf(buf, CHAT_SIZE_MAX, msg_txt(sd,1299), // Normal Drop Rates: Common %.2fx / Healing %.2fx / Usable %.2fx / Equipment %.2fx / Card %.2fx
-		(battle_config.item_rate_common + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_common) / 100 : 0)) / 100.,
-		(battle_config.item_rate_heal + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_heal) / 100 : 0)) / 100.,
-		(battle_config.item_rate_use + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_use) / 100 : 0)) / 100.,
-		(battle_config.item_rate_equip + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_equip) / 100 : 0)) / 100.,
-		(battle_config.item_rate_card + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_card) / 100 : 0)) / 100.);
+		(battle_config.item_rate_common + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_common) / 100 : 0)) / 100.,
+		(battle_config.item_rate_heal + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_heal) / 100 : 0)) / 100.,
+		(battle_config.item_rate_use + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_use) / 100 : 0)) / 100.,
+		(battle_config.item_rate_equip + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_equip) / 100 : 0)) / 100.,
+		(battle_config.item_rate_card + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_card) / 100 : 0)) / 100.);
 	clif_displaymessage(fd, buf);
 	snprintf(buf, CHAT_SIZE_MAX, msg_txt(sd,1300), // Boss Drop Rates: Common %.2fx / Healing %.2fx / Usable %.2fx / Equipment %.2fx / Card %.2fx
-		(battle_config.item_rate_common_boss + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_common_boss) / 100 : 0)) / 100.,
-		(battle_config.item_rate_heal_boss + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_heal_boss) / 100 : 0)) / 100.,
-		(battle_config.item_rate_use_boss + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_use_boss) / 100 : 0)) / 100.,
-		(battle_config.item_rate_equip_boss + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_equip_boss) / 100 : 0)) / 100.,
-		(battle_config.item_rate_card_boss + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_card_boss) / 100 : 0)) / 100.);
+		(battle_config.item_rate_common_boss + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_common_boss) / 100 : 0)) / 100.,
+		(battle_config.item_rate_heal_boss + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_heal_boss) / 100 : 0)) / 100.,
+		(battle_config.item_rate_use_boss + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_use_boss) / 100 : 0)) / 100.,
+		(battle_config.item_rate_equip_boss + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_equip_boss) / 100 : 0)) / 100.,
+		(battle_config.item_rate_card_boss + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_card_boss) / 100 : 0)) / 100.);
 	clif_displaymessage(fd, buf);
 	snprintf(buf, CHAT_SIZE_MAX, msg_txt(sd,1024), // MVP Drop Rates: Common %.2fx / Healing %.2fx / Usable %.2fx / Equipment %.2fx / Card %.2fx
-		(battle_config.item_rate_common_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_common_mvp) / 100 : 0)) / 100.,
-		(battle_config.item_rate_heal_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_heal_mvp) / 100 : 0)) / 100.,
-		(battle_config.item_rate_use_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_use_mvp) / 100 : 0)) / 100.,
-		(battle_config.item_rate_equip_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_equip_mvp) / 100 : 0)) / 100.,
-		(battle_config.item_rate_card_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_card_mvp) / 100 : 0)) / 100.);
+		(battle_config.item_rate_common_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_common_mvp) / 100 : 0)) / 100.,
+		(battle_config.item_rate_heal_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_heal_mvp) / 100 : 0)) / 100.,
+		(battle_config.item_rate_use_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_use_mvp) / 100 : 0)) / 100.,
+		(battle_config.item_rate_equip_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_equip_mvp) / 100 : 0)) / 100.,
+		(battle_config.item_rate_card_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_card_mvp) / 100 : 0)) / 100.);
 	clif_displaymessage(fd, buf);
 	snprintf(buf, CHAT_SIZE_MAX, msg_txt(sd,1301), // Other Drop Rates: MvP %.2fx / Card-Based %.2fx / Treasure %.2fx
-		(battle_config.item_rate_mvp + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_mvp) / 100 : 0)) / 100.,
-		(battle_config.item_rate_adddrop + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_adddrop) / 100 : 0)) / 100.,
-		(battle_config.item_rate_treasure + (pc_isvip(sd) ? (battle_config.vip_drop_increase * battle_config.item_rate_treasure) / 100 : 0)) / 100.);
+		(battle_config.item_rate_mvp + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_mvp) / 100 : 0)) / 100.,
+		(battle_config.item_rate_adddrop + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_adddrop) / 100 : 0)) / 100.,
+		(battle_config.item_rate_treasure + (pc_isPremium(sd) ? (battle_config.premium_dropboost * battle_config.item_rate_treasure) / 100 : 0)) / 100.);
 	clif_displaymessage(fd, buf);
 
 	return 0;
@@ -8687,6 +8742,8 @@ ACMD_FUNC(resetstat)
 {
 	nullpo_retr(-1, sd);
 
+	pc_check_security_retr(sd, SECU_RESET_SKILL_STAT, -1);
+
 	pc_resetstate(sd);
 	sprintf(atcmd_output, msg_txt(sd,207), sd->status.name); // '%s' stats points reset.
 	clif_displaymessage(fd, atcmd_output);
@@ -8696,6 +8753,8 @@ ACMD_FUNC(resetstat)
 ACMD_FUNC(resetskill)
 {
 	nullpo_retr(-1,sd);
+
+	pc_check_security_retr(sd, SECU_RESET_SKILL_STAT, -1);
 
 	pc_resetskill(sd,1);
 	sprintf(atcmd_output, msg_txt(sd,206), sd->status.name); // '%s' skill points reset.
@@ -8946,6 +9005,162 @@ ACMD_FUNC(stats)
 	return 0;
 }
 
+/*==========================================
+ * Exp Gain Information
+ *------------------------------------------*/
+void atcommand_expinfo_sub(int time, int* day, int* hour, int* minute, int* second)
+{
+	*day = time / 86400; time -= *day * 86400;
+	*hour = time / 3600; time -= *hour * 3600;
+	*minute = time / 60; time -= *minute * 60;
+	*second = time;
+
+	*day = *day > 0 ? *day : 0;
+	*hour = *hour > 0 ? *hour : 0;
+	*minute = *minute > 0 ? *minute : 0;
+	*second = *second > 0 ? *second : 0;
+
+	return;
+}
+
+ACMD_FUNC(expinfo)
+{
+	unsigned int nextb, nextj, bexp_ps, jexp_ps, nextbt, nextjt;
+	int session_time, day = 0, hour = 0, minute = 0, second = 0;
+
+	nullpo_retr(-1,sd);
+
+	if( !strcmpi(message, "reset") )
+	{ // Restart Vars
+		sd->custom_data.session_base_exp = 0;
+		sd->custom_data.session_job_exp = 0;
+		sd->custom_data.session_start = last_tick;
+	}
+	else if( !strcmpi(message, "off") )
+	{
+		sd->state.showgain = 0;
+		clif_displaymessage(fd, msg_txt(sd,864));
+
+		return 0;
+	}
+	else if( !strcmpi(message, "on") )
+	{
+		sd->state.showgain = 1;
+		clif_displaymessage(fd, msg_txt(sd,865));
+
+		return 0;
+	}
+	else
+		clif_displaymessage(fd, msg_txt(sd,866));
+
+	session_time = DIFF_TICK(last_tick, sd->custom_data.session_start);
+
+	atcommand_expinfo_sub(session_time, &day, &hour, &minute, &second);
+	sprintf(atcmd_output, msg_txt(sd,867), day, hour, minute, second);
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+
+	if( session_time <= 0 )
+		return 0;
+
+	nextb = pc_nextbaseexp(sd);
+	nextj = pc_nextjobexp(sd);
+
+	sprintf(atcmd_output, msg_txt(sd,868), sd->custom_data.session_base_exp, sd->custom_data.session_job_exp);
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+
+	if( nextb )
+	{ // Next Base lvl information
+		if( (bexp_ps = sd->custom_data.session_base_exp / session_time) < 1 )
+			sprintf(atcmd_output, msg_txt(sd,869), bexp_ps);
+		else if( (nextbt = (nextb - sd->status.base_exp) / bexp_ps) < 604800 )
+		{
+			atcommand_expinfo_sub(nextbt, &day, &hour, &minute, &second);
+			if( day )
+				sprintf(atcmd_output, msg_txt(sd,870), bexp_ps, day, hour, minute, second);
+			else
+				sprintf(atcmd_output, msg_txt(sd,871), bexp_ps, hour, minute, second);
+		}
+		else
+			sprintf(atcmd_output, msg_txt(sd,869), bexp_ps);
+
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+	}
+
+	if( nextj )
+	{ // Next Job lvl information
+		if( (jexp_ps = sd->custom_data.session_job_exp / session_time) < 1 )
+			sprintf(atcmd_output, msg_txt(sd,872), jexp_ps);
+		else if( (nextjt = (nextj - sd->status.job_exp) / jexp_ps) < 604800 )
+		{
+			atcommand_expinfo_sub(nextjt, &day, &hour, &minute, &second);
+			if( day )
+				sprintf(atcmd_output, msg_txt(sd,873), jexp_ps, day, hour, minute, second);
+			else
+				sprintf(atcmd_output, msg_txt(sd,874), jexp_ps, hour, minute, second);
+		}
+		else
+			sprintf(atcmd_output, msg_txt(sd,872), jexp_ps);
+
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+	}
+
+	return 0;
+}
+
+ACMD_FUNC(myinfo)
+{
+	char output[CHAT_SIZE_MAX];
+	uint32 ip;
+	int i;
+
+	struct {
+		const char* format;
+		int value;
+	} output_table[] = {
+		{ "Cash Points - %d", 0 },
+		{ "Kafra Points - %d", 0 },
+		{ "BattleGround Points - %d", 0 },
+		{ "Vote Points - %d", 0 },
+		{ "Dona Points - %d", 0 },
+		{ NULL, 0 }
+	};
+
+	memset(output, '\0', sizeof(output));
+
+	//direct array initialization with variables is not standard C compliant.
+		output_table[0].value = sd->cashPoints;
+		output_table[1].value = sd->kafraPoints;
+		output_table[2].value = pc_readaccountreg(sd,add_str("#BGPOINTS"));
+		output_table[3].value = pc_readaccountreg(sd,add_str("#VOTEPOINTS"));
+		output_table[4].value = pc_readaccountreg(sd,add_str("#DONAPOINTS"));
+	
+
+	sprintf(output, "'%s' Info:", sd->status.name); // '%s' stats:
+	clif_displaymessage(fd,output);
+
+	for( i = 0; output_table[i].format != NULL; i++ )
+	{
+		sprintf(output,output_table[i].format,output_table[i].value);
+		clif_displaymessage(fd,output);
+	}
+
+	if( pc_isPremium(sd) )
+	{
+		int tick = sd->Premium_Tick - (int)time(NULL), day, hour, minute, second;
+
+		clif_displaymessage(fd,"- Cuenta Premium Activada -");
+		atcommand_expinfo_sub(tick, &day, &hour, &minute, &second);
+		sprintf(output, "La cuenta premium expira en : %d dias, %02d horas, %02d minutos, %02d segundos", day, hour, minute, second);
+		clif_displaymessage(fd,output);
+	}
+
+	ip = session[sd->fd]->client_addr;
+	sprintf(output,"IP Address - %d.%d.%d.%d",CONVIP(ip));
+	clif_displaymessage(fd,output);
+	return 0;
+}
+
+
 ACMD_FUNC(delitem)
 {
 	char item_name[100];
@@ -8954,6 +9169,8 @@ ACMD_FUNC(delitem)
 	struct item_data* id;
 
 	nullpo_retr(-1, sd);
+
+	pc_check_security_retr(sd, SECU_RESET_ITEM, -1);
 
 	if( !message || !*message || ( sscanf(message, "\"%99[^\"]\" %11d", item_name, &amount) < 2 && sscanf(message, "%99s %11d", item_name, &amount) < 2 ) || amount < 1 )
 	{
@@ -9144,7 +9361,7 @@ ACMD_FUNC(charcommands) {
 }
 /* for new mounts */
 ACMD_FUNC(mount2) {
-	clif_displaymessage(sd->fd,msg_txt(sd,1362)); // NOTICE: If you crash with mount your LUA is outdated.
+	//clif_displaymessage(sd->fd,msg_txt(sd,1362)); // NOTICE: If you crash with mount your LUA is outdated.
 	if (!sd->sc.data[SC_ALL_RIDING]) {
 		clif_displaymessage(sd->fd,msg_txt(sd,1363)); // You have mounted.
 		sc_start(NULL, &sd->bl, SC_ALL_RIDING, 10000, 1, INFINITE_TICK);
@@ -10055,6 +10272,557 @@ ACMD_FUNC(resurrect) {
 
 	return 0;
 }
+/*==========================================
+* Battleground Leader Commands
+*------------------------------------------*/
+ACMD_FUNC(order)
+{
+	nullpo_retr(-1,sd);
+	memset(atcmd_output, '\0', sizeof(atcmd_output));
+	if( !message || !*message )
+	{
+		clif_displaymessage(fd, "Please, enter a message (usage: @order <message>).");
+		return -1;
+	}
+
+	if( map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+	{
+		if( !sd->bmaster_flag )
+		{
+			clif_displaymessage(fd, "This command is reserved for Team Leaders Only.");
+			return -1;
+		}
+		if (battle_config.bg_order_behavior)
+			sprintf(atcmd_output, "%s: %s", sd->status.name, message);
+		else
+			sprintf(atcmd_output, "Team Leader: %s", message);
+		clif_broadcast2(&sd->bl, atcmd_output, (int)strlen(atcmd_output)+1, sd->bmaster_flag->color, 0x190, 20, 0, 0, BG);
+	}
+	else
+	{
+		if( !sd->state.gmaster_flag )
+		{
+			clif_displaymessage(fd, "This command is reserved for Guild Leaders Only.");
+			return -1;
+		}
+		clif_broadcast2(&sd->bl, message, (int)strlen(message)+1, 0xFF0000, 0x190, 20, 0, 0, GUILD);
+	}
+
+	return 0;
+}
+
+ACMD_FUNC(leader)
+{
+	struct map_session_data *pl_sd = NULL;
+	nullpo_retr(-1,sd);
+	memset(atcmd_player_name, '\0', sizeof(atcmd_player_name));
+	
+	if (!message || !*message || sscanf(message, "%23[^\n]", atcmd_player_name) < 1) {
+		clif_displaymessage(fd,"Please enter a player name (usage: @leader <char name/ID>).");
+		return -1;
+	}
+
+	if( !sd->bmaster_flag )
+		clif_displaymessage(fd, "This command is reserved for Team Leaders Only.");
+	else if( sd->ud.skilltimer != INVALID_TIMER )
+		clif_displaymessage(fd, "Command not allow while casting a skill.");
+	else if( !message || !*message )
+		clif_displaymessage(fd, "Please, enter the new Leader name (usage: @leader <name>).");
+	else if((pl_sd=map_nick2sd(atcmd_player_name,true)) == NULL && (pl_sd=map_charid2sd(atoi(atcmd_player_name))) == NULL)
+		clif_displaymessage(fd, "Character not found.");
+	else if( sd->bg_id != pl_sd->bg_id )
+		clif_displaymessage(fd, "Destination Player is not in your Team.");
+	else if( sd == pl_sd )
+		clif_displaymessage(fd, "You are already the Team Leader.");
+	else
+	{ // Everytest OK!
+		sprintf(atcmd_output, "Team Leader transfered to [%s]", pl_sd->status.name);
+		clif_broadcast2(&sd->bl, atcmd_output, (int)strlen(atcmd_output)+1, sd->bmaster_flag->color, 0x190, 20, 0, 0, BG);
+
+		sd->bmaster_flag->leader_char_id = pl_sd->status.char_id;
+		pl_sd->bmaster_flag = sd->bmaster_flag;
+		sd->bmaster_flag = NULL;
+
+		clif_name_area(&sd->bl);
+		clif_name_area(&pl_sd->bl);
+		return 0;
+	}
+	return -1;
+}
+
+ACMD_FUNC(reportafk)
+{
+	struct map_session_data *pl_sd = NULL;
+	nullpo_retr(-1,sd);
+	memset(atcmd_player_name, '\0', sizeof(atcmd_player_name));
+	
+	if (!message || !*message || sscanf(message, "%23[^\n]", atcmd_player_name) < 1) {
+		clif_displaymessage(fd,"Please enter a player name (usage: @reportafk <char name/ID>).");
+		return -1;
+	}
+	if( !sd->bg_id )
+		clif_displaymessage(fd, "This command is reserved for Battleground Only.");
+	else if( !sd->bmaster_flag && battle_config.bg_reportafk_leaderonly )
+		clif_displaymessage(fd, "This command is reserved for Team Leaders Only.");
+	else if( !message || !*message )
+		clif_displaymessage(fd, "Please, enter the character name (usage: @reportafk <name>).");
+	else if((pl_sd=map_nick2sd(atcmd_player_name,true)) == NULL && (pl_sd=map_charid2sd(atoi(atcmd_player_name))) == NULL)
+		clif_displaymessage(fd, "Character not found");
+	else if( sd->bg_id != pl_sd->bg_id )
+		clif_displaymessage(fd, "Destination Player is not in your Team.");
+	else if( sd == pl_sd )
+		clif_displaymessage(fd, "You cannot kick yourself.");
+	else if( pl_sd->state.bg_afk == 0 )
+		clif_displaymessage(fd, "The player is not AFK on this Battleground.");
+	else
+	{ // Everytest OK!
+		struct battleground_data *bgd;
+		if( (bgd = bg_team_search(sd->bg_id)) == NULL )
+			return -1;
+
+		bg_team_leave(pl_sd,2);
+		clif_displaymessage(pl_sd->fd, "You have been kicked from Battleground because of your AFK status.");
+		pc_setpos(pl_sd,pl_sd->status.save_point.map,pl_sd->status.save_point.x,pl_sd->status.save_point.y,CLR_TELEPORT);
+
+		sprintf(atcmd_output, "- AFK [%s] Kicked by @reportafk command-", pl_sd->status.name);
+		clif_broadcast2(&sd->bl, atcmd_output, (int)strlen(atcmd_output)+1, bgd->color, 0x190, 20, 0, 0, BG);
+		return 0;
+	}
+	return -1;
+}
+
+ACMD_FUNC(listenbg)
+{
+	if (sd->state.bg_listen)
+	{
+		sd->state.bg_listen = 0;
+		clif_displaymessage(fd, "You will receive Battleground announcements");
+	}
+	else
+	{
+		sd->state.bg_listen = 1;
+		clif_displaymessage(fd, "You will not receive Battleground announcements.");
+	}
+
+	return 0;
+}
+
+/*==========================================
+* Guild Skill Usage for Guild Masters
+*------------------------------------------*/
+ACMD_FUNC(bgskill)
+{
+	int i, skillnum = 0, skilllv = 0;
+	t_tick tick = gettick();
+	struct battleground_data *bgd;
+
+	const struct { char skillstr[3]; int id; } skills[] = {
+		{ "BO",	10010 },
+		{ "RG",	10011 },
+		{ "RS",	10012 },
+		{ "EC",	10013 },
+	};
+
+	// Check for Skill ID
+	for( i = 0; i < ARRAYLENGTH(skills); i++ )
+	{
+		if( strncmpi(message, skills[i].skillstr, 3) == 0 )
+		{
+			skillnum = skills[i].id;
+			break;
+		}
+	}
+	if( !skillnum )
+	{
+		clif_displaymessage(fd, "Invalid Skill string. Use @bgskill EC/RS/RG/BO");
+		return -1;
+	}
+
+	if( !map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+	{
+		clif_displaymessage(fd, "This command is only available for Battleground.");
+		return -1;
+	}
+	else
+	{
+		if( (bgd = sd->bmaster_flag) != NULL )
+		{
+			if( bgd->skill_block_timer[skillnum] == INVALID_TIMER )
+				skilllv = bg_checkskill(bgd, skillnum);
+			else
+			{
+				bg_block_skill_status(bgd, skillnum);
+				skilllv = 0;
+			}
+		}
+		else
+		{
+			clif_displaymessage(fd, "This command is reserved for Team Leaders Only.");
+			return -1;
+		}
+	}
+
+	if( pc_cant_act(sd) || pc_issit(sd) || skill_isNotOk(skillnum, sd) || sd->ud.skilltimer != -1 || sd->sc.option&(OPTION_WEDDING|OPTION_XMAS|OPTION_SUMMER) || sd->state.only_walk || sd->sc.data[SC_BASILICA] )
+		return -1;
+
+	if( DIFF_TICK(tick, sd->ud.canact_tick) < 0 )
+		return -1;
+
+	if( sd->menuskill_id )
+	{
+		if( sd->menuskill_id == SA_TAMINGMONSTER )
+			sd->menuskill_id = sd->menuskill_val = 0; //Cancel pet capture.
+		else if( sd->menuskill_id != SA_AUTOSPELL )
+			return -1; //Can't use skills while a menu is open.
+	}
+
+	sd->skillitem = sd->skillitemlv = 0;
+	if( skilllv ) unit_skilluse_id(&sd->bl, sd->bl.id, skillnum, skilllv);
+	return 0;
+}
+
+ACMD_FUNC(bgrank)
+{
+	int i;
+
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], "============ BATTLEGROUND RANK ============", false, SELF);
+	for( i = 0; i < MAX_FAME_LIST; i++ )
+	{
+		if (!bg_fame_list[i].id)
+			sprintf(atcmd_output,"[ %d ] None        :    0 POINT",i+1);
+		else
+			sprintf(atcmd_output,"[ %d ] %s        :    %d POINT",i+1,bg_fame_list[i].name,bg_fame_list[i].fame);
+		clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+	}
+	sprintf(atcmd_output,"MY POINT    :    %d POINT",sd->status.bgstats.points);
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], "===========================================", false, SELF);
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], atcmd_output, false, SELF);
+	clif_messagecolor(&sd->bl, color_table[COLOR_LIGHT_GREEN], "===========================================", false, SELF);
+	return 0;
+}
+
+ACMD_FUNC(woerank)
+{
+	int i;
+
+	clif_messagecolor(&sd->bl, color_table[COLOR_CYAN], "============ WAR OF EMPERIUM RANK ============", false, SELF);
+	for( i = 0; i < MAX_FAME_LIST; i++ )
+	{
+		if (!woe_fame_list[i].id)
+			sprintf(atcmd_output,"[ %d ] None        :    0 POINT",i+1);
+		else
+			sprintf(atcmd_output,"[ %d ] %s        :    %d POINT",i+1,woe_fame_list[i].name,woe_fame_list[i].fame);
+		clif_messagecolor(&sd->bl, color_table[COLOR_CYAN], atcmd_output, false, SELF);
+	}
+	sprintf(atcmd_output,"MY POINT    :    %d POINT",sd->status.wstats.points);
+	clif_messagecolor(&sd->bl, color_table[COLOR_CYAN], "===========================================", false, SELF);
+	clif_messagecolor(&sd->bl, color_table[COLOR_CYAN], atcmd_output, false, SELF);
+	clif_messagecolor(&sd->bl, color_table[COLOR_CYAN], "===========================================", false, SELF);
+	return 0;
+}
+
+ACMD_FUNC(bgstats)
+{
+	pc_battle_stats(sd,sd,1);
+	return 0;
+}
+
+ACMD_FUNC(woestats)
+{
+	pc_battle_stats(sd,sd,2);
+	return 0;
+}
+
+/*==========================================
+ * @unequipall by [Cydh]
+ * house.bad@gmail.com
+ * Put off all equipped equipments
+ *------------------------------------------*/
+ACMD_FUNC(unequipall)
+{
+	int i;
+	nullpo_retr(-1, sd);
+
+
+	for (i = 0; i < MAX_INVENTORY; i++) {
+		if (sd->inventory.u.items_inventory[i].amount) {
+			if(sd->inventory.u.items_inventory[i].equip != 0)
+				pc_unequipitem(sd, i, 3);
+		}
+	}
+
+	clif_displaymessage(fd, "Se te ha desequipado todo");
+	return 0;
+}
+
+
+/*==========================================
+* @deleteall by [nanakiwurtz]
+* Delete all of your inventory & storage items.
+* rAthena to eAmod
+*==========================================*/
+ACMD_FUNC(deleteall) {
+
+	int i;
+	nullpo_retr(-1, sd);
+
+	if (sd->state.storage_flag != 1)
+	{
+
+		if( storage_storageopen(sd) == 1 ) {
+			clif_displaymessage(fd, "No puedes abrir el storage actualmente.");
+			return -1;
+		}
+	}
+
+	for (i = 0; i < MAX_INVENTORY; i++) 
+	{
+		if (sd->inventory.u.items_inventory[i].amount) 
+		{
+			if(sd->inventory.u.items_inventory[i].equip != 0)
+				pc_unequipitem(sd, i, 3);
+
+			pc_delitem(sd, i, sd->inventory.u.items_inventory[i].amount, 0, 0, LOG_TYPE_OTHER);
+
+		}
+	}
+
+	for (i = 0; i < MAX_STORAGE; i++) 
+	{
+		if(sd->storage.u.items_storage[i].amount)
+		storage_delitem(sd, &sd->storage, i, sd->storage.u.items_storage[i].amount);
+	}
+
+	storage_storageclose(sd);
+	return 0;
+
+}
+
+ACMD_FUNC(petstats)
+{
+	struct pet_data *pd;
+	nullpo_retr(-1, sd);
+	char output[CHAT_SIZE_MAX];
+	char petname[100];
+	char mobname[100];
+	char infostring1[100];
+	char infostring2[100];
+	int i;
+	struct {
+		const char* format;
+		int value;
+	} output_table[] = {
+		{ NULL, 0 },
+		{ NULL, 0 },
+		{ "Pet ID - %d", 0 },
+		{ "Pet Level - %d", 0 },
+		{ "Pet Loyalty - %d", 0 },
+		{ "Pet equip - %d", 0 },
+		{ "Pet Hungry - %d", 0 },
+		{ NULL, 0 },
+		{ NULL, 0 },
+		{ "Mob ID - %d", 0 },
+		{ "Egg ID - %d", 0 },
+		{ "Food ID - %d", 0 },
+		{ "Equip ID - %d", 0 },
+	};
+
+	pd = sd->pd;
+	if (!pd) {
+		clif_displaymessage(fd, msg_txt(sd, 184)); // Sorry, but you have no pet.
+		return -1;
+	}
+	std::shared_ptr<s_pet_db> pet_db_ptr = pd->get_pet_db();
+	memset(infostring1, '\0', sizeof(infostring1));
+	memset(output, '\0', sizeof(output));
+	memset(petname, '\0', sizeof(petname));
+	memset(infostring2, '\0', sizeof(infostring2));
+	memset(mobname, '\0', sizeof(mobname));
+	sprintf(infostring2, "- Pet Information -");
+	output_table[0].format = infostring2;
+	sprintf(petname, "Pet Name - %s", pd->pet.name);
+	output_table[1].format = petname;
+	output_table[2].value = pd->pet.pet_id;
+	output_table[3].value = pd->pet.level;
+	output_table[4].value = pd->pet.intimate;
+	output_table[5].value = pd->pet.equip;
+	output_table[6].value = pd->pet.hungry;
+	sprintf(infostring1, "- Database Information -");
+	output_table[7].format = infostring1;
+	//sprintf(mobname, "Mob Name - %s", pd->pet.jname);
+	output_table[8].format = mobname;
+	output_table[9].value = pet_db_ptr->class_;
+	output_table[10].value = pet_db_ptr->EggID;
+	output_table[11].value = pet_db_ptr->FoodID;
+	output_table[12].value = pet_db_ptr->AcceID;
+	for (i = 0; i<13; i++) {
+		sprintf(output, output_table[i].format, output_table[i].value);
+		clif_displaymessage(fd, output);
+	}
+	return 0;
+}
+
+/*==========================================
+* @show by KarLaeda
+* => Displays the point on minimap
+*------------------------------------------*/
+ACMD_FUNC(show)
+{
+	nullpo_retr(-1, sd);
+	int x = 0, y = 0;
+	
+	if(!message || !*message || (sscanf(message, "%d %d", &x, &y) != 2))
+	{
+		clif_displaymessage(fd, "Usa: @show <x> <y>");
+		return -1;
+	}
+	
+	clif_viewpoint(sd, 1, 1, x, y, 2, 0xFF0000);
+	return 0;
+}
+
+/*==========================================
+ * @heart
+ *------------------------------------------*/
+ACMD_FUNC(heart) { //tylah
+
+    nullpo_retr(-1, sd);
+    if ( !message || !*message ) {
+        clif_displaymessage(fd, "Usa: @heart 1 o 2");
+        return -1;
+    }
+    if ( atoi(message) == 1 )
+        clif_specialeffect(&sd->bl, 364,AREA);
+    else if ( atoi(message) == 2 )
+        clif_specialeffect(&sd->bl, 509,AREA);
+    return 0;
+}
+
+
+/*==========================================
+ * Dance
+ *------------------------------------------ */
+ACMD_FUNC(dance) {
+
+   nullpo_retr(-1, sd);
+
+	if (!message || !*message || atoi(message) > 9 || atoi(message) < 1 ) {
+		clif_displaymessage(fd, "Usa: @dance 1-9");
+		return -1;
+	}
+	switch ( atoi(message) ) {
+		case 1: clif_specialeffect(&sd->bl, 413,AREA); break;
+		case 2: clif_specialeffect(&sd->bl, 414,AREA); break;
+		case 3: clif_specialeffect(&sd->bl, 415,AREA); break;
+		case 4: clif_specialeffect(&sd->bl, 426,AREA); break;
+		case 5: clif_specialeffect(&sd->bl, 458,AREA); break;
+		case 6: clif_specialeffect(&sd->bl, 466,AREA); break;
+		case 7: clif_specialeffect(&sd->bl, 501,AREA); break;
+		case 8: clif_specialeffect(&sd->bl, 540,AREA); break;
+		case 9: clif_specialeffect(&sd->bl, 550,AREA); break;
+	}
+   return 0;
+}
+
+/*==========================================
+* @allchat by [rootKid]
+* Makes all players, except the invoker, send out a desired message
+* eg. @allchat blahblah
+*------------------------------------------*/
+ACMD_FUNC(allchat) 
+{
+	struct map_session_data* iter_sd;
+	struct s_mapiterator* iter;
+	
+	char tempmes[200];
+	iter = mapit_getallusers();
+	nullpo_retr(-1, sd);
+	
+	memset(tempmes, '\0', sizeof(tempmes));
+	memset(atcmd_output, '\0', sizeof(atcmd_output));
+	
+	if (!message || !*message || sscanf(message, "%199[^\n]", tempmes) < 0) {
+		clif_displaymessage(fd, "Porfavor inserta el mensaje (Usa: @allchat <message>).");
+		return -1;
+	}
+	
+	for (iter_sd = (TBL_PC*)mapit_first(iter); mapit_exists(iter); iter_sd = (TBL_PC*)mapit_next(iter))
+		if (iter_sd != sd) 
+		{
+			sprintf(atcmd_output, "%s : %s", iter_sd->status.name, tempmes);
+		clif_disp_overhead(&iter_sd->bl, atcmd_output);
+		}
+	mapit_free(iter);
+	return 0;
+}
+
+/*==========================================
+* @allemo by [rootKid]
+* Makes all players, except the invoker, send out a desired emote
+* eg. @allemo 1
+*------------------------------------------*/
+ACMD_FUNC(allemo) {
+	struct map_session_data* iter_sd;
+	struct s_mapiterator* iter;	
+	iter = mapit_getallusers();
+	
+	if (!message || !*message) {
+		clif_displaymessage(fd, "Usa: @emo 1-81");
+	return -1;
+   }
+   
+   for (iter_sd = (TBL_PC*)mapit_first(iter); mapit_exists(iter); iter_sd = (TBL_PC*)mapit_next(iter))
+		if (iter_sd != sd){	//Triggers on all players except the one who initiates it.
+			clif_emotion(&iter_sd->bl, atoi(message));
+	}
+	mapit_free(iter);
+   return 0;
+}
+
+/*=========================================
+ *  new erundek
+ *-----------------------------------------*/
+ACMD_FUNC(erundek)
+{
+	nullpo_retr(-1,sd);
+	if( sd->npc_id || sd->vender_id || sd->buyer_id || sd->state.trading || sd->state.storage_flag )
+		return -1;
+
+	npc_event(sd,"MavisErundek::OnAttach",0);
+	return 0;
+}
+
+/*=========================================
+ *  new Telma
+ *-----------------------------------------*/
+ACMD_FUNC(telma)
+{
+	nullpo_retr(-1,sd);
+	if( sd->npc_id || sd->vender_id || sd->buyer_id || sd->state.trading || sd->state.storage_flag )
+		return -1;
+
+	npc_event(sd,"MavisTelma::OnAttach",0);
+	return 0;
+}
+
+/*=========================================
+ * isaac Drop Auto Trade
+ *-----------------------------------------*/
+static int DropAT(struct map_session_data* sd, va_list args)
+{
+	if (sd->state.autotrade == 0)
+		return 0;
+	clif_GM_kick(NULL, sd);
+	return 0;
+}
+
+ACMD_FUNC(dropat)
+{
+	map_foreachpc(DropAT,sd);
+	return 0;
+}
+
+
 
 #include "../custom/atcommand.inc"
 
@@ -10357,6 +11125,34 @@ void atcommand_basecommands(void) {
 		ACMD_DEFR(changedress, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),
 		ACMD_DEFR(camerainfo, ATCMD_NOCONSOLE|ATCMD_NOAUTOTRADE),
 		ACMD_DEFR(resurrect, ATCMD_NOCONSOLE),
+
+// [DarbladErxX] --------------------------------
+		//BG COMMANDS
+		ACMD_DEF(listenbg),
+		ACMD_DEF(order),
+		ACMD_DEF(leader),
+		ACMD_DEF(reportafk),
+		ACMD_DEF(bgskill),
+		ACMD_DEF(bgrank),
+		ACMD_DEF(woerank),
+		ACMD_DEF(bgstats),
+		ACMD_DEF(woestats),
+
+		ACMD_DEF(deleteall ),
+		ACMD_DEF(allemo ),
+		ACMD_DEF(allchat),
+		ACMD_DEF(dance ),
+		ACMD_DEF(heart ),
+		ACMD_DEF(unequipall),
+		ACMD_DEF(dropat ),
+		ACMD_DEF(show),
+		ACMD_DEF(telma ),
+		ACMD_DEF(erundek),
+		ACMD_DEF2("erudek", erundek),
+		ACMD_DEF(petstats),
+		ACMD_DEF(myinfo),
+		ACMD_DEF(expinfo),
+		ACMD_DEF2("costumeitem", item), // Costume item edit
 	};
 	AtCommandInfo* atcommand;
 	int i;

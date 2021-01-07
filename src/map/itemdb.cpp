@@ -3,7 +3,10 @@
 
 #include "itemdb.hpp"
 
+#include <math.h>
 #include <stdlib.h>
+#include <unordered_map>
+#include <vector>
 
 #include "../common/malloc.hpp"
 #include "../common/nullpo.hpp"
@@ -30,6 +33,9 @@ static DBMap *itemdb_randomopt_group; /// Random option group DB
 struct item_data *dummy_item; /// This is the default dummy item used for non-existant items. [Skotlex]
 
 struct s_roulette_db rd;
+struct s_item_vend item_vend[MAX_INVENTORY]; /// Technoken
+struct s_bg_reward bgr[MAX_FAME_LIST];
+struct s_woe_reward woer[MAX_FAME_LIST];
 
 /**
 * Check if combo exists
@@ -1239,6 +1245,33 @@ static void itemdb_roulette_free(void) {
 	}
 }
 
+/**
+* Extended Vending system [Lilith]
+**/
+static bool itemdb_read_vending(char* fields[], int columns, int current)
+{
+	struct item_data* id;
+	unsigned short nameid;
+
+	nameid = atoi(fields[0]);
+
+	if ((id = itemdb_exists(nameid)) == NULL)
+	{
+		ShowWarning("itemdb_read_vending: Invalid item id %hu.\n", nameid);
+		return false;
+	}
+
+	if (id->type == IT_ARMOR || id->type == IT_WEAPON || id->type == IT_SHADOWGEAR)
+	{
+		ShowWarning("itemdb_read_vending: item id %hu cannot be equipment or weapon.\n", nameid);
+		return false;
+	}
+
+	item_vend[current].itemid = nameid;
+
+	return true;
+}
+
 /*======================================
  * Applies gender restrictions according to settings. [Skotlex]
  *======================================*/
@@ -1284,6 +1317,84 @@ static void itemdb_re_split_atoi(char *str, int *val1, int *val2) {
 	*val1 = val[0];
 	*val2 = val[1];
 	return;
+}
+
+/**
+* BG Reward read db [Easycore]
+**/
+static bool itemdb_read_bgreward(char* fields[], int columns, int current)
+{
+	struct item_data* id;
+	unsigned short nameid, amount;
+	int zeny;
+
+	nameid = atoi(fields[0]);
+	amount = atoi(fields[1]);
+	zeny = atoi(fields[2]);
+
+	if ((id = itemdb_exists(nameid)) == NULL)
+	{
+		ShowWarning("itemdb_read_bgreward: Invalid item id %hu.\n", nameid);
+		return false;
+	}
+
+	if (amount <= 0)
+	{
+		ShowWarning("itemdb_read_bgreward: Invalid item amount %hu.\n", amount);
+		return false;
+	}
+
+	if (zeny < 0)
+	{
+		ShowWarning("itemdb_read_bgreward: Invalid zeny amount %hu.\n", zeny);
+		return false;
+	}
+		
+
+	bgr[current].nameid = nameid;
+	bgr[current].amount = amount;
+	bgr[current].zeny = zeny;
+
+	return true;
+}
+
+/**
+* WoE Reward read db [Easycore]
+**/
+static bool itemdb_read_woereward(char* fields[], int columns, int current)
+{
+	struct item_data* id;
+	unsigned short nameid, amount;
+	int zeny;
+
+	nameid = atoi(fields[0]);
+	amount = atoi(fields[1]);
+	zeny = atoi(fields[2]);
+
+	if ((id = itemdb_exists(nameid)) == NULL)
+	{
+		ShowWarning("itemdb_read_woereward: Invalid item id %hu.\n", nameid);
+		return false;
+	}
+
+	if (amount <= 0)
+	{
+		ShowWarning("itemdb_read_woereward: Invalid item amount %hu.\n", amount);
+		return false;
+	}
+
+	if (zeny < 0)
+	{
+		ShowWarning("itemdb_read_woereward: Invalid zeny amount %hu.\n", zeny);
+		return false;
+	}
+		
+
+	woer[current].nameid = nameid;
+	woer[current].amount = amount;
+	woer[current].zeny = zeny;
+
+	return true;
 }
 
 /**
@@ -1434,6 +1545,7 @@ static bool itemdb_parse_dbrow(char** str, const char* source, int line, int scr
 static int itemdb_readdb(void){
 	const char* filename[] = {
 		DBPATH"item_db.txt",
+		DBPATH"item_db2.txt",
 		DBIMPORT"/item_db.txt" 
 	};
 
@@ -1866,6 +1978,9 @@ static void itemdb_read(void) {
 		sv_readdb(dbsubpath1, "item_findingore.txt",	',', 2, 10, -1, &itemdb_read_group, i > 0);
 		sv_readdb(dbsubpath2, "item_giftbox.txt",		',', 2, 10, -1, &itemdb_read_group, i > 0);
 		sv_readdb(dbsubpath2, "item_misc.txt",			',', 2, 10, -1, &itemdb_read_group, i > 0);
+		sv_readdb(dbsubpath1, "bg_rewards.txt",			',', 3, 3, MAX_FAME_LIST, &itemdb_read_bgreward, i > 0);
+		sv_readdb(dbsubpath1, "woe_rewards.txt",		',', 3, 3, MAX_FAME_LIST, &itemdb_read_woereward, i > 0);
+		sv_readdb(dbsubpath1, "item_vending.txt",		',', 1, 1, ARRAYLENGTH(item_vend), &itemdb_read_vending, i); // Extended Vending system [Lilith]
 #ifdef RENEWAL
 		sv_readdb(dbsubpath2, "item_package.txt",		',', 2, 10, -1, &itemdb_read_group, i > 0);
 #endif
@@ -2000,7 +2115,10 @@ void itemdb_reload(void) {
 	itemdb_randomopt->clear(itemdb_randomopt, itemdb_randomopt_free);
 	itemdb_randomopt_group->clear(itemdb_randomopt_group, itemdb_randomopt_group_free);
 	itemdb->clear(itemdb, itemdb_final_sub);
+	memset(bgr, 0, sizeof(bgr));
+	memset(woer, 0, sizeof(woer));
 	db_clear(itemdb_combo);
+	memset(item_vend, 0, sizeof(item_vend)); // Extended Vending system [Lilith]
 	if (battle_config.feature_roulette)
 		itemdb_roulette_free();
 
@@ -2034,6 +2152,110 @@ void itemdb_reload(void) {
 		status_calc_pc(sd, SCO_FORCE); // 
 	}
 	mapit_free(iter);
+}
+
+char base62_dictionary[] = {
+	'0', '1', '2', '3', '4', '5', '6', '7',
+	'8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
+	'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+	'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+	'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+	'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+	'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
+	'U', 'V', 'W', 'X', 'Y', 'Z'
+};
+
+std::unordered_map<char, int> base62_map = {
+	{ '0' ,  0 },{ '1' ,  1 },{ '2' ,  2 },{ '3' ,  3 },{ '4' ,  4 },{ '5' ,  5 },{ '6' ,  6 },{ '7' ,  7 },
+	{ '8' ,  8 },{ '9' ,  9 },{ 'a' , 10 },{ 'b' , 11 },{ 'c' , 12 },{ 'd' , 13 },{ 'e' , 14 },{ 'f' , 15 },
+	{ 'g' , 16 },{ 'h' , 17 },{ 'i' , 18 },{ 'j' , 19 },{ 'k' , 20 },{ 'l' , 21 },{ 'm' , 22 },{ 'n' , 23 },
+	{ 'o' , 24 },{ 'p' , 25 },{ 'q' , 26 },{ 'r' , 27 },{ 's' , 28 },{ 't' , 29 },{ 'u' , 30 },{ 'v' , 31 },
+	{ 'w' , 32 },{ 'x' , 33 },{ 'y' , 34 },{ 'z' , 35 },{ 'A' , 36 },{ 'B' , 37 },{ 'C' , 38 },{ 'D' , 39 },
+	{ 'E' , 40 },{ 'F' , 41 },{ 'G' , 42 },{ 'H' , 43 },{ 'I' , 44 },{ 'J' , 45 },{ 'K' , 46 },{ 'L' , 47 },
+	{ 'M' , 48 },{ 'N' , 49 },{ 'O' , 50 },{ 'P' , 51 },{ 'Q' , 52 },{ 'R' , 53 },{ 'S' , 54 },{ 'T' , 55 },
+	{ 'U' , 56 },{ 'V' , 57 },{ 'W' , 58 },{ 'X' , 59 },{ 'Y' , 60 },{ 'Z' , 61 },
+};
+
+/**
+* Encode base10 number to base62. Originally by lututui
+* @param val Base10 Number
+* @return Base62 string
+**/
+std::string base62_encode(unsigned int val)
+{
+	if (!val) {
+		return "0";
+	}
+	std::string result = "";
+	while (val != 0) {
+		result = base62_dictionary[(val % 62)] + result;
+		val /= 62;
+	}
+	return result;
+}
+
+/**
+* Decode base62 string to base10. Originally by lututui
+* @param str Base62 String
+* @return Base10 number
+**/
+unsigned int base62_decode(std::string str)
+{
+	if (str.empty()) {
+		return 0;
+	}
+	unsigned int base10 = 0, i = 0;
+	size_t n = str.size();
+	while (str[i] != NULL) {
+		char v = str[i];
+		base10 += base62_map[v] * ((unsigned int)pow(62, (n - i - 1)));
+		++i;
+	}
+	return base10;
+}
+
+/**
+* Generate <ITEML> string
+* @param nameid Item ID
+* @param refine Refine level (optional)
+* @param s_item_link Additional info itemlink, cards and random options (optional)
+* @return <ITEML> string for the item
+**/
+std::string createItemLink(unsigned int nameid, unsigned char refine = 0, struct s_item_link *data = nullptr)
+{
+	std::string nameid63 = base62_encode(nameid);
+	struct item_data *id = itemdb_exists(nameid);
+	char showslot = (id && itemdb_isequip2(id)) ? '1' : '0';
+	std::string itemstr = "";
+	itemstr += "<ITEML>";
+	itemstr += "00000";
+	itemstr += showslot;
+	itemstr += nameid63;
+	if (refine > 0) {
+		std::string refine62 = base62_encode(refine);
+		itemstr += "%0" + refine62;
+	}
+	//itemstr += "&" + class62;
+	if (data != nullptr) {
+		if (data->flag.cards) {
+			for (uint8 i = 0; i < MAX_SLOTS; ++i) {
+				std::string card62 = (data->cards[i] != 0) ? base62_encode(data->cards[i]) : "0";
+				itemstr += "(0" + card62;
+			}
+		}
+#if PACKETVER >= 20150225
+		if (data->flag.options) {
+			for (uint8 i = 0; i < MAX_ITEM_RDM_OPT; ++i) {
+				std::string type62 = (data->options[1].id != 0) ? base62_encode(data->options[i].id) : "0";
+				std::string param62 = (data->options[i].param != 0) ? base62_encode(data->options[i].param) : "0";
+				std::string value62 = (data->options[i].value != 0) ? base62_encode(data->options[i].value) : "0";
+				itemstr += "*0" + type62 + "+0" + param62 + ",0" + value62;
+			}
+		}
+#endif
+	}
+	itemstr += "</ITEML>";
+	return itemstr;
 }
 
 /**

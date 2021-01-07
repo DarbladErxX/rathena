@@ -1,0 +1,355 @@
+-	script	Guitar_Hero::GH	-1,{
+
+OnInit:
+	// Configs.
+	// ======================================================================================
+	set $@gh_maxu, 1;	// Max players at the same time.
+	set $@gh_t1, 2;		// Minutes per game.
+	set $@gh_b1, 30;	// Battery size.
+	set $@gh_b2, 3;		// Every X number of times the battery will be incremented.
+	set $@gh_b3, 5;		// When the user complete the battery, he will receive x points more.
+	// ======================================================================================
+
+	// effects.
+	//		red, blue, green, brown (orange potion).
+	setarray $@gh_e[0], 55, 54, 56, 57;
+	while ( 1 ) {
+		if ( $@gh_game ) {
+			set .@a, atoi ( strnpcinfo ( 2 ) );
+			if ( .@a ) {
+				if ( ! .gh_i ) sleep ( ( .@a <= 4 ) ? rand ( 1, 500 ) : rand ( 400, 800 ) ) ;
+				npcspeed rand ( 1, 250 ) ;
+				getmapxy .@m$, .@x, .@y, 1 ;
+				set .@y, .@y - 3;
+				if ( .@y <= 83 ) {
+					setd "$@gh_"+ .@a +"_1", 500;
+					sleep 110 ;
+					if ( .@y <= 82 ) {
+						movenpc "Guitar Hero#"+ .@a, 108 + ( .@a * 2 ), 105 ;
+						set $@gh_d[.@a], 0;
+					}
+					sleep rand ( 1, 500 );
+				}
+				else
+					setd "$@gh_"+ .@a +"_1", 0;
+				if ( ! checkcell ( "gh_map", .@x, .@y, cell_chkpass ) ) movenpc "Guitar Hero#"+ .@a, 108 + ( .@a * 2 ), 105 ;
+				npcwalkto .@x, .@y ;
+			}
+			set .gh_i, 1;
+		}
+		sleep 1 ;
+	}
+	end ;
+
+OnTimer6000000:
+	announce "[Guitar Hero]: Siguiente turno...",bc_all,0x00FFFF;
+	mapannounce "gh_map","[Guitar Hero]: Siguiente Turno por tu inactividad....", bc_all, 0x00FFFF ;
+	sleep2 2000;
+	enablewaitingroomevent "GuitarHero";
+	stopnpctimer "GH";
+	areawarp "gh_map",106,81,121,61,"prontera",167,176;
+	end;
+}
+
+-	script	ResetGH	-1,{
+
+OnEvento:
+	if(getd ( "$@gh_pt"+ $@gh_p ) >= 100) {
+	//query_sql "UPDATE `char` SET `guitar` = `guitar` + '1' WHERE `name` = '"+strcharinfo(0)+"'";
+	//query_sql "UPDATE `char` SET `puntosguitar` = '"+getd("$@gh_pt"+$@gh_p)+"' WHERE `name` = '"+strcharinfo(0)+"'";
+	getitem 7539,10;
+	delitem 18118,1;
+	delitem 18119,1;
+	delitem 18120,1;
+	delitem 18121,1;
+	set $@gh_us, 0;
+	set $@gh_p, $@gh_p + 1;
+	set $@gh_t, 0;
+	set $@gh_2, 0;
+	set $@gh_game, 0;
+	set $@gh_b, 0;
+	announce "[Guitar Hero]: Siguiente turno...",bc_all,0x00FFFF;
+	mapannounce "gh_map","[Guitar Hero]: ¡¡Ganaste ^^!! Tiempo finalizado, siguiente Turno...", bc_all, 0x00FFFF ;
+	sleep2 2000;
+        warp "prontera",167,176;
+	for ( set .@a, 0; .@a < $@gh_maxu ; set .@a, .@a + 1 ) {
+		set .@b, 0;
+		set .@c, 0;
+		for ( set .@b, 0; .@b < $@gh_maxu ; set .@b, .@b + 1 ) {
+			if ( getd ( "$@gh_pt"+ .@a ) > getd ( "$@gh_pt"+ .@b ) ) set .@c, .@c + 1;
+			if ( .@c == ( $@gh_maxu - 1 ) ) set $@gh_w, .@c;
+		}
+	}
+	enablewaitingroomevent "GuitarHero";
+	stopnpctimer "GH";
+	}
+	delitem 18118,1;
+	delitem 18119,1;
+	delitem 18120,1;
+	delitem 18121,1;
+	set $@gh_us, 0;
+	set $@gh_p, $@gh_p + 1;
+	set $@gh_t, 0;
+	set $@gh_2, 0;
+	set $@gh_game, 0;
+	set $@gh_b, 0;
+	announce "[Guitar Hero]: Siguiente turno...",bc_all,0x00FFFF;
+	mapannounce "gh_map","[Guitar Hero]: Tiempo finalizado, siguiente Turno...", bc_all, 0x00FFFF ;
+	sleep2 2000;
+        warp "prontera",167,176;
+	for ( set .@a, 0; .@a < $@gh_maxu ; set .@a, .@a + 1 ) {
+		set .@b, 0;
+		set .@c, 0;
+		for ( set .@b, 0; .@b < $@gh_maxu ; set .@b, .@b + 1 ) {
+			if ( getd ( "$@gh_pt"+ .@a ) > getd ( "$@gh_pt"+ .@b ) ) set .@c, .@c + 1;
+			if ( .@c == ( $@gh_maxu - 1 ) ) set $@gh_w, .@c;
+		}
+	}
+	enablewaitingroomevent "GuitarHero";
+	stopnpctimer "GH";
+	end;
+}
+
+-	script	Effect::EFGH	-1,{
+
+OnEffect:
+
+	if ( $@gh_eff ) misceffect ( ( $@gh_eff == 1 ) ? $@gh_e[$@gh_a - 1] : ( ( $@gh_eff == 2 ) ? 622 : 273 ) ) ;
+}
+
+prontera,167,176,4	script	ghitems2	139,1,1,{
+
+	if ((countitem(18118) > 0) || (countitem(18118) > 0) || (countitem(18118) > 0) || (countitem(18118) > 0)){
+	delitem 18118,1;
+	delitem 18119,1;
+	delitem 18120,1;
+	delitem 18121,1;
+	end;
+	}
+	end;
+}
+
+gh_map,113,78,4	script	ghitems	139,5,5,{
+
+	initnpctimer "GH";
+	set $@gh_us, 1;
+	if ((countitem(18118) < 1) || (countitem(18118) < 1) || (countitem(18118) < 1) || (countitem(18118) < 1)){
+	getitem 18118,1;
+	getitem 18119,1;
+	getitem 18120,1;
+	getitem 18121,1;
+	end;
+	}
+	end;
+}
+
+prontera,156,194,4	script	GuitarHero	467,{
+
+if (getgmlevel() >= 80) goto L_GM;
+
+		mes "^FF0000Guitar Hero^000000";
+		mes "Buenas "+strcharinfo(0)+", ¿Qué puedo hacer por tí?";
+		next ;
+		select ( "¿De qué se trata este evento?:Horario del evento:Nada" );
+		mes "^FF0000Guitar Hero^000000";
+		switch ( @menu ) {
+
+			case 1:
+			mes "Es muy simple,  para poder participar primero debes entrar y hacer cola para esperar tu turno en el chat que tengo encima.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Cuando entres, recibirás 4 potions de diferentes colores, colócalas en tu Barra F12 de Skills directas.";
+			mes "Si usas una de las potions, la partida comenzará.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Así como hay 4 colores de potions también hay 4 colores de porings.";
+			mes "Simplemente debes presionar el potion segun el color del poring cuando llegue a los cuadros amarillos de la pista.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Tendrás un tiempo de 2 minuto por turno, si logras acumular 100 puntos o más, ganas 10 poring coin.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Por supuesto puedes repetir tu turno cuantas veces quieras antes de que este evento finalice, eso es todo. ^_^";
+			close;
+
+			case 2:
+			mes "El Guitar Hero son los Lunes, Martes, Jueves y Viernes a las 16:30 @servertime. ^_^";
+			close;
+
+			case 3:
+			mes "Bueno, ni modo, supongo que ya sabes de qué se trata. Nos vemos. ^_^";
+			close;
+		}
+
+L_GM:
+		mes "^FF0000Guitar Hero^000000";
+		mes "Buenas "+strcharinfo(0)+", ¿Qué puedo hacer por tí?";
+		next ;
+		select ( "Activar evento manual:Desactivar evento manual:¿De qué se trata este evento?:Horario del evento:Nada" );
+		mes "^FF0000Guitar Hero^000000";
+		switch ( @menu ) {
+
+			case 1:
+			announce "[Guitar Hero]: Ha sido activado por un GM el evento Guitar Hero en Prontera, favor leer las instrucciones antes de participar",bc_all,0x00FF00;
+    			waitingroom "Guitar Hero",5,"GuitarHero::OnFull",1;
+    			enablewaitingroomevent "GuitarHero";
+			mes "Evento activado, gracias por utilizar mis servicios. ^^";
+			close;
+			case 2:
+			announce "[Guitar Hero]: El evento ha sido finalizado por un GM, gracias por participar. ^^",bc_all,0x00FF00;
+    			delwaitingroom "GuitarHero";
+   			disablewaitingroomevent "GuitarHero";
+			mes "Evento desactivado, gracias por utilizar mis servicios. ^^";
+			close;
+			case 3:
+			mes "Es muy simple,  para poder participar primero debes entrar y hacer cola para esperar tu turno en el chat que tengo encima.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Cuando entres, recibirás 4 potions de diferentes colores, colócalas en tu Barra F12 de Skills directas.";
+			mes "Si usas una de las potions, la partida comenzará.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Así como hay 4 colores de potions también hay 4 colores de porings.";
+			mes "Simplemente debes presionar el potion segun el color del poring cuando llegue a los cuadros amarillos de la pista.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Tendrás un tiempo de 1 minuto por turno, si logras acumular 60 puntos o más, ganas 1 poring coin.";
+			next;
+			mes "^FF0000Guitar Hero^000000";
+			mes "Por supuesto puedes repetir tu turno cuantas veces quieras antes de que este evento finalice, eso es todo. ^_^";
+			close;
+
+			case 4:
+			mes "Todos los días a las 18:30, 20:30, 22:30 Hora servidor (@time).";
+			close;
+
+			case 5:
+			mes "Bueno, ni modo, supongo que ya sabes de qué se trata. Nos vemos. ^_^";
+			close;
+		}
+
+OnFull:
+	warpwaitingpc "gh_map",113,77;
+	disablewaitingroomevent "GuitarHero";
+	specialeffect 273;
+	specialeffect 622;
+	end;
+
+OnClock1830:
+OnClock2030:
+OnClock2230:
+announce "[Guitar Hero]: Ha iniciado el evento Guitar Hero en Prontera, favor leer las instrucciones antes de participar",bc_all,0x00FF00;
+waitingroom "Guitar Hero",5,"GuitarHero::OnFull",1;
+enablewaitingroomevent "GuitarHero";
+end;
+
+OnClock1831:
+OnClock2031:
+OnClock2231:
+announce "[Guitar Hero]: Tienen 2 horas para ganar sus coins.",bc_all,0x00FF00;
+end;
+
+g_temprano:
+announce "[Guitar Hero]: Tienen 1 hora para ganar sus coins.",bc_all,0x00FF00;
+end;
+
+
+
+OnClock2020:
+OnClock2220:
+OnClock0020:
+announce "[Guitar Hero]: Faltan 10 minutos para que el evento finalice.",bc_all,0x00FF00;
+end;
+
+OnClock2029:
+OnClock2229:
+OnClock0029:
+announce "[Guitar Hero]: Evento finalizado, Gracias a Todos por participar.",bc_all,0x00FF00;
+delwaitingroom "GuitarHero";
+disablewaitingroomevent "GuitarHero";
+//areawarp "gh_map",60,169,167,34,"prontera",167,176;
+end;
+}
+
+function	script	GH	{
+	if ( strcharinfo ( 3 ) == "gh_map" ) {
+		stopnpctimer "GH";
+		for ( set .@a, 0; .@a < $@gh_maxu ; set .@a, .@a + 1 )
+			if ( $@gh_u$[.@a] == strcharinfo ( 0 ) && ( .@a == $@gh_p ) ) set .@a, 1;
+		if ( .@a ) {
+			if ( ! $@gh_game ) set $@gh_game, 1;
+			if ( ! $@gh_t ) {
+				addtimer $@gh_t1 * 60000, "ResetGH::OnEvento" ;
+				set $@gh_t, 1;
+			}
+			if ( getd ( "$@gh_"+ getarg ( 0 ) +"_1" ) && ! $@gh_d[getarg ( 0 )] ) {
+				set $@gh_2, $@gh_2 + 1;
+				set .@a$, "[";
+				for ( set .@a, 1; .@a < $@gh_b ; set .@a, .@a + 1 ) {
+					if ( ! ( .@a % $@gh_b2 ) ) {
+						set .@a$, .@a$ + "|||";
+						set .@b, .@b + 3;
+					}
+				}
+				for ( set .@a, 1; .@a < ( $@gh_b1 - .@b ) ; set .@a, .@a + 3 ) set .@a$, .@a$ + "--";
+				set .@a$, .@a$ + "]";
+				if ( .@a$ != "" && ( ( .gh_l != .@b ) || ( ! .@b ) ) ) announce .@a$, bc_self, 0xe8a53b ;
+				set .gh_l, .@b;
+				setd "$@gh_pt"+ $@gh_p, getd ( "$@gh_pt"+ $@gh_p ) + 1;
+				dispbottom getd ( "$@gh_pt"+ $@gh_p );
+				if ( getd ( "$@gh_pt"+ $@gh_p ) >= ( $@gh_b1 * $@gh_b2 ) ) set $@gh_b, 0;
+				set $@gh_b, getd ( "$@gh_pt"+ $@gh_p );
+				if((getd ( "$@gh_pt"+ $@gh_p ) == 30) || (getd ( "$@gh_pt"+ $@gh_p ) == 60)) {
+					set $@gh_eff, 2;
+					announce "Rampage!", bc_self, 0x4ba1b0 ;
+					//setd "$@gh_pt"+ $@gh_p, getd ( "$@gh_pt"+ $@gh_p ) + $@gh_b3;
+				}
+				else
+					if ( ! $@gh_d[ getarg ( 0 )] ) set $@gh_eff, 3;
+				set $@gh_d[getarg ( 0 )], 1;
+				donpcevent "Effect#"+ getarg ( 0 ) +"::OnEffect" ;
+			}
+			else
+				set $@gh_2, 0;
+			set $@gh_eff, 1;
+			set $@gh_a, getarg ( 0 );
+			donpcevent "Effect#"+ getarg ( 0 ) +"::OnEffect" ;
+		}
+	}
+	if ( ! .@a ) return ;
+	return ;
+
+}
+
+// Porings.
+gh_map,110,103,4	duplicate(GH)	Guitar Hero#1	1002
+gh_map,112,103,4	duplicate(GH)	Guitar Hero#2	1242
+gh_map,114,103,4	duplicate(GH)	Guitar Hero#3	1031
+gh_map,116,103,4	duplicate(GH)	Guitar Hero#4	1572
+
+// Effects.
+gh_map,110,82,4	duplicate(EFGH)	Effect#1	139
+gh_map,112,82,4	duplicate(EFGH)	Effect#2	139
+gh_map,114,82,4	duplicate(EFGH)	Effect#3	139
+gh_map,116,82,4	duplicate(EFGH)	Effect#4	139
+
+// Warps.
+gh_map,142,66,0	warp	ghw1	1,1,prontera,167,176
+//gh_map,124,60,0	warp	ghw1	1,1,gh_map,99,60
+//gh_map,103,60,0	warp	ghw2	1,1,gh_map,126,60
+//gh_map,84,76,0	warp	ghw3	1,1,gh_map,84,129
+//gh_map,84,126,0	warp	ghw4	1,1,gh_map,84,74
+//gh_map,103,144,0	warp	ghw5	1,1,gh_map,127,144
+//gh_map,124,144,0	warp	ghw6	1,1,gh_map,100,144
+//gh_map,142,126,0	warp	ghw7	1,1,gh_map,142,74
+//gh_map,142,77,0	warp	ghw8	1,1,gh_map,142,129
+
+// Mapflags.
+gh_map	mapflag	noteleport
+gh_map	mapflag	nocommand
+gh_map	mapflag	noskill
+gh_map	mapflag	nosave	SavePoint
+gh_map	mapflag	pvp	off
+gh_map	mapflag	nobranch
+gh_map	mapflag	nomemo
+gh_map	mapflag	nopenalty

@@ -1,0 +1,31 @@
+prontera,151,171,5	script	Card Recycle#card	563,{
+				mes "Rolling a new card.....";
+				for( .@i = 0; .@i < 25 ; .@i++ ){
+					if( .@i == 20 )
+						mes "^777777-- stopping --^000000";
+					cutin callfunc( "card_illust",rand( .card_id_range[0],.card_id_range[1] ) ),4;
+					sleep2 ( .@i * 25 + 100 );
+				}
+				
+				do
+				.@new_card = rand( .card_id_range[0],.card_id_range[1] );
+				while( compare( .black_list$, .@new_card +"|" ) );
+				cutin callfunc( "card_illust",.@new_card ),4;
+				mes " ";
+				mes "Gained a New Card: ";
+				mes " ~ ^0055FF"+getitemname( .@new_card )+"^000000";
+				getitem .@new_card,1;
+				close2;
+			cutin "",255;
+			end;
+
+OnInit:
+	// zeny required for this process.
+	set .zeny_cost,10000;
+
+	// list of card that cant be used to exchange/get.
+	set .black_list$, "4144|4147|4142|4132|4128|4143|4137|4123|4146|4131|4148|4121|4135|4318|4324|4168|4305|4276|4134|4330|4263|4236|4302|4342|4372|4357|4359|4361|4363|4367|4365|4352|4374|4376|4399|4386|4403|4407|4408|4419|4425|4430|4441|4145|4183|4054|4047|4171|4207|4198|4238|4169|4290|4237|4241|4174|4354"; // black list ID
+	// current card id range.
+	setarray .card_id_range,4001,4453;
+	end;
+}

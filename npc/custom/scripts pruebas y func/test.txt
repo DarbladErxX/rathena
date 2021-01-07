@@ -1,0 +1,277 @@
+// use @monsterbet to start..
+
+prontera,155,168,3	script	Monster vs Monster Bet	100,{
+	doevent "mob_vs_mob_main::OnTalk";
+	end;
+OnInit:
+	waitingroom "Monster vs Monster", 0,"",0;
+}
+
+-	script	mobvmobtimer	-1,{
+OnStart:
+	++.stx;
+	if ( .stx == .st ) end;
+	initnpctimer;
+	.cd = getvariableofnpc ( .event_cooldown, "mob_vs_mob_main" );
+	.st = getvariableofnpc ( .start_times, "mob_vs_mob_main" );
+	.timer = 0;
+	end;
+	
+OnTimer60000:
+	if ( .timer == .cd ) {
+		stopnpctimer;
+		donpcevent "mob_vs_mob_main::OnStartEvent";
+		end;
+	}
+	.timer++;
+	setnpctimer 0;
+	end;
+}
+
+-	script	mob_vs_mob_main	-1,{
+OnMinute15:
+	if ( .status ) end;
+	set getvariableofnpc(.stx,"mobvmobtimer"), 1;
+	donpcevent strnpcinfo(3)+"::OnStartEvent";
+	end;
+	
+	OnInit:
+		.zeny_win_rate = 2; // 2x bet zeny reward.
+		.waiting_time = 1; 	// waiting time before event starts..
+		.event_cooldown = 1; // cooldown time before event re-starts..
+		.start_times = 10; // how many times event runs...
+		set getvariableofnpc(.stx,"mobvmobtimer"), 1;
+		.map$ = "gon_test";
+		
+		setarray .mob_id,
+			1038, // Osiris
+			1039, // Baphomet
+			1046, // Doppelganger
+			1059, // Mistress
+			1086, // Golden Thief Bug
+			1087, // Orc Hero
+			1112, // Drake
+			1115, // Eddga
+			1147, // Maya
+			1150, // Moonlight Flower
+			1157, // Pharaoh
+			1159, // Phreeoni
+			1190, // Orc Lord
+			1251, // Stormy Knight
+			1252, // Garm
+			1272, // Dark Lord
+			1312, // Turtle General
+			1373, // Lord of the Dead
+			1388, // Arc Angeling
+			1389, // Dracula
+			1418, // Evil Snake Lord
+			1492, // Samurai Specter
+			1511, // Amon Ra
+			1583; // Tao Gunka	
+		.mob_id_size = getarraysize(.mob_id);
+		
+		setmapflag .map$, mf_noteleport;
+		setmapflag .map$, mf_nodrop;
+		setmapflag .map$, mf_nomobloot;
+		setmapflag .map$, mf_nomvploot;
+		
+		.npc_name$ = strnpcinfo(3);
+		bindatcmd("monsterbet", strnpcinfo(3)+"::OnStartEvent",60,99);
+		query_sql(" CREATE TABLE IF NOT EXISTS `e_mob_vs_mob_bet` (`id` smallint(6) unsigned NOT NULL AUTO_INCREMENT, `session` int(11) NOT NULL DEFAULT '0', `aid` int(11) NOT NULL DEFAULT '0', `cid` int(11) NOT NULL DEFAULT '0', `mob_id` smallint(6) NOT NULL DEFAULT '0', `zeny` int(11) NOT NULL DEFAULT '0', `zeny_rate` int(11) NOT NULL DEFAULT '0', `status` tinyint(3) NOT NULL DEFAULT '1', PRIMARY KEY (`id`)) ENGINE=MyISAM; ");
+		end;
+	
+	OnStartEvent:
+		if (!.status) {
+			.status = 1;
+			.session_id = gettimetick(2);
+			.winner_mob_id = 0;
+			
+			do {
+				callfunc("F_ShuffleNumbers", 0, (.mob_id_size - 1), .@output, 2); // possible output 9,55,27,84,33
+				.mob_id_1 = .mob_id[.@output[0]];
+				.mob_id_2 = .mob_id[.@output[1]];
+			} while (!.mob_id_1 || !.mob_id_2 || .mob_id_1 == .mob_id_2);
+			
+			for (.@i = .waiting_time; .@i > 0; .@i--) {
+				if ( .@i > 0 ) announce "<Monster Bet> Event start in "+.@i+" minute(s). Register and place your bet now.", bc_all;
+				sleep 60000;
+			}
+			announce "<Monster Bet> Event start now. Bet closed now.", bc_all;
+			
+			.status = 2;
+
+			.@size = query_sql("SELECT `cid` FROM `e_mob_vs_mob_bet` WHERE `session` = "+.session_id+" AND `status` = 1", .@cid);
+			for (.@i = 0; .@i < .@size; .@i++)
+				warpchar .map$, 55, 94, .@cid[.@i];
+			
+			sleep 5000;
+			
+			for (.@i = 10; .@i > 0; .@i--) {
+				mapannounce .map$, "-- "+.@i+" --", bc_map;
+				sleep 1000;
+			}
+			
+			.@mob_gid_1 = bg_monster(1, .map$, 51, 87, "--ja--", .mob_id_1,  .npc_name$+"::OnKill1");
+			.@mob_gid_2 = bg_monster(2, .map$, 64, 87, "--ja--", .mob_id_2,  .npc_name$+"::OnKill2");
+			
+			getunitdata .@mob_gid_1, .@unitdata;
+			setunitdata .@mob_gid_1, UMOB_MODE, .@unitdata[UMOB_MODE] | (MD_AGGRESSIVE|MD_CANATTACK|MD_CANATTACKMOB);
+			setunitdata .@mob_gid_2, UMOB_MODE, .@unitdata[UMOB_MODE] | (MD_AGGRESSIVE|MD_CANATTACK|MD_CANATTACKMOB);
+			
+			while (!.winner_mob_id) {
+				unitattack .@mob_gid_1, .@mob_gid_2;
+				unitattack .@mob_gid_2, .@mob_gid_1;
+				sleep 2000;
+			}
+			
+			if (.winner_mob_id) {
+				mapannounce .map$, "<Monster Bet> "+getmonsterinfo(.winner_mob_id, MOB_NAME)+" won the match.", bc_map;
+				query_sql("UPDATE `e_mob_vs_mob_bet` SET `status` = 3, `zeny` = (`zeny` * "+.zeny_win_rate+") WHERE `session` = "+.session_id+" AND `mob_id` = "+.winner_mob_id+" AND `status` = 1");
+				query_sql("UPDATE `e_mob_vs_mob_bet` SET `status` = 2 WHERE `session` = "+.session_id+" AND `mob_id` <> "+.winner_mob_id+" AND `status` = 1");
+			}
+			
+			.mob_id_1 = .mob_id_2 = .status = .session_id = .winner_mob_id = 0;
+			
+			donpcevent "mobvmobtimer::OnStart";
+			killmonsterall .map$;
+			
+			sleep 5000;
+			mapwarp .map$, "prontera", 155, 181;
+		}
+		end;
+
+	OnKill1:
+		.winner_mob_id = .mob_id_2;
+		end;
+		
+	OnKill2:
+		.winner_mob_id = .mob_id_1;
+		end;
+		
+
+	OnTalk:
+		if (.status) {
+			query_sql("SELECT `id`,`mob_id`,`zeny` FROM `e_mob_vs_mob_bet` WHERE `cid` = "+getcharid(0)+" AND `session` = "+.session_id+" LIMIT 1", .@id, .@mob_id, .@total_zeny);
+			mes "Your current betting:";
+			mes "Bet Confirmation:";
+			if (.@id > 0) {
+				mes "Monster: "+getmonsterinfo(.@mob_id, MOB_NAME);
+				mes "Zeny: "+F_InsertComma(.@total_zeny)+"z";
+			}
+			else {
+				mes "none";
+			}
+		}
+		if (!.status) mes "There are no events at this time.";
+		else if (.status == 1) mes "Please place your bets!";
+		else  mes "Event is starting, please wait to end.";
+		
+		.claim_size = query_sql("SELECT `id`,`zeny` FROM `e_mob_vs_mob_bet` WHERE `cid` = "+getcharid(0)+" AND `status` = 3 LIMIT 20", .@id, .@zeny);
+		switch (select(
+			(.status) ? "Warp":"",
+			(.status) ? "Place Bet":"",
+			(.claim_size) ? "Claim Bet":"",
+			( getgmlevel() > 60 ) ? "^ff0000[GM Menu] Clear Data^000000":"",
+			"Cancel"
+		)) {
+			case 1:
+				warp .map$, 55, 94;
+				end;
+			case 2:
+				if (!.status || !.session_id) {
+					mes "Event isn't running now.";
+				}
+				else if (.status != 1) {
+					mes "You can only place the bet before the event starting.";
+				}
+				else {
+					mes "Which monster would you like to bet on?";
+					.@i = select(getmonsterinfo(.mob_id_1, MOB_NAME), getmonsterinfo(.mob_id_2, MOB_NAME));
+					mes "How much zeny?";
+					next;
+					input .@zeny, 1, Zeny;
+						mes "Bet Confirmation:";
+						mes "Monster: "+getmonsterinfo(getd(".mob_id_"+.@i), MOB_NAME);
+						mes "Zeny: "+F_InsertComma(.@zeny)+"z";
+						if (.@id) 
+							mes "Increase existing bet amount.";
+						next;
+						if (select("Confirm", "Cancel") == 1) {
+							if (.status == 1) {
+								Zeny -= .@zeny;
+								if (.@id) {
+									query_sql("UPDATE `e_mob_vs_mob_bet` SET `mob_id` = "+getd(".mob_id_"+.@i)+", `zeny` = `zeny` + "+.@zeny+" WHERE `id` = "+.@id+" LIMIT 1");
+								}
+								else {
+									query_sql("INSERT INTO `e_mob_vs_mob_bet` (`session`,`aid`,`cid`,`mob_id`,`zeny`) VALUES ("+.session_id+","+getcharid(3)+","+getcharid(0)+","+getd(".mob_id_"+.@i)+","+.@zeny+")");
+								}
+								mes "You have placed your bet.";
+							}
+							else {
+								mes "Bet failed. Try again later.";
+							}
+						}
+				}
+				break;
+			case 3:
+				for (.@i = 0; .@i < .claim_size; .@i++) 
+					.@menu$ = .@menu$ + "#"+.@id[.@i]+" - "+F_InsertComma(.@zeny[.@i])+"z" + ":";
+				.@i = select(.@menu$) - 1;
+				if (select("Claim", "Cancel") == 1) {
+					query_sql("UPDATE `e_mob_vs_mob_bet` SET `status` = 4 WHERE `id` = "+.@id[.@i]+" LIMIT 1");
+					Zeny += .@zeny[.@i];
+					mes "You claimed "+F_InsertComma(.@zeny[.@i])+"z";
+				}
+				break;
+			case 4:
+				mes "Sucessfully cleared the data";
+				query_sql("TRUNCATE TABLE `e_mob_vs_mob_bet`");
+				break;
+			default:
+				break;
+		}
+		close;
+		
+}
+
+// F_ShuffleNumbers( <start num>, <last num>, <output array>{, <count>} );
+function	script	F_ShuffleNumbers	{
+    deletearray getarg(2);
+    .@static = getarg(0);
+    .@range = getarg(1) +1 - .@static;
+    .@count = getarg(3, .@range);
+    if (.@range <= 0 || .@count <= 0)
+        return 0;
+    if (.@count > .@range)
+        .@count = .@range;
+    for (.@i = 0; .@i < .@range; ++.@i)
+        .@temparray[.@i] = .@i;
+    for (.@i = 0; .@i < .@count; ++.@i) {
+        .@rand = rand(.@range);
+        set getelementofarray( getarg(2), .@i ), .@temparray[.@rand] + .@static;
+        .@temparray[.@rand] = .@temparray[--.@range];
+    }
+    return .@count;
+}
+-	script	sjdfkhsf	FAKE_NPC,{
+OnInit:
+    .itemid = 501;
+    .amount = 10;
+//    bindatcmd "test", strnpcinfo(0)+"::OnDebug", 99, 100;
+    end;
+OnMinute00:
+    if ( gettime(DT_HOUR) % 2 ) end;
+//OnDebug:
+    .@size = getunits( BL_PC, .@aid );
+    F_ShuffleNumbers( 0, .@size -1, .@r );
+    for ( .@i = 0; .@i < .@size; ++.@i ) {
+        attachrid .@aid[.@r[.@i]];
+        if ( getgmlevel() < 60 && ( checkvending() & (2|4) ) == 0 ) {
+//        if ( getgmlevel() < 60 && ( checkvending() & (2|4) ) == 0 && checkidle() < 60 ) {
+            announce strcharinfo(0) +" won the Lucky Draw !!",bc_all;
+            mail getcharid(0), "Lucky Draw", "Prize", "Here is the Lucky Draw Prize", 0, .itemid, .amount;
+            break;
+        }
+    }
+    end;
+}

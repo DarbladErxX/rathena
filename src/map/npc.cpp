@@ -1570,6 +1570,8 @@ int npc_cashshop_buylist(struct map_session_data *sd, int points, int count, uns
 	if( sd->state.trading )
 		return ERROR_TYPE_EXCHANGE;
 
+	pc_check_security_retr(sd, SECU_NPCTRADE, 4);
+
 	new_ = 0;
 	w = 0;
 	vt = 0; // Global Value
@@ -1730,6 +1732,8 @@ int npc_cashshop_buy(struct map_session_data *sd, unsigned short nameid, int amo
 	if( sd->state.trading )
 		return ERROR_TYPE_EXCHANGE;
 
+	pc_check_security_retr(sd, SECU_NPCTRADE, 4);
+
 	if( (item = itemdb_exists(nameid)) == NULL )
 		return ERROR_TYPE_ITEM_ID; // Invalid Item
 
@@ -1847,6 +1851,8 @@ uint8 npc_buylist(struct map_session_data* sd, uint16 n, struct s_npc_buy_list *
 		return 3;
 	if (!item_list || !n)
 		return 3;
+
+	pc_check_security_retr(sd, SECU_NPCTRADE, 3);
 
 	z = 0;
 	w = 0;
@@ -2073,6 +2079,8 @@ uint8 npc_selllist(struct map_session_data* sd, int n, unsigned short *item_list
 	{
 		return 1;
 	}
+
+	pc_check_security_retr(sd, SECU_NPCTRADE, -1);
 
 	z = 0;
 

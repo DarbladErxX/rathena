@@ -1,0 +1,256 @@
+arlandria,147,161,4	script	Disguise Event	795,{
+
+	set .@GMLevel,80;	// Nivel de GM requerido para configurar el npc
+	set .@n$,"[^0000FFDisguise NPC^000000]";
+
+	if (getgmlevel()>=.@GMLevel) {
+		mes .@n$;
+		mes "Seleciona una opción.";
+		next;
+		switch(select("Activar ON/OFF Event:Event Settings")) {
+		case 1:
+			mes .@n$;
+			if (.EventON) {
+				mes "El evento esta actualmente: [^0000FFON^000000]";
+				mes "Te gustaria desactivarlo?";
+			} else {
+				mes "El evento esta actualmente: [^FF0000OFF^000000]";
+				mes "Te gustaria activarlo?";
+			}
+			if(select("Si:No")==2) close;
+			if (.EventON) {
+				set .EventON,0; set .Timer,0; set $DisguiseRound, 0;
+				setnpctimer 0; stopnpctimer;
+				announce "Un GM ha desactivado el evento, por lo cual no habra premios.",bc_map | bc_blue;
+				deletepset 1;
+				setnpcdisplay "Disguise Event",795;
+				close;
+			}
+			set $DisguiseRound, 0; set .EventON,1; set .Timer,1; set $DisguiseRound, 0;
+			announce "[Disguise Event]: El evento iniciara en Arlandria en 1 minuto.",bc_all | bc_blue;
+			 close2; sleep2 60000; goto OnStart;
+		case 2:
+			mes .@n$;
+			mes "Elija una configuración para modificar.";
+			next;
+			switch(select("Numero de rondas:Configuración de premios")) {
+				case 1:
+				mes .@n$;
+				mes "Ingrese el número de rondas que desea que dure el evento.";
+				mes "Numero actual: [^0000FF"+$guessrounds+"^000000]";
+				next;
+				input .@guessrounds;
+				set  $guessrounds,.@guessrounds;
+				mes .@n$;
+				mes "El número de rondas se ha cambiado a "+$guessrounds+".";
+				close;
+			case 2:
+				mes .@n$;
+				mes "Ingrese el ID del item otorgado en cada ronda.";
+				mes "Item Actual: [^0000FF"+getitemname($DisguisePrice)+"^000000] (ID #"+$DisguisePrice+")";
+				mes "Cantidad Actual: [^0000FF " + $DisguiseCount + " ^000000]";
+				next;
+				input .@Prize;
+				mes .@n$;
+				if (getitemname(.@Prize)=="" || getitemname(.@Prize)=="null") {
+					mes "Ese item no existe, intentalo otra vez.";
+					close;
+				}
+				set $DisguisePrice,.@Prize;
+				mes "Ingresa la cantidad a entregar.";
+				next;
+				input .@DisguisePriceamount;
+				mes .@n$;
+				if (.@DisguisePriceamount<=0 || .@DisguisePriceamount>=10000) {
+					mes "Esa cantidad no es valida, tiene que ser un numero del 1 al 10000.";
+					set .@DisguisePriceamount,1;
+					next;
+					mes .@n$;
+				}
+				set $DisguiseCount,.@DisguisePriceamount;
+				mes "El premio se ha cambiado con éxito.";
+				mes "Premio: "+$DisguiseCount+"x [^0000FF"+getitemname($DisguisePrice)+"^000000]";
+				close;
+			}
+		}
+	}
+	if (.EventON) end;
+	mes .@n$;
+	mes "Bienvenido.";
+	mes "¿Cómo puedo ser de ayuda??";
+	if(select("Información:Nada, solo ando de paso.")==2) close;
+	next;
+	mes .@n$;
+	mes "El evento es simple.";
+	mes "Tienes que adivinar el nombre del monstruo y se grita.";
+	mes "No te preocupes por el uso de letras mayusculas y minusculas iniciales.";
+	mes "Para que te acepte el nombre debes poner una letra primero te dare un ejemplo.";
+	mes "isilla, sucubus, abysmal knight.";
+	mes "Solo tienes que poner el nombre correctamente ¿entendiste?.";
+	close;
+
+
+Oninit:
+	set .EventON,0;
+	set .Wait,0;
+	set $DisguiseRound, 0;
+	set .BlackList$,"1003|1006|1017|1021|1022|1027|1043|1075|1136|1137|1168|" + 
+	    "1171|1172|1173|1181|1187|1210|1217|1218|1222|1223|1224|1225|1226|1227|1228|" + 
+	    "1233|1284|1407|1411|1414|1495|1501|1900|1996|2000|2001|2002|2003|2004|" + 
+	    "2005|2006|2007|2011|2012|2025|2028|2029|2030|2031|2032|2033|2034|2035|" + 
+	    "2036|2037|2038|2039|2040|2041|2042|2043|2044|2045|2046|2047|2048|2049|" + 
+	    "2050|2051|2052|2053|2054|2055|2056|2057|2058|2059|2060|2061|2062|2063|" + 
+	    "2064|2065|2066|2067|2075|2076|2077|2078|2079|2080|2081|2083|2084|2085|" + 
+	    "2086|2087|2088|2089|2090|2091|2092|2093|2094|2095|2096|2097|2098|2099|" + 
+	    "2100|2101|2012|2103|2104|2105|2106|2107|2108|2109|2110|2111|2112|2113|" + 
+	    "2114|2115|2116|2117|2118|2119|2120|2121|2123|2124|2125|1496|1324|1325|" +
+	    "1326|1327|1328|1329|1330|1331|1332|1333|1334|1335|1336|1337|1338|1339|" +
+	    "1340|1341|1342|1343|1344|1345|1346|1347|1348|1349|1350|1351|1352|1353|" +
+	    "1354|1355|1356|1357|1358|1359|1360|1361|1362|13603|1899|1902|1903|1938|" +
+	    "1939|1940|1941|1942|1943|1944|1945|1946|1949|1950|1951|1952|1953|1954|1955|" +
+	    "3005|2106|2107|3030|1288|1905|1906|1907|1908|1909|1910|1911|1912|1913|1914|" +
+	    "1915|2011|1934|1934|1936|";
+	setarray $@MVP[0],1038,1039,1046,1059,1086,1087,1112,1115,1147,1150,1157,1159,1190,1251,1252,1272,1312,1373,
+	                  1389,1399,1418,1492,1502,1511,1583,1623,1630,1646,1647,1648,1649,1650,1651,1658,1685,1688,
+				   1708,1719,1734,1751,1768,1779,1785,1802,1832,1871,1874,1885,1917,1980,2022,2068,2087,2131,
+				   2156,2165;
+				     end;
+
+
+OnClock0308:
+OnClock0708:
+OnClock1108:   
+OnClock1508:
+OnClock1908:
+OnClock2308:
+	   announce "[Disguise Event]: El evento iniciara en Arlandria en 1 minuto.",bc_all | bc_blue;
+	   sleep2 60000; goto OnStart;
+OnStart:
+if (.Timer!=1) end;
+	if (!$DisguiseRound)
+	{
+		set .Rule,1; //rand(1,2); // randomizamos para saber que ronda sera
+		npctalk "Bien. Vamos a empezar este juego!";
+		sleep2 3000;
+		npctalk "Pero primero voy a explicar las reglas.";
+		sleep2 3000;
+		npctalk "Me Voy a ocultar en un monstruo al azar.";
+		sleep2 3000;
+		npctalk "Tienes que adivinar el nombre del monstruo y se grita.";
+		sleep2 3000;
+		npctalk "No te preocupes por el uso de letras mayusculas y minusculas iniciales.";
+		sleep2 3000;
+		npctalk "Para que te acepte el nombre debes poner el nombre correcto te dare un ejemplo.";
+		sleep2 3000;
+		npctalk "isilla, sucubus, abysmal knight.";
+		sleep2 3000;
+		npctalk "Solo tienes que poner el nombre correctamente ¿entendiste?.";
+		sleep2 3000;
+		npctalk "Esta vez la ronda sera de "+(.Rule == 2 ?  "Solo MVP's" : "Todos los Monsters ")+"";
+		sleep2 3000;
+		npctalk "Ahora preparate!";
+		sleep2 5000;
+
+
+	}
+	else if ($DisguiseRound < $guessrounds-1)
+	{
+		npctalk "Preparese para la siguiente ronda.";
+		sleep2 3500;
+		npctalk "Ronda actual: "+ $DisguiseRound +" / "+ $guessrounds +" ";
+		setnpctimer 0;
+		sleep2 8000;
+	}
+	else
+	{	
+		npctalk "ultima ronda ahora!";
+		sleep2 2000;
+		npctalk "Prepararse!";
+		sleep2 6000;
+	}
+	set .DisguiseWon, 0;
+	while (.@guessrepeat);
+if (.Rule == 1) // Todos los Monsters
+	{
+		set $monster,1000+rand(1,995);
+		if (compare( .BlackList$, $monster +"|" ) ) goto OnStart; 
+		if ($monster==.LastMonster) goto OnStart;
+		set .LastMonster,$monster;
+		set $MonsterName$, strmobinfo(1,$monster);
+	}
+if(.Rule == 2) // Only MVP's and Mini boss
+	{
+		set $monster, $@MVP[rand(49)];
+		set $MonsterName$, strmobinfo(1,$monster);
+	}
+        set .@guessrepeat, 0;
+	setnpctimer 0;
+	initnpctimer;
+	setnpcdisplay "Disguise Event",$monster;
+	defpattern 1, "([^:]+):.*\\s"+$MonsterName$+"(.*)", "winround";
+	activatepset 1;
+	specialeffect EF_DETECT2;
+	npctalk "Cual es mi nombre?";
+	end;
+
+	OnTimer35000:
+	if (.Timer!=1) end;
+		if (!.DisguiseWon)
+		{ 
+			npctalk "Ronda terminada";
+			set $DisguiseRound, $DisguiseRound + 1;
+			deletepset 1;
+			sleep2 3000;
+			npctalk $MonsterName$ + " habria sido la respuesta correcta";
+			set $MonsterName$,"";
+			sleep2 5000;
+			if ($DisguiseRound >= $guessrounds || getmapusers("arlandria") == 0)
+			{
+				set $DisguiseRound, 0;
+				set .EventON,0;
+				set .Wait,0;
+				sleep2 3000;
+				npctalk "El evento a  terminado por ahora!";
+				sleep2 3500;
+				npctalk "Nos vemos!";
+				sleep2 2000;
+				emotion 12;
+				sleep2 1000;
+				setnpcdisplay "Disguise Event",795;
+				end;
+			}
+			goto OnStart;
+		}
+		end;
+
+	winround:
+		setnpctimer 0;
+		deletepset 1;
+		set .DisguiseWon, 1;
+		set $DisguiseRound, $DisguiseRound + 1;
+		npctalk strcharinfo(0) + " dijo mi nombre correcto!";
+		getitem $DisguisePrice, $DisguiseCount;
+		sleep2 3000;
+		npctalk $MonsterName$ + " es la respuesta correcta.";
+		if ($DisguiseRound >= $guessrounds)
+			{
+				set $DisguiseRound, 0;
+				set .EventON,0;
+				set .Wait,0;
+				sleep2 3000;
+				npctalk "El Evento a terminado por ahora";
+				sleep2 3500;
+				npctalk "Nos vemos!";
+				sleep2 2000;
+				emotion 12;
+				sleep2 1000;
+				setnpcdisplay "Disguise Event",795;
+				end;
+			}
+		sleep2 5000;
+		goto OnStart;
+		end;
+
+	
+
+}

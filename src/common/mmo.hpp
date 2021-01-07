@@ -53,7 +53,7 @@
 #define MAX_ZENY INT_MAX ///Max zeny
 #define MAX_BANK_ZENY SINT32_MAX ///Max zeny in Bank
 #define MAX_FAME 1000000000 ///Max fame points
-#define MAX_CART 100 ///Maximum item in cart
+#define MAX_CART 150 ///Maximum item in cart
 #define MAX_SKILL 1250 ///Maximum skill can be hold by Player, Homunculus, & Mercenary (skill list) AND skill_db limit
 #define DEFAULT_WALK_SPEED 150 ///Default walk speed
 #define MIN_WALK_SPEED 20 ///Min walk speed
@@ -200,7 +200,7 @@ enum e_mode {
 	MD_IGNOREMISC			= 0x0100000,
 	MD_KNOCKBACK_IMMUNE		= 0x0200000,
 	MD_TELEPORT_BLOCK		= 0x0400000,
-	//FREE					= 0x0800000,
+	MD_CANATTACKMOB			= 0x0800000,
 	MD_FIXED_ITEMDROP		= 0x1000000,
 	MD_DETECTOR				= 0x2000000,
 	MD_STATUS_IMMUNE		= 0x4000000,
@@ -474,6 +474,118 @@ struct hotkey {
 	unsigned char type; // 0: item, 1: skill
 };
 #endif
+// Extended Feature [Easycore]
+struct s_battleground_stats {
+	unsigned int
+		top_damage,
+		damage_done,
+		damage_received,
+		boss_damage;
+	unsigned short
+		// Triple Inferno
+		skulls,
+		ti_wins, ti_lost, ti_tie,
+		// Tierra EoS
+		eos_flags,
+		eos_bases,
+		eos_wins, eos_lost, eos_tie,
+		// Tierra Bossnia
+		boss_killed,
+		boss_flags,
+		boss_wins, boss_lost, boss_tie,
+		// Tierra Domination
+		dom_bases,
+		dom_off_kills,
+		dom_def_kills,
+		dom_wins, dom_lost, dom_tie,
+		// Flavius TD
+		td_kills,
+		td_deaths,
+		td_wins, td_lost, td_tie,
+		// Flavius SC
+		sc_stole,
+		sc_captured,
+		sc_droped,
+		sc_wins, sc_lost, sc_tie,
+		// Flavius CTF
+		ctf_taken,
+		ctf_captured,
+		ctf_droped,
+		ctf_wins, ctf_lost, ctf_tie,
+		// Conquest
+		emperium_kill,
+		barricade_kill,
+		gstone_kill,
+		cq_wins, cq_lost,
+		// Rush
+		ru_captures,
+		ru_wins, ru_lost;
+
+	unsigned int // Ammo
+		sp_heal_potions,
+		hp_heal_potions,
+		yellow_gemstones,
+		red_gemstones,
+		blue_gemstones,
+		poison_bottles,
+		acid_demostration,
+		acid_demostration_fail,
+		support_skills_used,
+		healing_done,
+		wrong_support_skills_used,
+		wrong_healing_done,
+		sp_used,
+		zeny_used,
+		spiritb_used,
+		ammo_used;
+	unsigned short
+		kill_count,
+		death_count,
+		win, lost, tie,
+		leader_win, leader_lost, leader_tie,
+		deserter, rank_games;
+
+	int score, points, rank_points, showstats;
+};
+
+struct s_woestats {
+	int score;
+	unsigned short
+		kill_count,
+		death_count;
+	unsigned int
+		top_damage,
+		damage_done,
+		damage_received;
+	unsigned int
+		emperium_damage,
+		guardian_damage,
+		barricade_damage,
+		gstone_damage;
+	unsigned short
+		emperium_kill,
+		guardian_kill,
+		barricade_kill,
+		gstone_kill;
+	unsigned int // Ammo
+		sp_heal_potions,
+		hp_heal_potions,
+		yellow_gemstones,
+		red_gemstones,
+		blue_gemstones,
+		poison_bottles,
+		acid_demostration,
+		acid_demostration_fail,
+		support_skills_used,
+		healing_done,
+		wrong_support_skills_used,
+		wrong_healing_done,
+		sp_used,
+		zeny_used,
+		spiritb_used,
+		ammo_used;
+	int points, showstats;
+};
 
 struct mmo_charstatus {
 	uint32 char_id;
@@ -501,6 +613,9 @@ struct mmo_charstatus {
 	int spear_faith, spear_calls;
 	int sword_faith, sword_calls;
 
+	time_t last_tick;
+	unsigned int playtime;
+
 	short weapon; // enum weapon_type
 	short shield; // view-id
 	short head_top,head_mid,head_bottom;
@@ -513,6 +628,9 @@ struct mmo_charstatus {
 
 	uint32 mapip;
 	uint16 mapport;
+
+	struct s_battleground_stats bgstats; // Extended Feature [Easycore]
+	struct s_woestats wstats;
 
 	struct point last_point,save_point,memo_point[MAX_MEMOPOINTS];
 	struct s_skill skill[MAX_SKILL];
@@ -646,6 +764,7 @@ struct guild_alliance {
 	int opposition;
 	int guild_id;
 	char name[NAME_LENGTH];
+	bool war;
 };
 
 struct guild_expulsion {
@@ -674,12 +793,16 @@ struct guild {
 	struct guild_alliance alliance[MAX_GUILDALLIANCE];
 	struct guild_expulsion expulsion[MAX_GUILDEXPULSION];
 	struct guild_skill skill[MAX_GUILDSKILL];
+	int skill_block_timer[MAX_GUILDSKILL]; // BG eAmod [Easycore]
+	int ccolor; // Extended Features BG [Easycore]
 	struct Channel *channel;
 	unsigned short instance_id;
 	time_t last_leader_change;
 
 	/* Used by char-server to save events for guilds */
 	unsigned short save_flag;
+	bool war;
+	time_t war_tick;
 };
 
 struct guild_castle {
@@ -1002,7 +1125,9 @@ enum e_rank {
 	RANK_BLACKSMITH = 0,
 	RANK_ALCHEMIST = 1,
 	RANK_TAEKWON = 2,
-	RANK_KILLER = 3
+	RANK_KILLER = 3,
+	RANK_BG = 4,
+	RANK_WOE = 5
 };
 
 struct clan_alliance {

@@ -95,6 +95,7 @@ void battle_drain(struct map_session_data *sd, struct block_list *tbl, int64 rda
 int battle_attr_ratio(int atk_elem,int def_type, int def_lv);
 int64 battle_attr_fix(struct block_list *src, struct block_list *target, int64 damage,int atk_elem,int def_type, int def_lv);
 int battle_calc_cardfix(int attack_type, struct block_list *src, struct block_list *target, int nk, int s_ele, int s_ele_, int64 damage, int left, int flag);
+int get_ele_fix(struct map_session_data *tsd, int rh_ele);
 
 // Final calculation Damage
 int64 battle_calc_damage(struct block_list *src,struct block_list *bl,struct Damage *d,int64 damage,uint16 skill_id,uint16 skill_lv);
@@ -476,6 +477,7 @@ struct Battle_Config
 	int quest_exp_rate;
 	int autotrade_mapflag;
 	int at_timeout;
+	int at_tax; // eAmod
 	int homunculus_autoloot;
 	int idle_no_autoloot;
 	int max_guild_alliance;
@@ -512,6 +514,8 @@ struct Battle_Config
 	int bg_magic_damage_rate;
 	int bg_misc_damage_rate;
 	int bg_flee_penalty;
+
+	int security_mode; // @security [Cydh]
 
 	// rAthena
 	int max_third_parameter;
@@ -658,6 +662,47 @@ struct Battle_Config
 	int min_shop_sell;
 	int feature_equipswitch;
 	int pet_walk_speed;
+	int bg_idle_announce;
+	int bg_idle_autokick;
+	int bg_reportafk_leaderonly;
+	int bg_queue2team_balanced;
+	int bg_reward_rates;
+	int bg_queue_onlytowns;
+	int bg_order_behavior;
+	int bg_eAmod_mode;
+	int bg_reserved_char_id;
+	int woe_reserved_char_id;
+	int bg_can_trade;
+	int bg_double_login;
+	int bg_team_color;
+	int bg_party_skills;
+	int bg_join_location;
+	int bg_team_ccolor_blue;
+	int bg_team_ccolor_red;
+	int bg_team_ccolor_green;
+	int bg_extended_check_equip;
+	int bg_queue_interface;
+	// Premium Account System
+	int premium_group_id;
+	int premium_bonusexp;
+	int premium_dropboost;
+	int premium_gemstone;
+	int premium_job_exp_increase;
+	int premium_base_exp_increase;
+	//Customs Mavis to eAmod
+	int costume_reserved_char_id;
+	int mob_slave_adddrop;
+	int reflect_damage_fix;
+	// Extended Vending system [Lilith]
+	int extended_vending;
+	int show_broadcas_info;
+	int show_item_vending;
+	int ex_vending_info;
+	int ex_vending_report;
+	int item_zeny;
+	int item_cash;
+	int unmount_on_damage;
+	int mount_delay;
 
 #include "../custom/battle_config_struct.inc"
 };

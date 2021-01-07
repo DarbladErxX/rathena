@@ -1,0 +1,571 @@
+//= ==== eAthena Script ============================================= = \\
+//= Evento Arena Nivel 3                                                //
+//= ==== By: ======================================================== = \\
+//= DarbladErxX // (darbladerxx@hotmail.com // facebook/DarbladErX      //
+//= Copyright © 2013 DarbladErxX - Todos los derechos reservados.       //
+//= ==== Current Version: =========================================== = \\
+//= Version: 3.0                                                        //
+//= ==== Compatible With: =========================================== = \\
+//= eAthena SVN	SQL y TXT // Ahora es compatible con rathena	        //
+//= ==== Description: =============================================== = //
+//= Arena Fase 3 Tipo modo Interactiva			                //
+// = Ultima actualización 05/11/2020                                   //
+//= ================================================================== //
+
+-	script	Arena3ON	-1,{
+
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto OnArenaON;
+	}
+end;
+
+OnArenaON:
+	$ArenaV3 = 0;
+      	setwall "force_4-1",106,18,14,2,0,"Arena3Inicio";
+	setnpcdisplay "ArenaV3","Karlita";
+	enablenpc "ArenaV3";
+ 	initnpctimer "ArenaV3";
+	end;
+}
+
+
+-	script	Arena3OFF	-1,{
+
+OnWhisperGlobal:
+	if ( getgmlevel() >= 90 ) 
+	{
+		if (@whispervar0$ == "activar")
+			goto OnArenaOFF;
+	}
+end;
+
+OnArenaOFF:
+	stopnpctimer;
+	stopnpctimer "ArenaV3";
+ 	stopnpctimer "ArenaVT";
+ 	stopnpctimer "Arena3Final";
+	hideonnpc "ArenaVT";
+	$Karlita = 0;
+	$@NReload = 0;
+	$progesEnd = 0;
+	$@OnTimeSummonDeath = 0;
+	$ArenaV3 = 1;
+       disablenpc "ArenaW1";
+       disablenpc "ArenaW2";
+       disablenpc "ArenaW3";
+       disablenpc "ArenaW4";
+       disablenpc "ArenaW5";
+       disablenpc "ArenaW6";
+       disablenpc "ArenaW7";
+       disablenpc "ArenaV3";
+       disablenpc "Ifrit";
+       disablenpc "ArenaFase3";
+       disablenpc "Helaer Alysa";
+       killmonsterall "force_4-1";
+	end;
+
+OnInit:
+	setnpcdisplay "ArenaVT","Karlita";
+	setnpcdisplay "ArenaV3","Karlita";
+	hideonnpc "ArenaVT";
+	stopnpctimer;
+	stopnpctimer "ArenaV3";
+ 	stopnpctimer "ArenaVT";
+ 	stopnpctimer "Arena3Final";
+	$Karlita = 0;
+	$@NReload = 0;
+	$progesEnd = 0;
+	$@OnTimeSummonDeath = 0;
+	$ArenaV3 = 1;
+       disablenpc "ArenaW1";
+       disablenpc "ArenaW2";
+       disablenpc "ArenaW3";
+       disablenpc "ArenaW4";
+       disablenpc "ArenaW5";
+       disablenpc "ArenaW6";
+       disablenpc "ArenaW7";
+       disablenpc "ArenaV3";
+       disablenpc "Ifrit";
+       disablenpc "Naght Sieger";
+       disablenpc "ArenaFase3";
+       disablenpc "Helaer Alysa";
+       killmonsterall "force_4-1";
+	end;
+
+}
+
+force_4-1,99,20,4	script	ArenaV3	529,{
+	end;
+
+OnTimer3000:
+	npctalk "Hola a todoooos!"; end;
+OnTimer6000:
+	npctalk "Por lo general ando repartiendo volantes y folletos en todas las ciudades"; end;
+OnTimer9000:
+	npctalk "Pero no se lo cuenten a nadie... soy un agente en cubierto"; end;
+OnTimer12000:
+	npctalk "Me dedico a buscar a los mejores guerreros como ustedes capaces de pasar las 2 fases de la arena"; end;
+OnTimer15000:
+	npctalk "Hace tiempo tuvimos la gran tragedia de abrir el portal a otra dimension y de ahi salio Satan Morroc pero eso no fue todo..."; end;
+OnTimer18000:
+	npctalk "Perdimos al gran Thanatos corrompido por aquella influencia maligna, actualmente se encuentra en su gran torre rodeado de fuerzas oscuras"; end;
+OnTimer21000:
+	npctalk "Algo similar paso en la torre del relog, algo paso, no se que fue... la verdad no lo se, pero aparecio Time Holder"; end;
+OnTimer24000:
+	npctalk "Por eso me dedico a buscar a guerreros como ustedes, para no perder a ningún heroe más"; end;
+OnTimer27000:
+	npctalk "Yo me especializo en barreras, claro no soy una experta, pero hago lo que puedo, espera... que fue esoo!!"; end;
+OnTimer30000:
+	delwall "Arena3Inicio";
+	npcspeed 150;
+	npcwalkto 73,25;
+	end;
+
+OnTimer34000:
+	stopnpctimer;
+ 	initnpctimer "ArenaVT";
+	hideoffnpc "ArenaVT";
+	donpcevent "ArenaVT::OnArenaStart";
+	mapwarp "force_4-1","force_4-1",26,24;
+	npcwalkto 99,20;
+	end;
+
+OnTimer38000:
+	disablenpc "ArenaV3";
+	end;
+
+}
+
+force_4-1,25,26,4	script	ArenaVT	529,{
+	           end;
+
+OnTimer9000:
+	npctalk "Tranquilos, no se asusten, bueno aun no..."; end;
+OnTimer12000:
+	npctalk "Recuerdan que les dije que era una experta en barreras"; end;
+OnTimer15000:
+	npctalk "Pues estamos rodeados por 4 barreras magicas asi que tranquilos"; end;
+OnTimer18000:
+	npctalk "El problema es que hay mucho miasma en este lugar"; end;
+OnTimer21000:
+	npctalk "Solo podre tenerla activa 30 segundos más, asi que preparados todos...!"; end;
+OnTimer34000:
+	mapannounce "force_4-1","[Karlita] La estoy perdiendo... ",bc_all; end;
+OnTimer48000:
+	npctalk "Ya no pude contenerla más a luchar";
+	hideonnpc "ArenaVT";
+	delwall "ArenaW1";
+	delwall "ArenaW2";
+	delwall "ArenaW3";
+	delwall "ArenaW4";
+	end;
+
+
+OnArenaStart:
+setnpcdisplay "ArenaVT","Karlita";
+	$MobArena3 = 52;
+
+       		setwall "force_4-1",16,17,17,6,0,"ArenaW1"; // East
+
+       		setwall "force_4-1",33,17,17,0,0,"ArenaW2"; // Nort
+
+      		setwall "force_4-1",34,34,17,2,0,"ArenaW3"; // West
+
+      		setwall "force_4-1",17,35,18,4,0,"ArenaW4"; // Sur
+
+		areamonster "force_4-1",38,37,38,14,"Bow Guardian",3654,12,"ArenaVT::OnMvParenaDeath";
+		areamonster "force_4-1",37,13,14,13,"Bow Guardian",3654,12,"ArenaVT::OnMvParenaDeath";
+		areamonster "force_4-1",13,13,13,37,"Bow Guardian",3654,12,"ArenaVT::OnMvParenaDeath";
+		areamonster "force_4-1",13,38,37,38,"Bow Guardian",3654,12,"ArenaVT::OnMvParenaDeath";
+		end;
+
+
+OnMvParenaDeath:
+ if ($ArenaV3 == 1) end;
+ 	$MobArena3--;
+	switch ( $MobArena3 ) {
+	case 40: 
+ 		mapannounce "force_4-1","[Karlita] Guerreros, miren arriba a la derecha!",8,0x09E8E8;
+		callfunc("ArenaMvpSummon","force_4-1",42,42,1,"ArenaVT::OnMvParenaDeath");
+
+		break;
+
+	case 35: 
+ 		mapannounce "force_4-1","[Karlita] Guerreros, ahora a la izquierda!",8,0x09E8E8;
+		callfunc("ArenaMvpSummon","force_4-1",9,42,1,"ArenaVT::OnMvParenaDeath");
+		break;
+
+      case 30:
+	 	mapannounce "force_4-1","[Karlita] Pierdo el control, este lugar esta rodeado de mucha energia maligna...",8,0x09E8E8;
+		break;
+
+      case 20:
+		callfunc("ArenaMvpSummon","force_4-1",9,9,1,"ArenaVT::OnMvParenaDeath");
+		break;
+
+      case 15:
+		callfunc("ArenaMvpSummon","force_4-1",42,10,1,"ArenaVT::OnMvParenaDeath");
+		break;
+
+     case 0:
+ 	        mapannounce "force_4-1","[Karlita] Logramos abrir la entrada delantera es tiempo de continuar",8,0x09E8E8;
+	        enablenpc "ArenaW1";
+		$FezeMode = 236;
+		goto FrezeMode;
+		break;
+	}
+end;
+
+
+FrezeMode:
+		atcommand "@snow";
+		areamonster "force_4-1",32,67,32,132,"Gazeti",3655,50,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",19,67,19,132,"Gazeti",3655,50,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",21,66,30,66,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,75,21,75,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,86,21,86,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,95,21,95,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,103,21,103,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,111,21,111,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,119,21,119,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,127,21,127,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+		areamonster "force_4-1",30,133,21,133,"Iceicle",1789,15,"ArenaVT::OnFrezearenaDeath"; 
+	 	mobevent "force_4-1",25,99,"Hatii",1889,2,1,0,0,0,0,0,0,0,0,0,0,0,"ArenaVT::OnFrezearenaDeath"; // esquina inferior Derecha
+		end;
+
+
+OnFrezearenaDeath:
+ if ($ArenaV3 == 1) end;
+ 	$FezeMode--;
+	if ($FezeMode == 0)
+	{
+	 atcommand "@snow"; // Desactivamos nieve 
+	 mapannounce "force_4-1","[Karlita] Lo siento heroes, después de usar toda mi magia no puedo continuar mas adelante.",8,0x09E8E8;
+	sleep2 3500;
+	initnpctimer "Ifrit";
+	mapannounce "force_4-1","[Karlita] Me quedare atras recuperando mis puntos de SP y los veo mas adelante.",8,0x09E8E8;
+	sleep2 4500;
+	enablenpc "ArenaW2";
+	enablenpc "Ifrit";
+	setnpcdisplay "Ifrit",651;
+	end;
+	}
+	end;
+
+}
+force_4-1,26,174,4	script	Ifrit	651,{
+
+if(rand(1,30) == 30) npctalk "Libérenme por favoooor!! T_T, debes estar cerca de mi.";
+
+ if ($ArenaV3 == 1) end;
+
+	getmapxy .@map$, .@cx, .@cy, 0; // Current Char Position
+	getmapxy .@mapn$, .@cxn, .@cyn, 1; // Current NPC Position
+			
+	set .@x1, .@cxn - 2;
+	set .@x2, .@cxn + 2;
+	set .@y1, .@cyn - 2;
+	set .@y2, .@cyn + 2;
+	if( .@cx < .@x1 || .@cx > .@x2 || .@cy < .@y1 || .@cy > .@y2) end;
+
+	doevent strnpcinfo(3)+"::OnStartProgressBar";
+		end;
+
+OnTimer18000:
+	npctalk "Solo Siento, Odio y Desesperación.";
+	specialeffect 237;
+	end;
+
+OnTimer30000:
+	if( getmapusers("force_4-1") == 0 ) donpcevent "Arena3OFF::OnArenaOFF";
+	
+	if ($@NReload == 3)
+	{
+	 mapannounce "force_4-1","[Karlita] No queria hacerlo pero lo tendre que hacer, Magnus Exorcismus.!!!",8,0x09E8E8;
+		atcommand "@raisemap";
+		specialeffect 113;
+		killmonsterall "force_4-1";
+		$Karlita = 1;
+		$@NReload = 0;
+		sleep2 4500;
+	 mapannounce "force_4-1","[Karlita] Tienen 10 segundos de ventaja no los arruinen y liberan a Ifrit...!",8,0x09E8E8;
+		sleep2 10000;
+	}
+	mapannounce "force_4-1","[Time Holder] Tic Tac... Tic Tac... Tic Tac...",8,0x0000FF;
+	areamonster "force_4-1",11,160,39,159,"Arc Elder",2920,15,"Ifrit::OnDimensional"; 
+	areamonster "force_4-1",38,160,38,186,"Time Kepper",2918,15,"Ifrit::OnDimensional"; 
+	areamonster "force_4-1",37,186,13,186,"Big Ben",2916,15,"Ifrit::OnDimensional"; 
+	areamonster "force_4-1",13,185,13,162,"Big Bel",2917,15,"Ifrit::OnDimensional"; 
+	monster "force_4-1",33,166,"Owl Marquees",2923,1,"Ifrit::OnDimensional";
+	monster "force_4-1",18,166,"Owl Marquees",2923,1,"Ifrit::OnDimensional";
+	monster "force_4-1",18,181,"Owl Marquees",2923,1,"Ifrit::OnDimensional";
+	monster "force_4-1",33,181,"Owl Marquees",2923,1,"Ifrit::OnDimensional";
+	$@NReload++;
+	initnpctimer;
+	end;
+
+OnDimensional: // Para evitar no event
+	end;
+
+
+OnStartProgressBar:
+	if ($progesEnd == 1 ) end;
+		progressbar "777777", 30;
+	if ($progesEnd == 1 ) end; // revalidamos por si alguien mas ya estaba en proceso
+		$progesEnd = 1;
+		killmonsterall "force_4-1";
+		stopnpctimer;
+		specialeffect2 870;
+		mapannounce "force_4-1","[Ifrit] Gracias "+strcharinfo(0)+" has logrado romper el sello",8,0x09E8E8;
+		setnpcdisplay "Ifrit",628;
+		sleep2 3500;
+		specialeffect2 118;
+		specialeffect2 635;
+		specialeffect2 882;
+		sleep2 1500;
+		specialeffect2 96;
+		specialeffect2 97;
+		mapannounce "force_4-1","[Ifrit] Vamos "+strcharinfo(0)+" Estoy muy debil, pero aun puedo luchar",8,0x09E8E8;
+		Sleep2 3500;
+		specialeffect2 668;
+		specialeffect2 670;
+		specialeffect2 796;
+		atcommand "@summon ifrit 3"; 
+		enablenpc "ArenaW3";
+		enablenpc "ArenaFase3";
+		donpcevent "ArenaFase3::OnModeZombie";
+		$ZombieMode = 171;
+		disablenpc "Ifrit";
+		end;
+  }
+
+
+force_4-1,134,174,5	script	ArenaFase3	45,2,2,{
+
+	atcommand "@unequipall";
+	warp "force_4-1",158,174;
+		end;
+
+OnModeZombie:
+	if ($Karlita == 1)
+	{
+		setmapflag "force_4-1",12; //no skill
+		setmapflag "force_4-1",mf_noequip; //No Equip
+		enablenpc "Healer Alysa";
+	}
+		monster "force_4-1",173,174,"Anubis",1098,25,"ArenaFase3::OnZombieDeath";
+		areamonster "force_4-1",166,181,166,166,"Antique Firelock",1403,30,"ArenaFase3::OnZombieDeath"; 
+		end;
+
+OnZombieDeath:
+ if ($ArenaV3 == 1) end;
+ 	$ZombieMode--;
+	switch ( $ZombieMode) {
+	case 150:
+		monster "force_4-1",173,174,"Anubis",1098,25,"ArenaFase3::OnZombieDeath"; break;
+
+	case 125:
+		areamonster "force_4-1",188,192,188,157,"Ancient Mummy",1297,30,"ArenaFase3::OnZombieDeath"; break;
+
+	case 110:
+		monster "force_4-1",173,174,"Evil Druid",1117,20,"ArenaFase3::OnZombieDeath"; break;
+
+	case 55:
+		monster "force_4-1",173,174,"Necromancer",1870,40,"ArenaFase3::OnZombieDeath";
+	if ($Karlita == 1){
+		mapannounce "force_4-1","[Karlita] Es tiempo de que entre en acción, quitare esta restricción maligna.",8,0x09E8E8;
+		sleep2 3500;
+		mapannounce "force_4-1","[Karlita] Es hora guerreros ya pueden usar echizos y usar su equipamiento.",8,0x09E8E8;
+		removemapflag "force_4-1",12; //no skill
+		removemapflag "force_4-1",mf_noequip; //No Equip
+		}
+	 break;
+
+	case 15:
+		mapannounce "force_4-1","[Entweihen Crothen] Denme el Corazón de Ymir o mueran protegiendolo.",8,0x09E8E8;
+		monster "force_4-1",173,174,"Entweihen Crothen",1957,1,"ArenaFase3::OnZombieDeath"; break;
+
+	case 0:
+		mapannounce "force_4-1","[Karlita] Hemos logrado liberar este piso guerreros, tengamos cuidado, lo que viene sera dificil.",8,0x09E8E8;
+		enablenpc "ArenaW4";
+		$NightMode = 105;
+		enablenpc "Naght Sieger";
+		goto OnNigtMode;
+		break;
+
+	}
+end;
+
+
+
+OnNigtMode:
+		areamonster "force_4-1",169,123,178,123,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath"; 
+		areamonster "force_4-1",169,113,178,113,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath"; 
+		areamonster "force_4-1",169,103,178,103,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath";
+		areamonster "force_4-1",169,95,178,95,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath"; 
+		areamonster "force_4-1",169,85,178,85,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath"; 
+		areamonster "force_4-1",169,75,178,75,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath"; 
+		areamonster "force_4-1",169,65,178,65,"Thorny Skeleton",3656,15,"ArenaFase3::OnNigtDeath";
+			end;
+
+
+OnNigtDeath:
+ if ($ArenaV3 == 1) end;
+ 	$NightMode--;
+	if( $NightMode == 0){
+ 	enablenpc "ArenaW5";
+	mapannounce "force_4-1","[Karlita] Preparense lo que se avecina no es cualquier cosa guerreros",8,0x09E8E8;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Después de estar atrapado en esa torre a culpa de Entweihen Knothen lo segui hasta quí y lo que encuentro es esto...",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Una aberración la cual detiene el tiempo y apresa a todo aquel que queda atrapasado en su infinito Tic Tac...",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Pero de nuevo humanos, si humanos donde no deberian de estar lo estan.!",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Desde la pelea de Thanatos hasta Eremes el que sobrevio por mas de 350 diás",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Las asañas de los humanos, se escuchan hasta los temibles rincones demoniacos y mas si son contra otros demonios.",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Les hare un encargo y con esto un regalo y una misión.",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Logrenme derrotar y liberare las barreras que detienen por el momento a ese maldito Relog.",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] ¿Quien sera el que logre reclamar mis espadas gemelas?.",8,0x2FEC14;
+	sleep2 4500;
+	mapannounce "force_4-1","[Time Holder] Tic Tac... Tic Tac... Tic Tac...",8,0x0000FF;
+	sleep2 4500;
+	mapannounce "force_4-1","[Naght Sieger] Ese maldito sonido otra vez...",8,0x2FEC14;
+	goto OnSiegermode;
+ 	}
+	end;
+
+OnSiegermode:
+	disablenpc "Naght Sieger";
+	monster "force_4-1",174,26,"Naght Sieger",1956,1,"ArenaFase3::OnSiegerDeath";
+	end;
+
+OnSiegerDeath:
+ if ($ArenaV3 == 1) end;
+	mapannounce "force_4-1","[Naght Sieger] Tienen el camino libre...",8,0x2FEC14;
+	set .@Rate,rand(100);
+	if (.@Rate >= 0 && .@Rate < 45) { getitem 13412,1; getitem 13413,1; } // 45 % de drop de caer las espadas
+	enablenpc "ArenaW6";
+	enablenpc "ArenaW7";
+	$@OnTimeSummonDeath = 3;
+ 	initnpctimer "Arena3Final";
+	donpcevent "Arena3Final::OnTimeHolder";
+	sleep2 3500;
+	mapannounce "force_4-1","[Time Holder] 	Cada segundo que pasa, se acercan más a su perdición",8,0x0000FF;
+	end;
+}
+
+-	script	Arena3Final	-1,{
+		end;
+
+OnTimer30000:
+	if( getmapusers("force_4-1") == 0 ) donpcevent "Arena3OFF::OnArenaOFF";
+	if ($@OnTimeSummonDeath == 4){ stopnpctimer; end; }
+	mapannounce "force_4-1","[Time Holder] Tic Tac... Tic Tac... Tic Tac...",8,0x0000FF;
+	monster "force_4-1",87,99,"Owl Marquees",2923,1,"Arena3Final::OnTimeSummonDeath";
+	monster "force_4-1",99,112,"Owl Marquees",2923,1,"Arena3Final::OnTimeSummonDeath";
+	monster "force_4-1",112,100,"Owl Marquees",2923,1,"Arena3Final::OnTimeSummonDeath";
+	monster "force_4-1",100,87,"Owl Marquees",2923,1,"Arena3Final::OnTimeSummonDeath";
+	$@OnTimeSummonDeath++;
+	initnpctimer;
+	end;
+
+OnTimeSummonDeath:
+	$@OnTimeSummonDeath--;
+if ($@OnTimeSummonDeath == 0) initnpctimer;
+	end;
+
+
+OnTimeHolder:
+ if ($ArenaV3 == 1) end;
+	monster "force_4-1",99,100,"Time Holder",3074,1,"Arena3Final::OnTimeHDeath";
+	end;
+
+OnTimeHDeath:
+ if ($ArenaV3 == 1) end;
+	mapannounce "force_4-1","[Time Holder] 	Piesan que yo fui el final, pero en realidad solo era el comienzo de algo mas grande",8,0x0000FF;
+	stopnpctimer;
+	sleep2 5000;
+   	atcommand "@raisemap";
+	callfunc("ArenaRewards","force_4-1");
+	donpcevent "Arena3OFF::OnArenaOFF";
+ 	sleep2 5000;
+	mapwarp "force_4-1","prontera",155,182;
+	end;
+}
+
+
+force_4-1,128,180,5	shop	Usables ARENA	506,610:-1,11501:1500,11502:1500
+
+
+force_4-1,174,26,4	script	Naght Sieger	1956,{
+	end;
+}
+
+force_4-1,157,190,5	script	Helaer Alysa	677,2,2,{
+
+	if ($@Healer == 30) mapannounce "force_4-1","[Alysa] Solo podre ayudarlos unas cuantas veces, usenme con cuidado.",8,0x09E8E8;
+
+	if ($@Healer == 100) mapannounce "force_4-1","[Alysa] Solo me podran usar 50 veces más.",8,0x09E8E8;
+
+	if ($@Healer == 150){
+	 mapannounce "force_4-1","[Alysa] Me retiro guerreros suerte a todos.",8,0x09E8E8;
+	atcommand "@raisemap";
+	disablenpc "Helaer Alysa";
+	end;
+	}
+
+	if (getbrokenid(1) != 0) {
+		while (getbrokenid(1) != 0){
+			specialeffect2 101;
+			repairall;
+		}
+	}
+OnTouch:
+	if (readparam(5) == 0 )
+		atcommand "@alive";
+
+	$@Healer++;
+	sc_start 32,  240000, 10;  // Increase Agi
+	sc_start 30, 240000, 10; // Blessing
+	sc_start SC_ASPERSIO,180000,5;
+	percentheal 100,100;
+	skilleffect 29,0; // Increase Agi
+	skilleffect 34,0; // Blessing
+	skilleffect "PR_ASPERSIO",0;
+	specialeffect2 312;
+	percentheal 100,100;
+	end;
+}
+
+
+
+force_4-1,26,44,0	warp	ArenaW1	1,1,force_4-1,25,68
+force_4-1,25,134,0	warp	ArenaW2	1,1,force_4-1,26,158
+force_4-1,44,173,0	warp	ArenaW3	1,1,force_4-1,68,174
+force_4-1,173,155,0	warp	ArenaW4	1,1,force_4-1,174,131
+force_4-1,174,65,0	warp	ArenaW5	1,1,force_4-1,174,41
+force_4-1,155,25,0	warp	ArenaW6	1,1,force_4-1,133,25
+force_4-1,100,54,0	warp	ArenaW7	1,1,force_4-1,99,84
+
+
+
+// -- Mapflags
+force_4-1	mapflag	nowarp
+force_4-1	mapflag	nowarpto
+force_4-1	mapflag	noteleport
+force_4-1	mapflag	nosave	SavePoint
+force_4-1	mapflag	nomemo
+force_4-1	mapflag	nobranch
+force_4-1	mapflag	nopenalty
+force_4-1	mapflag	noloot
+force_4-1	mapflag	restricted	5
+force_4-1	mapflag	monster_noteleport
+// -- End of Mapflags

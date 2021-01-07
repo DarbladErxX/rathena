@@ -476,7 +476,7 @@ void skill_getareachar_skillunit_visibilty_single(struct skill_unit *su, struct 
 int skill_castfix(struct block_list *bl, uint16 skill_id, uint16 skill_lv);
 int skill_castfix_sc(struct block_list *bl, double time, uint8 flag);
 #ifdef RENEWAL_CAST
-int skill_vfcastfix(struct block_list *bl, double time, uint16 skill_id, uint16 skill_lv);
+float skill_vfcastfix(struct block_list *bl, double time, uint16 skill_id, uint16 skill_lv, int what=0);
 #endif
 int skill_delayfix(struct block_list *bl, uint16 skill_id, uint16 skill_lv);
 void skill_toggle_magicpower(struct block_list *bl, uint16 skill_id);
@@ -1360,6 +1360,10 @@ enum e_skill {
 	NPC_IMMUNE_PROPERTY,
 	NPC_MOVE_COORDINATE,
 
+	CS_EQUIPMENT = 780,
+	CS_BG,
+	CS_WOE,
+
 	KN_CHARGEATK = 1001,
 	CR_SHRINK,
 	AS_SONICACCEL,
@@ -2221,6 +2225,8 @@ void skill_combo(struct block_list* src,struct block_list *dsrc, struct block_li
 
 void skill_reveal_trap_inarea(struct block_list *src, int range, int x, int y);
 int skill_get_time3(struct map_data *mapdata, uint16 skill_id, uint16 skill_lv);
+
+int skill_vending(struct map_session_data *sd, unsigned short nameid); //Extended Vending [Lilith]
 
 /// Variable name of copied skill by Plagiarism
 #define SKILL_VAR_PLAGIARISM "CLONE_SKILL"

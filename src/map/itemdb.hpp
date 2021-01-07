@@ -4,8 +4,13 @@
 #ifndef ITEMDB_HPP
 #define ITEMDB_HPP
 
+#include <string>
+
 #include "../common/db.hpp"
 #include "../common/mmo.hpp" // ITEM_NAME_LENGTH
+
+///Maximum allowed Item ID (range: 1 ~ 65,534)
+#define MAX_ITEMID USHRT_MAX
 
 ///Maximum allowed Item ID (range: 1 ~ 65,534)
 #define MAX_ITEMID USHRT_MAX
@@ -13,6 +18,10 @@
 #define UNKNOWN_ITEM_ID 512
 /// The maximum number of item delays
 #define MAX_ITEMDELAYS	10
+
+///Maximum amount of items to drop in an area
+#define MAX_ITEM_DROP_AREA 200
+
 ///Designed for search functions, species max number of matches to display.
 #define MAX_SEARCH	5
 ///Maximum amount of items a combo may require
@@ -29,6 +38,7 @@
 
 ///Marks if the card0 given is "special" (non-item id used to mark pets/created items. [Skotlex]
 #define itemdb_isspecial(i) (i == CARD0_FORGE || i == CARD0_CREATE || i == CARD0_PET)
+#define itemdb_isenchant(i) (i >= 4700 && i <= 4999) // Echant System to eAmod
 
 ///Enum of item id (for hardcoded purpose)
 enum item_itemid
@@ -51,6 +61,7 @@ enum item_itemid
 	ITEMID_POISON_BOTTLE				= 678,
 	ITEMID_EMPTY_BOTTLE					= 713,
 	ITEMID_EMPERIUM						= 714,
+	ITEMID_YELLOW_GEMSTONE				= 715,
 	ITEMID_RED_GEMSTONE					= 716,
 	ITEMID_BLUE_GEMSTONE				= 717,
 	ITEMID_ORIDECON_STONE				= 756,
@@ -791,6 +802,28 @@ struct s_roulette_db {
 };
 extern struct s_roulette_db rd;
 
+/**
+* Extended Vending system [Lilith]
+**/
+struct s_item_vend {
+	unsigned short itemid;
+};
+extern struct s_item_vend item_vend[MAX_INVENTORY];
+
+/// Struct of BG Reward db
+struct s_bg_reward {
+	unsigned short nameid, amount;
+	int zeny;
+};
+extern struct s_bg_reward bgr[MAX_FAME_LIST];
+
+/// Struct of WoE Reward db
+struct s_woe_reward {
+	unsigned short nameid, amount;
+	int zeny;
+};
+extern struct s_woe_reward woer[MAX_FAME_LIST];
+
 ///Main item data struct
 struct item_data
 {
@@ -967,7 +1000,22 @@ struct s_random_opt_group *itemdb_randomopt_group_exists(int id);
 
 void itemdb_reload(void);
 
+// Additional data for itemlink
+struct s_item_link {
+	unsigned int cards[MAX_SLOTS];
+	struct s_item_randomoption options[MAX_ITEM_RDM_OPT];
+	struct {
+		uint8 cards;
+		uint8 options;
+	} flag;
+};
+std::string createItemLink(unsigned int nameid, unsigned char refine, struct s_item_link *data);
+
 void do_final_itemdb(void);
 void do_init_itemdb(void);
+
+// Extended Vending system [Lilith]
+#define ITEMID_ZENY battle_config.item_zeny
+#define ITEMID_CASH battle_config.item_cash
 
 #endif /* ITEMDB_HPP */
